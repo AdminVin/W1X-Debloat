@@ -136,12 +136,12 @@ Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungCloudBluetoothSync*" 
 Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.PCGallery*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
 Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.OnlineSupportSService*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
 Get-AppxPackage -AllUsers "4AE8B7C2.BOOKING.COMPARTNERAPPSAMSUNGEDITION*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-
-# Disable SILENT installs of new Apps
+###
+# Disable SILENT installation of NEW third party apps
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Value "0"
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "ContentDeliveryAllowed" -Value "0"
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContentEnabled" -Value "0"
-# Start Menu Application suggestions
+# Disable Start Menu metro app suggestions
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Value "0"
 # Disable future installs/re-installs of factory/OEM Metro Apps
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEnabled" -Value "0"
@@ -310,6 +310,22 @@ Write-Host "4.1.11 Disabled: Windows Insider Service" -ForegroundColor Green
 Get-Service "icssvc" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
 Get-Service "icssvc" | Set-Service -StartupType Disabled | Out-Null
 Write-Host "4.1.12 Disabled: Windows Mobile Hotspot Service" -ForegroundColor Green
+# Fax
+Get-Service "fax" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
+Get-Service "fax" | Set-Service -StartupType Disabled | Out-Null
+Write-Host "4.1.13 Disabled: Windows Fax Service" -ForegroundColor Green
+# Windows Media Player Network Share
+Get-Service "WMPNetworkSvc" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
+Get-Service "WMPNetworkSvc" | Set-Service -StartupType Disabled | Out-Null
+Write-Host "4.1.14 Disabled: Windows Media Player Network Share" -ForegroundColor Green
+# Windows Mixed Reality OpenXR Service
+Get-Service "MixedRealityOpenXRSvc" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
+Get-Service "MixedRealityOpenXRSvc" | Set-Service -StartupType Disabled | Out-Null
+Write-Host "4.1.15 Disabled: Windows Mixed Reality OpenXR Service" -ForegroundColor Green
+# Windows Offline Files
+Get-Service "CscService" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
+Get-Service "CscService" | Set-Service -StartupType Disabled | Out-Null
+Write-Host "4.1.16 Disabled: Windows Offline Files" -ForegroundColor Green
 
 # Scheduled Tasks
 Write-Host "4.2 Scheduled Tasks" -ForegroundColor Green

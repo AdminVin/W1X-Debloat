@@ -130,12 +130,12 @@ Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungCloudBluetoothSync*" 
 Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.PCGallery*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
 Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.OnlineSupportSService*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
 Get-AppxPackage -AllUsers "4AE8B7C2.BOOKING.COMPARTNERAPPSAMSUNGEDITION*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-
-# Disable SILENT installs of new Apps
+###
+# Disable SILENT installation of NEW third party apps
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Value "0"
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "ContentDeliveryAllowed" -Value "0"
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContentEnabled" -Value "0"
-# Start Menu Application suggestions
+# Disable Start Menu metro app suggestions
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Value "0"
 # Disable future installs/re-installs of factory/OEM Metro Apps
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEnabled" -Value "0"
@@ -177,10 +177,10 @@ Write-Host "3.2.1.5 Removed Microsoft Edge - Addon - IE to Edge" -ForegroundColo
 ## 3.2.2 One Drive
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Value '0' -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
 Set-ItemProperty -Path "HKLM\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Name "DisableFileSyncNGSC" -Value "0" -ErrorAction SilentlyContinue | Out-Null
-# Enabling Usage of One Drive
+# Enabling Usage of One Drive (if previously disabled)
 Write-Host "3.2.2 OneDrive Removal [Skipped]" -ForegroundColor Yellow
 
-## Internet Explorer
+## 3.2.3 Internet Explorer
 # Addon 'Send to One Note'
 Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{2670000A-7350-4f3c-8081-5663EE0C6C49}" -Force -ErrorAction SilentlyContinue | Out-Null
 Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer\Extensions\{2670000A-7350-4f3c-8081-5663EE0C6C49}" -Force -ErrorAction SilentlyContinue | Out-Null
@@ -197,17 +197,17 @@ Write-Host "3.2.3.3 Internet Explorer - Addon - REMOVED 'Lync Click to Call'" -F
 Get-ChildItem -Path "C:\Program Files (x86)\Microsoft\Edge\Application" -Recurse -Filter "BHO" | Remove-Item -Force -Recurse
 Write-Host "3.2.3.4 Internet Explorer - Addon - REMOVED 'IE to Edge'" -ForegroundColor Green
 
-## One Note
+## 3.2.4 One Note
 Write-Host "3.2.4 One Note" -ForegroundColor Green
 Remove-Item -LiteralPath "C:\Users\$env:username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Send to OneNote.lnk" -Force -ErrorAction SilentlyContinue | Out-Null
 Write-Host "3.2.4.1 OneNote - REMOVED 'Send to OneNote'" -ForegroundColor Green
 
-## Mozilla Firefox
+## 3.2.5 Mozilla Firefox
 # Scheduled Tasks
 Get-ScheduledTask "*Firefox Default*" | Unregister-ScheduledTask -Confirm:$false
 Write-Host "3.2.5.1 Firefox - Disabled 'Periodic requests to set as default browser'" -ForegroundColor Green
 
-## Teams
+## 3.2.6 Teams (Free)
 # Task Bar - Shortcut
 New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarMn' -Value '0' -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
 Set-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarMn' -Value '0' -Force -ErrorAction SilentlyContinue | Out-Null

@@ -136,12 +136,12 @@ Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungCloudBluetoothSync*" 
 Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.PCGallery*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
 Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.OnlineSupportSService*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
 Get-AppxPackage -AllUsers "4AE8B7C2.BOOKING.COMPARTNERAPPSAMSUNGEDITION*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-
-# Disable SILENT installs of new Apps
+###
+# Disable SILENT installation of NEW third party apps
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Value "0"
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "ContentDeliveryAllowed" -Value "0"
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContentEnabled" -Value "0"
-# Start Menu Application suggestions
+# Disable Start Menu metro app suggestions
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Value "0"
 # Disable future installs/re-installs of factory/OEM Metro Apps
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEnabled" -Value "0"
@@ -185,7 +185,7 @@ Write-Host "3.2.1.5 Removed Microsoft Edge - Addon - IE to Edge" -ForegroundColo
 ## 3.2.2.x - OneDrive
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Value '0' -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
 Set-ItemProperty -Path "HKLM\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Name "DisableFileSyncNGSC" -Value "0" -ErrorAction SilentlyContinue | Out-Null
-# Enabling Usage of One Drive
+# Enabling Usage of One Drive (if previously disabled)
 Write-Host "3.2.2 OneDrive Removal [Skipped]" -ForegroundColor Yellow
 
 ## 3.2.3.x - Internet Explorer
@@ -282,6 +282,22 @@ Write-Host "4.1.11 Disabled: Windows Insider Service" -ForegroundColor Green
 Get-Service "icssvc" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
 Get-Service "icssvc" | Set-Service -StartupType Disabled | Out-Null
 Write-Host "4.1.12 Disabled: Windows Mobile Hotspot Service" -ForegroundColor Green
+# Fax
+Get-Service "fax" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
+Get-Service "fax" | Set-Service -StartupType Disabled | Out-Null
+Write-Host "4.1.13 Disabled: Windows Fax Service" -ForegroundColor Green
+# Windows Media Player Network Share
+Get-Service "WMPNetworkSvc" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
+Get-Service "WMPNetworkSvc" | Set-Service -StartupType Disabled | Out-Null
+Write-Host "4.1.14 Disabled: Windows Media Player Network Share" -ForegroundColor Green
+# Windows Mixed Reality OpenXR Service
+Get-Service "MixedRealityOpenXRSvc" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
+Get-Service "MixedRealityOpenXRSvc" | Set-Service -StartupType Disabled | Out-Null
+Write-Host "4.1.15 Disabled: Windows Mixed Reality OpenXR Service" -ForegroundColor Green
+# Windows Offline Files
+Get-Service "CscService" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
+Get-Service "CscService" | Set-Service -StartupType Disabled | Out-Null
+Write-Host "4.1.16 Disabled: Windows Offline Files" -ForegroundColor Green
 
 # Scheduled Tasks
 Write-Host "4.2 Scheduled Tasks" -ForegroundColor Green
@@ -319,7 +335,9 @@ New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\*\shell\runas' -Name 'Icon
 Write-Host "5.1 Windows: Adding File/Folder Take Ownership - Right Click Context Menu (Preference)" -ForegroundColor Green
 
 # Restore Classic W10 right click menu
-reg.exe add "HKCU\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" /f /ve
+#reg.exe add "HKCU\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" /f /ve
+if((Test-Path -LiteralPath "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32") -ne $true) {  New-Item "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" -Force -ErrorAction SilentlyContinue | Out-Null }
+New-ItemProperty -LiteralPath 'HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32' -Name '(default)' -Value '' -PropertyType String  -Force -ErrorAction SilentlyContinue | Out-Null
 Write-Host "5.2 Windows: Restored W10 - Right Click Context Menu (Preference)" -ForegroundColor Green
 
 # Add "Open with Powershell (Admin)" to right click menu
