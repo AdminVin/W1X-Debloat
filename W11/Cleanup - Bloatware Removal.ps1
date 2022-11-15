@@ -40,7 +40,7 @@ Write-Host "2.1 Verbose Status Messaging Enabled" -ForegroundColor Green
 Write-Host "3.0 Applications" -ForegroundColor Green
 Write-Host "3.1 Applications - Metro" -ForegroundColor Green
 # Default Windows Bloatware
-Get-AppxPackage -AllUsers "Microsoft.3DBuilder*" | Where-Object {$_.InstallLocation -notlike $null} | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+Get-AppxPackage -AllUsers "Microsoft.3DBuilder*" | Where-Object {$_.InstallLocation -notlike $null} | Remove-AppxPackage -AllUsers -Force -ErrorAction SilentlyContinue | Out-Null
 Get-AppxPackage -AllUsers "Microsoft.549981C3F5F10*" | Where-Object {$_.InstallLocation -notlike $null} | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
 Get-AppxPackage -AllUsers "Microsoft.Appconnector*" | Where-Object {$_.InstallLocation -notlike $null} | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
 Get-AppxPackage -AllUsers "Microsoft.BingFinance*" | Where-Object {$_.InstallLocation -notlike $null} | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
