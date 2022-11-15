@@ -1,9 +1,3 @@
-<### Elevating Powershell Script with Administrative Rights ###>
-<# Write-Host "Elevating Powershell Script with Administrative Rights" -ForegroundColor Green
-if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs exit }
-#>
-
-
 <### Log - Start ###>
 $PCName = (Get-CIMInstance CIM_ComputerSystem).Name
 $Date = Get-Date
