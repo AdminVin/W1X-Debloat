@@ -366,7 +366,7 @@ if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System") -
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'PublishUserActivities' -Value 0 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
 Write-Host "5.22 File Explorer: Disable Activity Log (Privacy)" -ForegroundColor Green
 
-# Disable 'High Precision Event Timer' to prevent input lag/delays.
+# Disable 'High Precision Event Timer' to prevent input lag/delays
 bcdedit /deletevalue useplatformclock
 bcdedit /set useplatformtick yes
 bcdedit /set disabledynamictick yes
