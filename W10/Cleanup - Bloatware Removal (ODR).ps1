@@ -459,6 +459,18 @@ Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\exefile\shell\runasuser
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\exefile\shell\runasuser' -Name 'Icon' -Value 'imageres.dll,-5203' -PropertyType String -Force -ErrorAction SilentlyContinue | Out-Null
 Write-Host "5.32 File Explorer: Added 'Run as different user' - Right Click Context Menu (Preference)" -ForegroundColor Green
 
+# Source: https://social.technet.microsoft.com/Forums/en-US/f2034875-6eb0-4dce-8910-b4cef26e6cac/can-grouping-by-date-in-the-downloads-folder-be-disabled-permanently-in-windows-10-1903?forum=win10itprogeneral
+if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderTypes\{885a186e-a440-4ada-812b-db871b942259}\TopViews\{00000000-0000-0000-0000-000000000000}") -ne $true) {  New-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderTypes\{885a186e-a440-4ada-812b-db871b942259}\TopViews\{00000000-0000-0000-0000-000000000000}" -Force -ErrorAction SilentlyContinue | Out-Null };
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderTypes\{885a186e-a440-4ada-812b-db871b942259}\TopViews\{00000000-0000-0000-0000-000000000000}' -Name 'ColumnList' -Value 'prop:0(34)System.ItemNameDisplay;0System.DateModified;0System.ItemTypeText;0System.Size;1System.DateCreated;1System.Author;1System.Category;1System.Keywords;1System.Title' -PropertyType String -Force -ErrorAction SilentlyContinue | Out-Null;
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderTypes\{885a186e-a440-4ada-812b-db871b942259}\TopViews\{00000000-0000-0000-0000-000000000000}' -Name 'GroupAscending' -Value 0 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null;
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderTypes\{885a186e-a440-4ada-812b-db871b942259}\TopViews\{00000000-0000-0000-0000-000000000000}' -Name 'GroupBy' -Value 'System.DateModified' -PropertyType String -Force -ErrorAction SilentlyContinue | Out-Null;
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderTypes\{885a186e-a440-4ada-812b-db871b942259}\TopViews\{00000000-0000-0000-0000-000000000000}' -Name 'LogicalViewMode' -Value 1 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null;
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderTypes\{885a186e-a440-4ada-812b-db871b942259}\TopViews\{00000000-0000-0000-0000-000000000000}' -Name 'Name' -Value 'NoName' -PropertyType String -Force -ErrorAction SilentlyContinue | Out-Null;
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderTypes\{885a186e-a440-4ada-812b-db871b942259}\TopViews\{00000000-0000-0000-0000-000000000000}' -Name 'Order' -Value 0 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null;
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderTypes\{885a186e-a440-4ada-812b-db871b942259}\TopViews\{00000000-0000-0000-0000-000000000000}' -Name 'PrimaryProperty' -Value 'System.DateModified' -PropertyType String -Force -ErrorAction SilentlyContinue | Out-Null;
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderTypes\{885a186e-a440-4ada-812b-db871b942259}\TopViews\{00000000-0000-0000-0000-000000000000}' -Name 'SortByList' -Value 'prop:System.DateModified' -PropertyType String -Force -ErrorAction SilentlyContinue | Out-Null;
+Write-Host "5.33 File Explorer: Disabled 'Group By' (Preference)" -ForegroundColor Green
+
 
 <### 6.0 Performance ###>
 Write-Host "6.0 Performance" -ForegroundColor Green
