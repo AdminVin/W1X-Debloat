@@ -142,7 +142,7 @@ Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentD
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEverEnabled" -Value "0"
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "OEMPreInstalledAppsEnabled" -Value "0"
 
-Write-Host "3.2 Applications - Desktop"
+Write-Host "3.2 Applications - Desktop" -ForegroundColor Green
 # 3.2.1 Edge
 Write-Host "3.2.1 Microsoft Edge" -ForegroundColor Green
 ## Services
