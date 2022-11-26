@@ -224,6 +224,7 @@ Write-Host "3.2.6.1 Teams - Removed Taskbar Shortcut" -ForegroundColor Green
 
 # 3.3 Widgets
 winget uninstall --Name "Windows web experience pack" --accept-source-agreements
+New-ItemProperty -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -PropertyType Dword -Name "TaskbarDa" -Value "0" -Force -ErrorAction SilentlyContinue | Out-Null
 Write-Host "3.3 Widgets Removal" -ForegroundColor Green
 #endregion
 

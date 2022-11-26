@@ -252,6 +252,7 @@ Write-Host "3.2.6.1 Teams - Removed Taskbar Shortcut" -ForegroundColor Green
 
 # 3.3 Widgets
 winget uninstall --Name "Windows web experience pack" --accept-source-agreements
+New-ItemProperty -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -PropertyType Dword -Name "TaskbarDa" -Value "0" -Force -ErrorAction SilentlyContinue | Out-Null
 Write-Host "3.3 Widgets Removal" -ForegroundColor Green
 #endregion
 
@@ -426,8 +427,8 @@ New-ItemProperty -LiteralPath 'Registry::\HKEY_USERS\.DEFAULT\Control Panel\Mous
 New-ItemProperty -LiteralPath 'Registry::\HKEY_USERS\.DEFAULT\Control Panel\Mouse' -Name 'MouseThreshold2' -Value '0' -PropertyType String -Force -ErrorAction SilentlyContinue | Out-Null
 Write-Host "5.7 Mouse: MarkC's Acceleration Fix (Performance)" -ForegroundColor Green
 
-Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -Value "0"
-Write-Host "5.8 UAC: Disabled Prompt (Performance)" -ForegroundColor Green
+#Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -Value "2"
+#Write-Host "5.8 UAC: Disabled Prompt (Performance)" -ForegroundColor Green
 
 if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced") -ne $true) {  New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -force -ErrorAction SilentlyContinue | Out-Null }
 New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'LaunchTo' -Value 1 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
