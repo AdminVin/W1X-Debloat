@@ -1,0 +1,5 @@
+Windows Registry Editor Version 5.00
+
+; Set CPU Priority
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\PriorityControl]
+"Win32PrioritySeparation"=dword:00000026

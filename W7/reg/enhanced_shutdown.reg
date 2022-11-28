@@ -1,0 +1,11 @@
+Windows Registry Editor Version 5.00
+
+; These allow you to end tasks faster, shut down faster and speed up the menu display.
+[HKEY_CURRENT_USER\Control Panel\Desktop]
+"ForegroundLockTimeout"=dword:00000000
+"HungAppTimeout"="3000"
+"MenuShowDelay"="100"
+"WaitToKillAppTimeout"="4500"
+
+[HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control]
+"WaitToKillServiceTimeout"="4500"
