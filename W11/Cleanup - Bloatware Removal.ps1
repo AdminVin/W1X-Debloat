@@ -283,10 +283,10 @@ Write-Host "4.1.11 Disabled: Windows Insider Service" -ForegroundColor Green
 Get-Service "icssvc" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
 Get-Service "icssvc" | Set-Service -StartupType Disabled | Out-Null
 Write-Host "4.1.12 Disabled: Windows Mobile Hotspot Service" -ForegroundColor Green
-# Fax
-Get-Service "fax" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
-Get-Service "fax" | Set-Service -StartupType Disabled | Out-Null
-Write-Host "4.1.13 Disabled: Windows Fax Service" -ForegroundColor Green
+# Windows Connected User Experiences and Telemetry #InTune
+Get-Service "DiagTrack" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
+Get-Service "DiagTrack" | Set-Service -StartupType Disabled | Out-Null
+Write-Host "4.1.13 Disabled: Windows Connected User Experiences and Telemetry" -ForegroundColor Green
 # Windows Media Player Network Share
 Get-Service "WMPNetworkSvc" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
 Get-Service "WMPNetworkSvc" | Set-Service -StartupType Disabled | Out-Null

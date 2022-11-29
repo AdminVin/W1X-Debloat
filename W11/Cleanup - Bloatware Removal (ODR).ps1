@@ -162,13 +162,13 @@ Write-Host "3.2.1.1 Disabled Microsoft Edge - Auto Update Services" -ForegroundC
 ## Scheduled Tasks
 Get-Scheduledtask "*edge*" -erroraction silentlycontinue | Disable-ScheduledTask | Out-Null
 Write-Host "3.2.1.2 Disabled Microsoft Edge - Auto Start (Scheduled Task)" -ForegroundColor Green
-## Auto Start
-Set-Location HKLM:
+## Auto Start / Startup Boost
 if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft") -ne $true) {  New-Item "HKLM:\SOFTWARE\Policies\Microsoft" -Force -ErrorAction SilentlyContinue | Out-Null}
 if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge") -ne $true) {  New-Item "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge" -Force -ErrorAction SilentlyContinue | Out-Null}
 if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main") -ne $true) {  New-Item "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main" -Force -ErrorAction SilentlyContinue | Out-Null}
 New-ItemProperty -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main" -Name "AllowPrelaunch" -Value "0" -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
-Set-Location HKCU:
+if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\Edge") -ne $true) {  New-Item "HKLM:\SOFTWARE\Policies\Microsoft\Edge" -Force -ErrorAction SilentlyContinue | Out-Null }
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'StartupBoostEnabled' -Value 0 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
 Set-Location "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run\"
 Remove-ItemProperty -Path. -Name "*MicrosoftEdge*" -Force -ErrorAction SilentlyContinue | Out-Null
 Set-Location "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
@@ -193,22 +193,21 @@ New-ItemProperty -LiteralPath 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Value '1' -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
 Set-ItemProperty -Path "HKLM\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Name "DisableFileSyncNGSC" -Value "1" -ErrorAction SilentlyContinue | Out-Null
 # Removal - x86
-%SystemRoot%\System32\OneDriveSetup.exe /uninstall
+if((Test-Path -LiteralPath "%SystemRoot%\System32\OneDriveSetup.exe") -eq $true) {  Start-Process -FilePath "OneDriveSetup.exe /Uninstall" -WorkingDirectory "%SystemRoot%\System32\" }
 # Removal - x64
-%SystemRoot%\SysWOW64\OneDriveSetup.exe /uninstall
-# Misc - Leftovers
-Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$env:localappdata\Microsoft\OneDrive"
-Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "$env:programdata\Microsoft OneDrive"
-Remove-Item -Recurse -Force -ErrorAction SilentlyContinue "C:\OneDriveTemp"
+if((Test-Path -LiteralPath "%SystemRoot%\SysWOW64\OneDriveSetup.exe") -eq $true) {  Start-Process -FilePath "OneDriveSetup.exe /Uninstall" -WorkingDirectory "%SystemRoot%\SysWOW64\" }
+# Misc - Folders
+Remove-Item -Path "C:\Users\$env:username\AppData\Local\Microsoft\OneDrive\" -Recurse -Force -Confirm:$false
+Remove-Item -Path "C:\OneDriveTemp" -Recurse -Force -Confirm:$false #-ErrorAction SilentlyContinue 
 # Misc - Prevent New User Accounts installone OneDrive
 reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
 reg delete "HKEY_USERS\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v "OneDriveSetup" /f
 reg unload "hku\Default"
 # Shorcut - Start Menu Removal
-Remove-Item "$env:userprofile\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" -Force -ErrorAction SilentlyContinue
-Remove-Item "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" -ErrorAction SilentlyContinue
+if((Test-Path -LiteralPath "C:\Users\$env:userprofile\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk") -eq $true) {  Remove-Item "C:\Users\$env:userprofile\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" -Force -ErrorAction SilentlyContinue | Out-Null }
 # Program Files - Cleanup
 Remove-Item -LiteralPath "C:\Program Files (x86)\Microsoft OneDrive" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue | Out-Null
+Remove-Item -LiteralPath "C:\Program Files\Microsoft OneDrive" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue | Out-Null
 # Scheduled Tasks
 Get-ScheduledTask "*OneDrive*" | Unregister-ScheduledTask -Confirm:$false
 # Services
@@ -246,9 +245,14 @@ Write-Host "3.2.5.1 Firefox - Disabled 'Periodic requests to set as default brow
 
 ## 3.2.6.x - Teams
 # Task Bar - Shortcut
-New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarMn' -Value 0 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
-Set-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarMn' -Value '0' -Force -ErrorAction SilentlyContinue | Out-Null
+New-ItemProperty -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarMn" -Value "0" -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
+Set-ItemProperty -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarMn" -Value "0" -Force -ErrorAction SilentlyContinue | Out-Null
 Write-Host "3.2.6.1 Teams - Removed Taskbar Shortcut" -ForegroundColor Green
+
+## 3.2.7.x - Discord
+# Disable Auto Start
+Remove-ItemProperty -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run" -Name "Discord" -Force -ErrorAction SilentlyContinue | Out-Null
+Write-Host "3.2.7.1 Discord - Disabled Auto Start" -ForegroundColor Green
 
 # 3.3 Widgets
 winget uninstall --Name "Windows web experience pack" --accept-source-agreements
@@ -311,10 +315,10 @@ Write-Host "4.1.11 Disabled: Windows Insider Service" -ForegroundColor Green
 Get-Service "icssvc" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
 Get-Service "icssvc" | Set-Service -StartupType Disabled | Out-Null
 Write-Host "4.1.12 Disabled: Windows Mobile Hotspot Service" -ForegroundColor Green
-# Fax
-Get-Service "fax" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
-Get-Service "fax" | Set-Service -StartupType Disabled | Out-Null
-Write-Host "4.1.13 Disabled: Windows Fax Service" -ForegroundColor Green
+# Windows Connected User Experiences and Telemetry #InTune
+Get-Service "DiagTrack" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
+Get-Service "DiagTrack" | Set-Service -StartupType Disabled | Out-Null
+Write-Host "4.1.13 Disabled: Windows Connected User Experiences and Telemetry" -ForegroundColor Green
 # Windows Media Player Network Share
 Get-Service "WMPNetworkSvc" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
 Get-Service "WMPNetworkSvc" | Set-Service -StartupType Disabled | Out-Null
@@ -443,18 +447,15 @@ Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" 
 Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
 Write-Host "5.11 Remote Desktop: Enabled (Preference)" -ForegroundColor Green
 
-Remove-ItemProperty -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run" -Name "Discord" -Force -ErrorAction SilentlyContinue | Out-Null
-Write-host "5.12 Discord: Disabled Auto Start (Performance)" -ForegroundColor Green
-
 Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Force -ErrorAction SilentlyContinue | Out-Null
 New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications" -PropertyType "Dword" -Name "ToastEnabled" -Value "0" | Out-Null
-Write-host "5.13 Windows: Disabled Toast Notifications (Performance)" -ForegroundColor Green
+Write-host "5.12 Windows: Disabled Toast Notifications (Performance)" -ForegroundColor Green
 
 New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -PropertyType "Dword" -Name "ShowTaskViewButton" -Value "0" -ErrorAction SilentlyContinue | Out-Null
-Write-host "5.14 Start Menu/Taskbar: Removed 'Task View' Button (Preference)" -ForegroundColor Green
+Write-host "5.13 Start Menu/Taskbar: Removed 'Task View' Button (Preference)" -ForegroundColor Green
 
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "SearchBoxTaskbarMode" -Value "0" -Type "DWord" -Force | Out-Null
-Write-host "5.15 Start Menu/Taskbar: Removed 'Search' Button (Preference)" -ForegroundColor Green
+Write-host "5.14 Start Menu/Taskbar: Removed 'Search' Button (Preference)" -ForegroundColor Green
 
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Value "0" | Out-Null
 Write-Host "5.16 Explorer: Enabled Display of Known File Extensions (Preference)" -ForegroundColor Green
