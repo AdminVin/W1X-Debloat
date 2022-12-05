@@ -156,8 +156,10 @@ Write-Host "3.2.1 Microsoft Edge" -ForegroundColor Green
 ## Services
 Get-Service "edgeupdate" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
 Get-Service "edgeupdate" | Set-Service -StartupType Disabled | Out-Null
+Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdate" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue
 Get-Service "edgeupdatem" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
 Get-Service "edgeupdatem" | Set-Service -StartupType Disabled | Out-Null
+Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdatem" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue
 Write-Host "3.2.1.1 Disabled Microsoft Edge - Auto Update Services" -ForegroundColor Green
 ## Scheduled Tasks
 Get-Scheduledtask "*edge*" -erroraction silentlycontinue | Disable-ScheduledTask | Out-Null
