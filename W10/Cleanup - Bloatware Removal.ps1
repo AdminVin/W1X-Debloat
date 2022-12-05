@@ -486,6 +486,6 @@ Write-Host "6.9 Network: Disabled Ethernet/Wireless Power Saving Settings" -Fore
 $Timer.Elapsed | Select-Object Hours, Minutes, Seconds | Format-Table | Out-File -Append -FilePath $LogFile
 $Timer.Stop()
 $TimerFinal = $Timer.Elapsed | Select-Object Hours, Minutes, Seconds | Format-Table
-Write-Host "8.0 Log: Script Duration:" -ForegroundColor Green
+Write-Host "8.0 Log: Script Duration" -ForegroundColor Green
 $TimerFinal
 Write-Host "Log file located at $LogFile" -ForegroundColor Yellow
