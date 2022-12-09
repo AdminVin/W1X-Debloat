@@ -220,16 +220,21 @@ Write-Host "3.2.4.1 OneNote - REMOVED 'Send to OneNote'" -ForegroundColor Green
 Get-ScheduledTask "*Firefox Default*" | Unregister-ScheduledTask -Confirm:$false
 Write-Host "3.2.5.1 Firefox - Disabled 'Periodic requests to set as default browser'" -ForegroundColor Green
 
-## 3.2.6.x - Teams
+## 3.2.6.x Teams (Home / Small Business)
 # Task Bar - Shortcut
-New-ItemProperty -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarMn" -Value "0" -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
-Set-ItemProperty -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarMn" -Value "0" -Force -ErrorAction SilentlyContinue | Out-Null
-Write-Host "3.2.6.1 Teams - Removed Taskbar Shortcut" -ForegroundColor Green
+New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarMn' -Value '0' -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
+Set-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarMn' -Value '0' -Force -ErrorAction SilentlyContinue | Out-Null
+Write-Host "3.2.6.1 Teams (Home / Small Business) - Removed Taskbar Shortcut" -ForegroundColor Green
 
-## 3.2.7.x - Discord
+## 3.2.7.x Teams (Work or School)
+Remove-ItemProperty -LiteralPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "com.squirrel.Teams.Teams" -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty -LiteralPath "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run" -Name "TeamsMachineInstaller" -Force -ErrorAction SilentlyContinue
+Write-Host "3.2.7.1 Teams (Work or School) - Disabled Auto Start" -ForegroundColor Green
+
+## 3.2.8.x - Discord
 # Disable Auto Start
 Remove-ItemProperty -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run" -Name "Discord" -Force -ErrorAction SilentlyContinue | Out-Null
-Write-Host "3.2.7.1 Discord - Disabled Auto Start" -ForegroundColor Green
+Write-Host "3.2.8.1 Discord - Disabled Auto Start" -ForegroundColor Green
 
 # 3.3 Widgets
 winget uninstall --Name "Windows web experience pack" --accept-source-agreements

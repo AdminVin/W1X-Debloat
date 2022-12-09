@@ -245,11 +245,16 @@ Write-Host "3.2.4.1 OneNote - REMOVED 'Send to OneNote'" -ForegroundColor Green
 Get-ScheduledTask "*Firefox Default*" | Unregister-ScheduledTask -Confirm:$false
 Write-Host "3.2.5.1 Firefox - Disabled 'Periodic requests to set as default browser'" -ForegroundColor Green
 
-## Teams
+## 3.2.6 Teams (Home / Small Business)
 # Task Bar - Shortcut
 New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarMn' -Value '0' -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
 Set-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarMn' -Value '0' -Force -ErrorAction SilentlyContinue | Out-Null
-Write-Host "3.2.6.1 Teams - Removed Taskbar Shortcut" -ForegroundColor Green
+Write-Host "3.2.6.1 Teams (Home / Small Business) - Removed Taskbar Shortcut" -ForegroundColor Green
+
+## 3.2.6 Teams (Work or School)
+Remove-ItemProperty -LiteralPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "com.squirrel.Teams.Teams" -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty -LiteralPath "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run" -Name "TeamsMachineInstaller" -Force -ErrorAction SilentlyContinue
+Write-Host "3.2.7.1 Teams (Work or School) - Disabled Auto Start" -ForegroundColor Green
 
 
 <### Services and Scheduled Tasks ###>
