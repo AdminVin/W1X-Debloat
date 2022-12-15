@@ -273,11 +273,11 @@ Write-Host "3.2 Applications - Desktop" -ForegroundColor Green
 # 3.2.1 Edge
 Write-Host "3.2.1 Microsoft Edge" -ForegroundColor Green
 ## Services
-Get-Service "edgeupdate" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
-Get-Service "edgeupdate" | Set-Service -StartupType Disabled | Out-Null
+Get-Service "edgeupdate" -ErrorAction SilentlyContinue | Stop-Service -ErrorAction SilentlyContinue | Out-Null
+Get-Service "edgeupdate" -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
 Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdate" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue
-Get-Service "edgeupdatem" | Stop-Service -ErrorAction SilentlyContinue | Out-Null
-Get-Service "edgeupdatem" | Set-Service -StartupType Disabled | Out-Null
+Get-Service "edgeupdatem" -ErrorAction SilentlyContinue | Stop-Service -ErrorAction SilentlyContinue | Out-Null
+Get-Service "edgeupdatem"  -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled | Out-Null
 Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdatem" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue
 Write-Host "Disabled Microsoft Edge - Auto Update Services" -ForegroundColor Green
 ## Scheduled Tasks
@@ -304,46 +304,9 @@ Get-ChildItem -Path "C:\Program Files (x86)\Microsoft\Edge\Application" -Recurse
 Write-Host "Removed Microsoft Edge - Addon - IE to Edge" -ForegroundColor Green
 
 # 3.2.2 OneDrive
-Write-Host "3.2.2 Microsoft One Drive" -ForegroundColor Green
+Write-Host "3.2.2 Microsoft One Drive [Skipped]" -ForegroundColor Yellow
 ## Close OneDrive (if running in background)
-taskkill /f /im OneDrive.exe
-taskkill /f /im FileCoAuth.exe
-## Official Removal
-# x86
-Start-Process -FilePath "$Env:WinDir\System32\OneDriveSetup.exe" -WorkingDirectory "$Env:WinDir\System32\" -ArgumentList "/uninstall" -ErrorAction SilentlyContinue
-# x64
-Start-Process -FilePath "$Env:WinDir\SysWOW64\OneDriveSetup.exe" -WorkingDirectory "$Env:WinDir\SysWOW64\" -ArgumentList "/uninstall" -ErrorAction SilentlyContinue
-## Files Cleanup
-# File Explorer - Navigation Bar
-if((Test-Path -LiteralPath "HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}") -ne $true) {  New-Item "HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Force -ErrorAction SilentlyContinue | Out-Null };
-New-ItemProperty -LiteralPath 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name '(default)' -Value 'OneDrive' -PropertyType String -Force -ErrorAction SilentlyContinue | Out-Null;
-New-ItemProperty -LiteralPath 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name 'System.IsPinnedToNameSpaceTree' -Value 0 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null;
-# AppData / Local
-Remove-Item -Path "$env:localappdata\OneDrive" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue
-# ProgramData
-Remove-Item -Path "$env:programdata\Microsoft OneDrive" -Recurse -Force -ErrorAction SilentlyContinue 
-# Shortcuts
-Remove-Item -Path "$env:userprofile\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" -Force -ErrorAction SilentlyContinue
-Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" -Force -ErrorAction SilentlyContinue
-# Program Files
-Remove-Item -LiteralPath "C:\Program Files (x86)\Microsoft OneDrive" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue
-Remove-Item -LiteralPath "C:\Program Files\Microsoft OneDrive" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue
-## Scheduled Tasks
-Get-ScheduledTask "*OneDrive*" | Unregister-ScheduledTask -Confirm:$false -ErrorAction SilentlyContinue
-## Services
-$ODUPdaterService = Get-WmiObject -Class Win32_Service -Filter "Name='OneDrive Updater Service'"
-$ODUPdaterService.delete() | Out-Null
-## Registry
-# Remove Previous Accounts/Sync Options
-Remove-Item -LiteralPath "HKCU:\Software\Microsoft\OneDrive" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue
-# Remove previously set One Drive settings
-Remove-Item -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue
-# Remove Right Click Menu Context Options
-Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\FileSyncHelper" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue
-# Remove from 'Default' user account
-reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
-reg delete "HKEY_USERS\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v "OneDriveSetup" /f
-reg unload "hku\Default"
+
 
 ## Internet Explorer
 if((Get-WMIObject win32_operatingsystem) | Where-Object {$_.Name -like "Microsoft Windows 10*"}) 
