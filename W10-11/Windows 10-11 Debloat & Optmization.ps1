@@ -798,6 +798,6 @@ Write-Host "***************************************************************" -Fo
 Write-Host "*    Windows 10-11 Debloat & Optimization has completed!      *" -ForegroundColor Green
 Write-Host "*                                                             *" -ForegroundColor Green
 Write-Host "*                                                             *" -ForegroundColor Green
-Write-Host "* " -ForegroundColor Green | Write-Host "For all changes to take effect please reboot your computer!" -ForegroundColor Red | Write-Host " *"-ForegroundColor Green
-Write-Host "***************************************************************"
+Write-Host "* For all changes to take effect please reboot your computer! *" -ForegroundColor Green
+Write-Host "***************************************************************" -ForegroundColor Green
 #endregion
