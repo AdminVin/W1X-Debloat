@@ -744,10 +744,6 @@ powercfg -setacvalueindex 381b4222-f694-41f0-9685-ff5bb260df2e 4f971e89-eebd-445
 powercfg -setdcvalueindex 381b4222-f694-41f0-9685-ff5bb260df2e 4f971e89-eebd-4455-a8de-9e59040e7347 5ca83367-6e45-459f-a27b-476b1d01c936 0
 Write-Host "Sleep Settings: Changed 'Closing Lid' action to turn off screen" -ForegroundColor Green
 
-powercfg -setdcvalueindex SCHEME_CURRENT 4f971e89-eebd-4455-a8de-9e59040e7347 96996bc0-ad50-47ec-923b-6f41874dd9eb 4
-powercfg -setacvalueindex SCHEME_CURRENT 4f971e89-eebd-4455-a8de-9e59040e7347 96996bc0-ad50-47ec-923b-6f41874dd9eb 4
-Write-Host "Sleep Settings: Changed 'Sleep Button' turns off display" -ForegroundColor Green
-
 if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings") -ne $true) {  New-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" -force -ErrorAction SilentlyContinue | Out-Null }
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings' -Name 'ShowSleepOption' -Value 0 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings' -Name 'ShowHibernateOption' -Value 0 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
@@ -781,6 +777,7 @@ Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Capabili
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appDiagnostics" -Name "Value" -Value "Deny" -ErrorAction SilentlyContinue
 #endregion
 
+
 <#############################################################################################################################>
 #region 8.0 Log - End
 # Log Locally
@@ -791,4 +788,16 @@ $TimerFinal = $Timer.Elapsed | Select-Object Hours, Minutes, Seconds | Format-Ta
 Write-Host "8.0 Log: Script Duration" -ForegroundColor Green
 $TimerFinal
 Write-Host "Log file located at $LogFile" -ForegroundColor Yellow
+#endregion
+
+<#############################################################################################################################>
+#region 9.0 Notify User / Reboot
+Write-Host " "
+Write-Host " "
+Write-Host "***************************************************************" -ForegroundColor Green
+Write-Host "*    Windows 10-11 Debloat & Optimization has completed!      *" -ForegroundColor Green
+Write-Host "*                                                             *" -ForegroundColor Green
+Write-Host "*                                                             *" -ForegroundColor Green
+Write-Host "* " -ForegroundColor Green | Write-Host "For all changes to take effect please reboot your computer!" -ForegroundColor Red | Write-Host " *"-ForegroundColor Green
+Write-Host "***************************************************************"
 #endregion
