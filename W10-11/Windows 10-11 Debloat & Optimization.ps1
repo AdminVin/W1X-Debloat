@@ -382,6 +382,7 @@ else {
 }
 #endregion
 
+
 #region Windows 11 - Services and Scheduled Tasks
 if((Get-WMIObject win32_operatingsystem) | Where-Object {$_.Name -like "Microsoft Windows 11*"}) 
 {
@@ -478,7 +479,7 @@ else {
 Write-Host "5.0 Quality of Life" -ForegroundColor Green
 
 
-<### Windows 10 Tweaks ###>
+<############### Windows 10 Tweaks ##################>
 if((Get-WMIObject win32_operatingsystem) | Where-Object {$_.Name -like "Microsoft Windows 10*"}) 
 {
     if((Test-Path -LiteralPath "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32") -ne $true) {  New-Item "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" -Force -ErrorAction SilentlyContinue | Out-Null }
@@ -518,7 +519,7 @@ else {
 }
 
 
-<### Windows 11 Tweaks ###>
+<############### Windows 11 Tweaks ###############>
 if((Get-WMIObject win32_operatingsystem) | Where-Object {$_.Name -like "Microsoft Windows 11*"}) 
 {
 if((Test-Path -LiteralPath "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32") -ne $true) {  New-Item "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" -Force -ErrorAction SilentlyContinue | Out-Null }
