@@ -764,8 +764,8 @@ Write-Host "Network: Disabled Ethernet/Wireless Power Saving Settings" -Foregrou
 #region 7.0 Privacy
 Write-Host "7.0 Privacy" -ForegroundColor Green
 ## Applications
-# App - Permissions
-Write-Host "Applications" -ForegroundColor Green
+Write-Host "7.1 Applications" -ForegroundColor Green
+Write-Host "Applications - Location Permissions" -ForegroundColor Green
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location" -Name "Value" -Value "Deny" -ErrorAction SilentlyContinue | Out-Null
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location" -Name "Value" -Value "Deny" -ErrorAction SilentlyContinue | Out-Null
 Set-Location HKLM:
@@ -773,20 +773,20 @@ New-Item -Path ".SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{
 New-ItemProperty -Path ".SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}" -Name "SensorPermissionState" -Type DWord -Value "1" -ErrorAction SilentlyContinue
 New-Item -Path ".\SYSTEM\CurrentControlSet\Services\lfsvc\Service\Configuration" -ErrorAction SilentlyContinue | Out-Null
 New-ItemProperty -Path ".\SYSTEM\CurrentControlSet\Services\lfsvc\Service\Configuration" -Name "EnableStatus" -Type DWord -Value "1" -ErrorAction SilentlyContinue | Out-Null
-# App - Diagnostics
+Write-Host "Applications - Diagnostics"
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appDiagnostics" -Name "Value" -Value "Deny" -ErrorAction SilentlyContinue | Out-Null
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appDiagnostics" -Name "Value" -Value "Deny" -ErrorAction SilentlyContinue | Out-Null
 
-## Keyboard
-Write-Host "Keyboard" -ForegroundColor Green
+Write-Host "7.2 Keyboard" -ForegroundColor Green
+Write-Host "Keyboard - Improved Inking and Typing Reconition" -ForegroundColor Green
 # Disable 'Improve inking and typing recognition'
 if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\TextInput\AllowLinguisticDataCollection") -ne $true) {  New-Item "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\TextInput\AllowLinguisticDataCollection" -ErrorAction SilentlyContinue | Out-Null };
 New-ItemProperty -LiteralPath "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\TextInput\AllowLinguisticDataCollection" -Name "value" -Value "0" -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
 if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Input\TIPC") -ne $true) {  New-Item "HKCU:\Software\Microsoft\Input\TIPC" -Force -ErrorAction SilentlyContinue | Out-Null };
 New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Input\TIPC' -Name 'Enabled' -Value 0 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
 
-## Clipboard
-# Disable "Smart Clipboard"
+Write-Host "7.3 Clipboard" -ForegroundColor Green
+Write-Host "Clipboard - 'Smart Clipboard'" -ForegroundColor Green
 if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\SmartActionPlatform\SmartClipboard") -ne $true) {  New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\SmartActionPlatform\SmartClipboard" -Force -ErrorAction SilentlyContinue | Out-Null };
 New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\SmartActionPlatform\SmartClipboard' -Name 'Disabled' -Value 1 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
 #endregion
