@@ -1,5 +1,7 @@
 <#############################################################################################################################>
-#region 1.0 Log - Start
+#region 1.0 - Script Settings
+$ErrorActionPreference = "SilentlyContinue"
+### Log - Start
 $PCName = (Get-CIMInstance CIM_ComputerSystem).Name
 $Date = Get-Date
 $LogFile = "C:\ProgramData\AV\Cleanup\$PCName.txt"
@@ -19,7 +21,7 @@ $Timer = [System.Diagnostics.Stopwatch]::StartNew()
 
 
 <#############################################################################################################################>
-#region 2.0 Diagnostics
+#region 2.0 - Diagnostics
 Write-Host "2.0 Diagnostics" -ForegroundColor Green
 # Verbose Status Messaging
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\System" -Name "VerboseStatus" -Value "1"
@@ -357,7 +359,7 @@ Write-Host "Teams (Work or School) - Disabled Auto Start" -ForegroundColor Green
 
 
 <#############################################################################################################################>
-# 4.0 Services and Scheduled Tasks
+# 4.0 - Services and Scheduled Tasks
 #region Windows 10 - Services and Scheduled Tasks
 if((Get-WMIObject win32_operatingsystem) | Where-Object {$_.Name -like "Microsoft Windows 10*"}) 
 {
@@ -475,7 +477,7 @@ else {
 
 
 <#############################################################################################################################>
-#region 5.0 Quality of Life
+#region 5.0 - Quality of Life
 Write-Host "5.0 Quality of Life" -ForegroundColor Green
 
 
@@ -722,7 +724,7 @@ Write-Host "Explorer: Set Explorer to open with 'This PC' instead of 'Most Recen
 
 
 <#############################################################################################################################>
-#region 6.0 Performance
+#region 6.0 - Performance
 Write-Host "6.0 Performance" -ForegroundColor Green
 Powercfg /Change monitor-timeout-ac 15
 Powercfg /Change monitor-timeout-dc 15
@@ -761,7 +763,7 @@ Write-Host "Network: Disabled Ethernet/Wireless Power Saving Settings" -Foregrou
 
 
 <#############################################################################################################################>
-#region 7.0 Privacy
+#region 7.0 - Privacy
 Write-Host "7.0 Privacy" -ForegroundColor Green
 ## Applications
 Write-Host "7.1 Applications" -ForegroundColor Green
@@ -793,7 +795,8 @@ New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\S
 
 
 <#############################################################################################################################>
-#region 8.0 Log - End
+#region 8.0 - Script Settings
+### Log - End
 # Log Locally
 "Script Duration" | Out-File -Append -FilePath $LogFile
 $Timer.Elapsed | Select-Object Hours, Minutes, Seconds | Format-Table | Out-File -Append -FilePath $LogFile
@@ -805,7 +808,7 @@ Write-Host "Log file located at $LogFile" -ForegroundColor Yellow
 #endregion
 
 <#############################################################################################################################>
-#region 9.0 Notify User / Reboot
+#region 9.0 - Notify User / Reboot
 Write-Host " "
 Write-Host " "
 Write-Host "***************************************************************" -ForegroundColor Green
