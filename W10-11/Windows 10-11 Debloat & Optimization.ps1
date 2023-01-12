@@ -30,7 +30,7 @@ Write-Host "2.1 Verbose Status Messaging Enabled" -ForegroundColor Green
 
 
 <#############################################################################################################################>
-<# Applications #>
+#region 3.0 Applications
 Write-Host "3.0 Applications" -ForegroundColor Green
 
 #region Windows 10 - 3.1 Applications - Metro
@@ -355,6 +355,9 @@ Write-Host "3.2.7 Teams (Work or School) - Disabled Auto Start" -ForegroundColor
 Remove-ItemProperty -LiteralPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "com.squirrel.Teams.Teams" -Force -ErrorAction SilentlyContinue
 Remove-ItemProperty -LiteralPath "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run" -Name "TeamsMachineInstaller" -Force -ErrorAction SilentlyContinue
 Write-Host "Teams (Work or School) - Disabled Auto Start" -ForegroundColor Green
+#endregion
+
+
 #endregion
 
 

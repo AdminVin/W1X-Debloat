@@ -30,231 +30,233 @@ Write-Host "2.1 Verbose Status Messaging Enabled" -ForegroundColor Green
 
 
 <#############################################################################################################################>
-<# Applications #>
+#region 3.0 Applications
 Write-Host "3.0 Applications" -ForegroundColor Green
 
 #region Windows 10 - 3.1 Applications - Metro
-if((Get-WMIObject win32_operatingsystem) | Where-Object {$_.Name -like "Microsoft Windows 10*"}) 
+if ((Get-WMIObject win32_operatingsystem) | Where-Object { $_.Name -like "Microsoft Windows 10*" })
 {
-Write-Host "3.1 Applications - Metro" -ForegroundColor Green
-# Default Windows Bloatware
-Get-AppxPackage -AllUsers "Microsoft.3DBuilder*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.549981C3F5F10*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.Appconnector*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.BingFinance*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.BingFoodAndDrink*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.BingHealthAndFitness*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.BingNews*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.BingSports*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.BingTranslator*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.BingTravel*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.CommsPhone*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.ConnectivityStore*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.WindowsFeedbackHub*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.GetHelp*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.Getstarted*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.Messaging*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.Microsoft3DViewer*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.MicrosoftOfficeHub*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.MicrosoftPowerBIForWindows*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.MixedReality.Portal*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.NetworkSpeedTest*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.Office.Sway*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.OneConnect*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.People*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.Print3D*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.MicrosoftSolitaireCollection" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.SkypeApp*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "MicrosoftTeams*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.Todos*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.Wallet*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.Whiteboard*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.WindowsMaps*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.WindowsPhone*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.WindowsReadingList*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.YourPhone*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.ZuneMusic*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.ZuneVideo*" | Remove-AppxPackage | Out-Null
-# Third Party General Bloatware
-Get-AppxPackage -AllUsers "*ACGMediaPlayer*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*ActiproSoftwareLLC*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*AdobePhotoshopExpress*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*Amazon.com.Amazon*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*Asphalt8Airborne*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*AutodeskSketchBook*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*BubbleWitch3Saga*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*CaesarsSlotsFreeCasino*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*CandyCrush*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*COOKINGFEVER*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*CyberLinkMediaSuiteEssentials*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*Disney*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*DrawboardPDF*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*Duolingo-LearnLanguagesforFree*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*EclipseManager*" | Remove-AppxPackage | Out-Null
-#Get-AppxPackage -AllUsers "*Facebook*" | Remove-AppxPackage | Out-Null #FaceBook/Facebook Messenger (Social Media)
-Get-AppxPackage -AllUsers "*FarmVille2CountryEscape*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*FitbitCoach*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*Flipboard*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*HiddenCity*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*Hulu*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*iHeartRadio*" | Remove-AppxPackage | Out-Null
-#Get-AppxPackage -AllUsers "*Instagram*" | Remove-AppxPackage | Out-Null # Instagram (Social Media)
-Get-AppxPackage -AllUsers "*Keeper*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*Kindle*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*LinkedInforWindows*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*MarchofEmpires*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*NYTCrossword*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*OneCalendar*" | Remove-AppxPackage | Out-Null
-#Get-AppxPackage -AllUsers "*Pandora*" | Remove-AppxPackage | Out-Null #Pandora (Music)
-Get-AppxPackage -AllUsers "*PhototasticCollage*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*PicsArt-PhotoStudio*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*PolarrPhotoEditorAcademicEdition*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*Prime*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*RoyalRevolt*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*Shazam*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*Sidia.LiveWallpaper*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*SlingTV*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*Speed" | Remove-AppxPackage | Out-Null
-#Get-AppxPackage -AllUsers "*SpotifyAB.SpotifyMusic*" | Remove-AppxPackage | Out-Null #Spotify (Music)
-Get-AppxPackage -AllUsers "*Sway*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*TuneInRadio*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*Twitter*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*Viber*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*WinZipUniversal*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*Wunderlist*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "*XING*" | Remove-AppxPackage | Out-Null
-# Samsung Bloatware
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.1412377A9806A*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.NewVoiceNote*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCoLtd.SamsungNotes*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCoLtd.SamsungFlux*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.StudioPlus*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungWelcome*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungUpdate*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungSecurity1.2*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungScreenRecording*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungQuickSearch*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungPCCleaner*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungCloudBluetoothSync*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.PCGallery*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.OnlineSupportSService*" | Remove-AppxPackage | Out-Null
-Get-AppxPackage -AllUsers "4AE8B7C2.BOOKING.COMPARTNERAPPSAMSUNGEDITION*" | Remove-AppxPackage | Out-Null
+	Write-Host "3.1 Applications - Metro" -ForegroundColor Green
+	# Default Windows Bloatware
+	Get-AppxPackage -AllUsers "Microsoft.3DBuilder*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.549981C3F5F10*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Appconnector*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingFinance*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingFoodAndDrink*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingHealthAndFitness*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingNews*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingSports*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingTranslator*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingTravel*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.CommsPhone*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.ConnectivityStore*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.WindowsFeedbackHub*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.GetHelp*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Getstarted*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Messaging*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Microsoft3DViewer*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.MicrosoftOfficeHub*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.MicrosoftPowerBIForWindows*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.MixedReality.Portal*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.NetworkSpeedTest*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Office.Sway*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.OneConnect*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.People*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Print3D*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.MicrosoftSolitaireCollection" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.SkypeApp*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "MicrosoftTeams*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Todos*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Wallet*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Whiteboard*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.WindowsMaps*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.WindowsPhone*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.WindowsReadingList*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.YourPhone*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.ZuneMusic*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.ZuneVideo*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	# Third Party General Bloatware
+	Get-AppxPackage -AllUsers "*ACGMediaPlayer*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*ActiproSoftwareLLC*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*AdobePhotoshopExpress*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Amazon.com.Amazon*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Asphalt8Airborne*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*AutodeskSketchBook*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*BubbleWitch3Saga*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*CaesarsSlotsFreeCasino*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*CandyCrush*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*COOKINGFEVER*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*CyberLinkMediaSuiteEssentials*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Disney*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*DrawboardPDF*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Duolingo-LearnLanguagesforFree*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*EclipseManager*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	#Get-AppxPackage -AllUsers "*Facebook*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null #FaceBook/Facebook Messenger (Social Media)
+	Get-AppxPackage -AllUsers "*FarmVille2CountryEscape*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*FitbitCoach*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Flipboard*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*HiddenCity*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Hulu*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*iHeartRadio*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	#Get-AppxPackage -AllUsers "*Instagram*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null # Instagram (Social Media)
+	Get-AppxPackage -AllUsers "*Keeper*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Kindle*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*LinkedInforWindows*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*MarchofEmpires*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*NYTCrossword*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*OneCalendar*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	#Get-AppxPackage -AllUsers "*Pandora*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null #Pandora (Music)
+	Get-AppxPackage -AllUsers "*PhototasticCollage*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*PicsArt-PhotoStudio*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*PolarrPhotoEditorAcademicEdition*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Prime*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*RoyalRevolt*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Shazam*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Sidia.LiveWallpaper*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*SlingTV*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Speed" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	#Get-AppxPackage -AllUsers "*SpotifyAB.SpotifyMusic*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null #Spotify (Music)
+	Get-AppxPackage -AllUsers "*Sway*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*TuneInRadio*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Twitter*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Viber*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*WinZipUniversal*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Wunderlist*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*XING*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	# Samsung Bloatware
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.1412377A9806A*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.NewVoiceNote*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCoLtd.SamsungNotes*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCoLtd.SamsungFlux*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.StudioPlus*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungWelcome*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungUpdate*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungSecurity1.2*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungScreenRecording*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungQuickSearch*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungPCCleaner*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungCloudBluetoothSync*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.PCGallery*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.OnlineSupportSService*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "4AE8B7C2.BOOKING.COMPARTNERAPPSAMSUNGEDITION*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
 }
-else {
-#Write-Host "Windows 11 Detected, Skipping."
+else
+{
+	#Write-Host "Windows 11 Detected, Skipping."
 }
 #endregion
 
 
 #region Windows 11 - 3.1 Applications - Metro
-if((Get-WMIObject win32_operatingsystem) | Where-Object {$_.Name -like "Microsoft Windows 11*"}) 
+if ((Get-WMIObject win32_operatingsystem) | Where-Object { $_.Name -like "Microsoft Windows 11*" })
 {
-Write-Host "3.1 Applications - Metro" -ForegroundColor Green
-# Default Windows Bloatware
-Get-AppxPackage -AllUsers "Microsoft.3DBuilder*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.549981C3F5F10*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.Appconnector*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.BingFinance*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.BingFoodAndDrink*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.BingHealthAndFitness*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.BingNews*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.BingSports*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.BingTranslator*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.BingTravel*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.CommsPhone*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.ConnectivityStore*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.WindowsFeedbackHub*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.GetHelp*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.Getstarted*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.Messaging*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.Microsoft3DViewer*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.MicrosoftOfficeHub*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.MicrosoftPowerBIForWindows*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.MixedReality.Portal*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.NetworkSpeedTest*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.Office.Sway*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.OneConnect*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.People*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.Print3D*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.MicrosoftSolitaireCollection" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.SkypeApp*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "MicrosoftTeams*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.Todos*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.Wallet*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.Whiteboard*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.WindowsMaps*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.WindowsPhone*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.WindowsReadingList*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.YourPhone*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.ZuneMusic*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "Microsoft.ZuneVideo*" | Remove-AppxPackage -AllUsers | Out-Null
-# Third Party General Bloatware
-Get-AppxPackage AllUsers "*ACGMediaPlayer*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*ActiproSoftwareLLC*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*AdobePhotoshopExpress*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*Amazon.com.Amazon*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*Asphalt8Airborne*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*AutodeskSketchBook*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*BubbleWitch3Saga*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*CaesarsSlotsFreeCasino*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*CandyCrush*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*COOKINGFEVER*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*CyberLinkMediaSuiteEssentials*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*Disney*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*DrawboardPDF*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*Duolingo-LearnLanguagesforFree*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*EclipseManager*" | Remove-AppxPackage -AllUsers | Out-Null
-#Get-AppxPackage -AllUsers "*Facebook*" | Remove-AppxPackage -AllUsers | Out-Null #FaceBook/Facebook Messenger (Social Media)
-Get-AppxPackage -AllUsers "*FarmVille2CountryEscape*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*FitbitCoach*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*Flipboard*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*HiddenCity*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*Hulu*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*iHeartRadio*" | Remove-AppxPackage -AllUsers | Out-Null
-#Get-AppxPackage -AllUsers "*Instagram*" | Remove-AppxPackage -AllUsers | Out-Null # Instagram (Social Media)
-Get-AppxPackage -AllUsers "*Keeper*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*Kindle*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*LinkedInforWindows*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*MarchofEmpires*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*NYTCrossword*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*OneCalendar*" | Remove-AppxPackage -AllUsers | Out-Null
-#Get-AppxPackage -AllUsers "*Pandora*" | Remove-AppxPackage -AllUsers | Out-Null #Pandora (Music)
-Get-AppxPackage -AllUsers "*PhototasticCollage*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*PicsArt-PhotoStudio*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*PolarrPhotoEditorAcademicEdition*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*Prime*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*RoyalRevolt*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*Shazam*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*Sidia.LiveWallpaper*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*SlingTV*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*Speed" | Remove-AppxPackage -AllUsers | Out-Null
-#Get-AppxPackage -AllUsers "*SpotifyAB.SpotifyMusic*" | Remove-AppxPackage -AllUsers | Out-Null #Spotify (Music)
-Get-AppxPackage -AllUsers "*Sway*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*TuneInRadio*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*Twitter*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*Viber*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*WinZipUniversal*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*Wunderlist*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "*XING*" | Remove-AppxPackage -AllUsers | Out-Null
-# Samsung Bloatware
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.1412377A9806A*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.NewVoiceNote*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCoLtd.SamsungNotes*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCoLtd.SamsungFlux*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.StudioPlus*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungWelcome*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungUpdate*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungSecurity1.2*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungScreenRecording*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungQuickSearch*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungPCCleaner*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungCloudBluetoothSync*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.PCGallery*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.OnlineSupportSService*" | Remove-AppxPackage -AllUsers | Out-Null
-Get-AppxPackage -AllUsers "4AE8B7C2.BOOKING.COMPARTNERAPPSAMSUNGEDITION*" | Remove-AppxPackage -AllUsers | Out-Null
+	Write-Host "3.1 Applications - Metro" -ForegroundColor Green
+	# Default Windows Bloatware
+	Get-AppxPackage -AllUsers "Microsoft.3DBuilder*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.549981C3F5F10*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Appconnector*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingFinance*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingFoodAndDrink*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingHealthAndFitness*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingNews*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingSports*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingTranslator*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingTravel*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.CommsPhone*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.ConnectivityStore*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.WindowsFeedbackHub*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.GetHelp*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Getstarted*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Messaging*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Microsoft3DViewer*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.MicrosoftOfficeHub*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.MicrosoftPowerBIForWindows*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.MixedReality.Portal*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.NetworkSpeedTest*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Office.Sway*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.OneConnect*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.People*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Print3D*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.MicrosoftSolitaireCollection" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.SkypeApp*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "MicrosoftTeams*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Todos*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Wallet*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Whiteboard*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.WindowsMaps*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.WindowsPhone*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.WindowsReadingList*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.YourPhone*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.ZuneMusic*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.ZuneVideo*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	# Third Party General Bloatware
+	Get-AppxPackage AllUsers "*ACGMediaPlayer*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*ActiproSoftwareLLC*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*AdobePhotoshopExpress*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Amazon.com.Amazon*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Asphalt8Airborne*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*AutodeskSketchBook*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*BubbleWitch3Saga*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*CaesarsSlotsFreeCasino*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*CandyCrush*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*COOKINGFEVER*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*CyberLinkMediaSuiteEssentials*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Disney*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*DrawboardPDF*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Duolingo-LearnLanguagesforFree*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*EclipseManager*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	#Get-AppxPackage -AllUsers "*Facebook*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null #FaceBook/Facebook Messenger (Social Media)
+	Get-AppxPackage -AllUsers "*FarmVille2CountryEscape*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*FitbitCoach*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Flipboard*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*HiddenCity*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Hulu*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*iHeartRadio*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	#Get-AppxPackage -AllUsers "*Instagram*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null # Instagram (Social Media)
+	Get-AppxPackage -AllUsers "*Keeper*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Kindle*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*LinkedInforWindows*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*MarchofEmpires*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*NYTCrossword*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*OneCalendar*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	#Get-AppxPackage -AllUsers "*Pandora*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null #Pandora (Music)
+	Get-AppxPackage -AllUsers "*PhototasticCollage*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*PicsArt-PhotoStudio*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*PolarrPhotoEditorAcademicEdition*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Prime*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*RoyalRevolt*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Shazam*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Sidia.LiveWallpaper*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*SlingTV*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Speed" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	#Get-AppxPackage -AllUsers "*SpotifyAB.SpotifyMusic*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null #Spotify (Music)
+	Get-AppxPackage -AllUsers "*Sway*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*TuneInRadio*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Twitter*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Viber*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*WinZipUniversal*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*Wunderlist*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*XING*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	# Samsung Bloatware
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.1412377A9806A*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.NewVoiceNote*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCoLtd.SamsungNotes*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCoLtd.SamsungFlux*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.StudioPlus*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungWelcome*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungUpdate*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungSecurity1.2*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungScreenRecording*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungQuickSearch*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungPCCleaner*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungCloudBluetoothSync*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.PCGallery*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.OnlineSupportSService*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "4AE8B7C2.BOOKING.COMPARTNERAPPSAMSUNGEDITION*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
 }
-else {
-#Write-Host "Windows 10 Detected, Skipping."
+else
+{
+	#Write-Host "Windows 10 Detected, Skipping."
 }
 #endregion
 
@@ -275,27 +277,27 @@ Write-Host "3.2 Applications - Desktop" -ForegroundColor Green
 # 3.2.1 Edge
 Write-Host "3.2.1 Microsoft Edge" -ForegroundColor Green
 ## Services
-Get-Service "edgeupdate" | Stop-Service | Out-Null
-Get-Service "edgeupdate" | Set-Service -StartupType Disabled | Out-Null
-Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdate" -Recurse -Confirm:$false -Force
-Get-Service "edgeupdatem" | Stop-Service | Out-Null
-Get-Service "edgeupdatem"  | Set-Service -StartupType Disabled | Out-Null
-Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdatem" -Recurse -Confirm:$false -Force
+Get-Service "edgeupdate" -ErrorAction SilentlyContinue | Stop-Service -ErrorAction SilentlyContinue | Out-Null
+Get-Service "edgeupdate" -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
+Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdate" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue
+Get-Service "edgeupdatem" -ErrorAction SilentlyContinue | Stop-Service -ErrorAction SilentlyContinue | Out-Null
+Get-Service "edgeupdatem" -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled | Out-Null
+Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdatem" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue
 Write-Host "Disabled Microsoft Edge - Auto Update Services" -ForegroundColor Green
 ## Scheduled Tasks
-Get-Scheduledtask "*edge*" | Disable-ScheduledTask | Out-Null
+Get-Scheduledtask "*edge*" -erroraction silentlycontinue | Disable-ScheduledTask | Out-Null
 Write-Host "Disabled Microsoft Edge - Auto Start (Scheduled Task)" -ForegroundColor Green
 ## Auto Start
 Set-Location HKLM:
-if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft") -ne $true) {  New-Item "HKLM:\SOFTWARE\Policies\Microsoft" -Force | Out-Null}
-if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge") -ne $true) {  New-Item "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge" -Force | Out-Null}
-if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main") -ne $true) {  New-Item "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main" -Force | Out-Null}
-New-ItemProperty -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main" -Name "AllowPrelaunch" -Value "0" -PropertyType DWord -Force | Out-Null
+if ((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft") -ne $true) { New-Item "HKLM:\SOFTWARE\Policies\Microsoft" -Force -ErrorAction SilentlyContinue | Out-Null }
+if ((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge") -ne $true) { New-Item "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge" -Force -ErrorAction SilentlyContinue | Out-Null }
+if ((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main") -ne $true) { New-Item "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main" -Force -ErrorAction SilentlyContinue | Out-Null }
+New-ItemProperty -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main" -Name "AllowPrelaunch" -Value "0" -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
 Set-Location HKCU:
 Set-Location "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run\"
-Remove-ItemProperty -Path. -Name "*MicrosoftEdge*" -Force | Out-Null
+Remove-ItemProperty -Path . -Name "*MicrosoftEdge*" -Force -ErrorAction SilentlyContinue | Out-Null
 Set-Location "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
-Remove-ItemProperty -Path. -Name "*MicrosoftEdge*" -Force | Out-Null
+Remove-ItemProperty -Path . -Name "*MicrosoftEdge*" -Force -ErrorAction SilentlyContinue | Out-Null
 Set-Location C:/
 Write-Host "Disabled Microsoft Edge - Auto Start (Startup Entry)" -ForegroundColor Green
 # Tracking
@@ -306,74 +308,38 @@ Get-ChildItem -Path "C:\Program Files (x86)\Microsoft\Edge\Application" -Recurse
 Write-Host "Removed Microsoft Edge - Addon - IE to Edge" -ForegroundColor Green
 
 # 3.2.2 OneDrive
-Write-Host "3.2.2 Microsoft One Drive" -ForegroundColor Green
+Write-Host "3.2.2 Microsoft One Drive [Skipped]" -ForegroundColor Yellow
 ## Close OneDrive (if running in background)
-taskkill /f /im OneDrive.exe
-taskkill /f /im FileCoAuth.exe
-## Official Removal
-# x86
-Start-Process -FilePath "$Env:WinDir\System32\OneDriveSetup.exe" -WorkingDirectory "$Env:WinDir\System32\" -ArgumentList "/uninstall"
-# x64
-Start-Process -FilePath "$Env:WinDir\SysWOW64\OneDriveSetup.exe" -WorkingDirectory "$Env:WinDir\SysWOW64\" -ArgumentList "/uninstall"
-## Files Cleanup
-# File Explorer - Navigation Bar
-if((Test-Path -LiteralPath "HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}") -ne $true) {  New-Item "HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Force | Out-Null };
-New-ItemProperty -LiteralPath 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name '(default)' -Value 'OneDrive' -PropertyType String -Force | Out-Null;
-New-ItemProperty -LiteralPath 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name 'System.IsPinnedToNameSpaceTree' -Value 0 -PropertyType DWord -Force | Out-Null;
-# AppData / Local
-Remove-Item -Path "$env:localappdata\OneDrive" -Recurse -Confirm:$false -Force
-# ProgramData
-Remove-Item -Path "$env:programdata\Microsoft OneDrive" -Recurse -Force 
-# Shortcuts
-Remove-Item -Path "$env:userprofile\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" -Force
-Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" -Force
-# Program Files
-Remove-Item -LiteralPath "C:\Program Files (x86)\Microsoft OneDrive" -Recurse -Confirm:$false -Force
-Remove-Item -LiteralPath "C:\Program Files\Microsoft OneDrive" -Recurse -Confirm:$false -Force
-## Scheduled Tasks
-Get-ScheduledTask "*OneDrive*" | Unregister-ScheduledTask -Confirm:$false
-## Services
-$ODUPdaterService = Get-WmiObject -Class Win32_Service -Filter "Name='OneDrive Updater Service'"
-$ODUPdaterService.delete() | Out-Null
-## Registry
-# Remove Previous Accounts/Sync Options
-Remove-Item -LiteralPath "HKCU:\Software\Microsoft\OneDrive" -Recurse -Confirm:$false -Force
-# Remove previously set One Drive settings
-Remove-Item -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Recurse -Confirm:$false -Force
-# Remove Right Click Menu Context Options
-Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\FileSyncHelper" -Recurse -Confirm:$false -Force
-# Remove from 'Default' user account
-reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
-reg delete "HKEY_USERS\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v "OneDriveSetup" /f
-reg unload "hku\Default"
+
 
 ## Internet Explorer
-if((Get-WMIObject win32_operatingsystem) | Where-Object {$_.Name -like "Microsoft Windows 10*"}) 
+if ((Get-WMIObject win32_operatingsystem) | Where-Object { $_.Name -like "Microsoft Windows 10*" })
 {
-Write-Host "3.2.3 Internet Explorer" -ForegroundColor Green
-# Addon 'Send to One Note'
-Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{2670000A-7350-4f3c-8081-5663EE0C6C49}" -Force | Out-Null
-Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer\Extensions\{2670000A-7350-4f3c-8081-5663EE0C6C49}" -Force | Out-Null
-Write-Host "Internet Explorer - Addon - REMOVED 'Send to One Note'" -ForegroundColor Green
-# Addon 'OneNote Linked Notes'
-Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{789FE86F-6FC4-46A1-9849-EDE0DB0C95CA}" -Force | Out-Null
-Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer\Extensions\{789FE86F-6FC4-46A1-9849-EDE0DB0C95CA}" -Force | Out-Null
-Write-Host "Internet Explorer - Addon - REMOVED 'OneNote Linked Notes'" -ForegroundColor Green
-# Addon 'Lync Click to Call'
-Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{31D09BA0-12F5-4CCE-BE8A-2923E76605DA}" -Force | Out-Null
-Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects\{31D09BA0-12F5-4CCE-BE8A-2923E76605DA}" -Force | Out-Null
-Write-Host "Internet Explorer - Addon - REMOVED 'Lync Click to Call'" -ForegroundColor Green
-# Addon IE to Edge Browser Helper Object
-Get-ChildItem -Path "C:\Program Files (x86)\Microsoft\Edge\Application" -Recurse -Filter "BHO" | Remove-Item -Force -Recurse
-Write-Host "Internet Explorer - Addon - REMOVED 'IE to Edge'" -ForegroundColor Green
+	Write-Host "3.2.3 Internet Explorer" -ForegroundColor Green
+	# Addon 'Send to One Note'
+	Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{2670000A-7350-4f3c-8081-5663EE0C6C49}" -Force -ErrorAction SilentlyContinue | Out-Null
+	Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer\Extensions\{2670000A-7350-4f3c-8081-5663EE0C6C49}" -Force -ErrorAction SilentlyContinue | Out-Null
+	Write-Host "Internet Explorer - Addon - REMOVED 'Send to One Note'" -ForegroundColor Green
+	# Addon 'OneNote Linked Notes'
+	Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{789FE86F-6FC4-46A1-9849-EDE0DB0C95CA}" -Force -ErrorAction SilentlyContinue | Out-Null
+	Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer\Extensions\{789FE86F-6FC4-46A1-9849-EDE0DB0C95CA}" -Force -ErrorAction SilentlyContinue | Out-Null
+	Write-Host "Internet Explorer - Addon - REMOVED 'OneNote Linked Notes'" -ForegroundColor Green
+	# Addon 'Lync Click to Call'
+	Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{31D09BA0-12F5-4CCE-BE8A-2923E76605DA}" -Force -ErrorAction SilentlyContinue | Out-Null
+	Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects\{31D09BA0-12F5-4CCE-BE8A-2923E76605DA}" -Force -ErrorAction SilentlyContinue | Out-Null
+	Write-Host "Internet Explorer - Addon - REMOVED 'Lync Click to Call'" -ForegroundColor Green
+	# Addon IE to Edge Browser Helper Object
+	Get-ChildItem -Path "C:\Program Files (x86)\Microsoft\Edge\Application" -Recurse -Filter "BHO" | Remove-Item -Force -Recurse
+	Write-Host "Internet Explorer - Addon - REMOVED 'IE to Edge'" -ForegroundColor Green
 }
-else {
-Write-Host "Windows 11 Detected, Skipping."
+else
+{
+	Write-Host "Windows 11 Detected, Skipping."
 }
 
 ## One Note
 Write-Host "3.2.4 One Note" -ForegroundColor Green
-Remove-Item -LiteralPath "C:\Users\$env:username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Send to OneNote.lnk" -Force | Out-Null
+Remove-Item -LiteralPath "C:\Users\$env:username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Send to OneNote.lnk" -Force -ErrorAction SilentlyContinue | Out-Null
 Write-Host "OneNote - REMOVED 'Send to OneNote'" -ForegroundColor Green
 
 ## Mozilla Firefox
@@ -383,15 +349,17 @@ Write-Host "Firefox - Disabled 'Periodic requests to set as default browser'" -F
 
 ## 3.2.6 Teams (Home / Small Business)
 Write-Host "3.2.6 Teams (Home / Small Business)" -ForegroundColor Green
-New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarMn' -Value '0' -PropertyType DWord -Force | Out-Null
-Set-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarMn' -Value '0' -Force | Out-Null
+New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarMn' -Value '0' -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
+Set-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarMn' -Value '0' -Force -ErrorAction SilentlyContinue | Out-Null
 Write-Host "Teams (Home / Small Business) - Removed Taskbar Shortcut" -ForegroundColor Green
 
 ## 3.2.7 Teams (Work or School)
 Write-Host "3.2.7 Teams (Work or School) - Disabled Auto Start" -ForegroundColor Green
-Remove-ItemProperty -LiteralPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "com.squirrel.Teams.Teams" -Force
-Remove-ItemProperty -LiteralPath "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run" -Name "TeamsMachineInstaller" -Force
+Remove-ItemProperty -LiteralPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "com.squirrel.Teams.Teams" -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty -LiteralPath "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run" -Name "TeamsMachineInstaller" -Force -ErrorAction SilentlyContinue
 Write-Host "Teams (Work or School) - Disabled Auto Start" -ForegroundColor Green
+#endregion
+
 #endregion
 
 
