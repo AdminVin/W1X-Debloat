@@ -355,6 +355,13 @@ Write-Host "3.2.7 Teams (Work or School) - Disabled Auto Start" -ForegroundColor
 Remove-ItemProperty -LiteralPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "com.squirrel.Teams.Teams" -Force -ErrorAction SilentlyContinue
 Remove-ItemProperty -LiteralPath "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run" -Name "TeamsMachineInstaller" -Force -ErrorAction SilentlyContinue
 Write-Host "Teams (Work or School) - Disabled Auto Start" -ForegroundColor Green
+
+## 3.2.8 Screen Tips for Suggested Features (Popup Ads)
+# Source: https://admx.help/?Category=Office2016&Policy=office16.Office.Microsoft.Policies.Windows::L_ShowScreenTips
+Write-Host "3.2.8 Screen Tips for Suggested Features (Popup Ads)" -ForegroundColor Green
+if((Test-Path -LiteralPath "HKCU:\Software\Policies\Microsoft\office\16.0\common\toolbars") -ne $true) {  New-Item "HKCU:\Software\Policies\Microsoft\office\16.0\common\toolbars" -Force | Out-Null}
+New-ItemProperty -LiteralPath 'HKCU:\Software\Policies\Microsoft\office\16.0\common\toolbars' -Name 'screentipsheme' -Value 2 -PropertyType DWord -Force | Out-Null
+Write-Host "Screen Tips for Suggested Features (Popup Ads) - Disabled" -ForegroundColor Green
 #endregion
 
 
