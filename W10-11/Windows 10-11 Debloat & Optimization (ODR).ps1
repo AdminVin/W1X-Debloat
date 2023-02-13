@@ -410,7 +410,6 @@ if((Test-Path -LiteralPath "HKCU:\Software\Policies\Microsoft\office\16.0\common
 New-ItemProperty -LiteralPath 'HKCU:\Software\Policies\Microsoft\office\16.0\common\toolbars' -Name 'screentipsheme' -Value 2 -PropertyType DWord -Force | Out-Null
 Write-Host "Screen Tips for Suggested Features (Popup Ads) - Disabled" -ForegroundColor Green
 #endregion
-#endregion
 
 #endregion
 
