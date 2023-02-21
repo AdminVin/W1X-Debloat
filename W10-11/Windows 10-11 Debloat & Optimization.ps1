@@ -421,7 +421,7 @@ Invoke-WebRequest -Uri "https://download.sysinternals.com/files/PSTools.zip" -Ou
 Expand-Archive -Path "C:/users/$env:username/PSTools.zip" -DestinationPath "C:\Windows\System32" -Force
 Remove-Item "C:/users/$env:username/PSTools.zip" -Force
 Write-Host "Explorer: Installed Sysinternals Suite" -ForegroundColor Green
-Write-Host "Official Website: https://learn.microsoft.com/en-us/sysinternals/"
+Write-Host "Official Website: https://learn.microsoft.com/en-us/sysinternals/" -ForegroundColor Green
 #endregion
 #endregion
 
@@ -848,7 +848,7 @@ New-Item -Path ".SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{
 New-ItemProperty -Path ".SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}" -Name "SensorPermissionState" -Type DWord -Value "1"
 New-Item -Path ".\SYSTEM\CurrentControlSet\Services\lfsvc\Service\Configuration" | Out-Null
 New-ItemProperty -Path ".\SYSTEM\CurrentControlSet\Services\lfsvc\Service\Configuration" -Name "EnableStatus" -Type DWord -Value "1" | Out-Null
-Write-Host "Applications - Diagnostics"
+Write-Host "Applications - Diagnostics" -ForegroundColor Green
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appDiagnostics" -Name "Value" -Value "Deny" | Out-Null
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appDiagnostics" -Name "Value" -Value "Deny" | Out-Null
 
