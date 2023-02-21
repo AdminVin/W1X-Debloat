@@ -308,7 +308,7 @@ Get-ChildItem -Path "C:\Program Files (x86)\Microsoft\Edge\Application" -Recurse
 Write-Host "Removed Microsoft Edge - Addon - IE to Edge" -ForegroundColor Green
 
 # 3.2.2 OneDrive
-$result = [System.Windows.Forms.MessageBox]::Show("Do you use OneDrive to back up your files?`n`nIf you are not sure, clicking 'Yes' will not modify any settings.", "Confirm", [System.Windows.Forms.MessageBoxButtons]::YesNo)
+$result = [System.Windows.Forms.MessageBox]::Show("Do you use OneDrive to back up your files?`n`nYes will keep OneDrive on your computer.`nNo will remove OneDrive from your computer.`n`nIf you are not sure, clicking 'Yes' will not modify any OneDrive settings.", "Confirm", [System.Windows.Forms.MessageBoxButtons]::YesNo)
 
 if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
     ## Close OneDrive (if running in background)
@@ -383,7 +383,7 @@ if ((Get-WMIObject win32_operatingsystem) | Where-Object { $_.Name -like "Micros
 }
 else
 {
-	Write-Host "Windows 11 Detected, Skipping."
+	Write-Host #"Windows 11 Detected, Skipping."
 }
 
 ## One Note
