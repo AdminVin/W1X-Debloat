@@ -609,10 +609,14 @@ if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Expl
 New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'EnableSnapBar' -Value 0 -PropertyType DWord -Force | Out-Null
 Write-Host "Explorer: Disabled 'Snap Layout' Overlay (Preference)" -ForegroundColor Green
 
-Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Force | Out-Null
-New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -PropertyType "Dword" -Name "TaskbarAl" -Value "0" -Force | Out-Null
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAnimations" -Value "0" -Force | Out-Null
-Write-Host "Start Menu/Taskbar: Alignment - Left (Preference)" -ForegroundColor Green
+$result = [System.Windows.Forms.MessageBox]::Show("Would you like your start bar and task bar icons aligned to the left?", "Confirm", [System.Windows.Forms.MessageBoxButtons]::YesNo)
+if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
+	Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Force | Out-Null
+	New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -PropertyType "Dword" -Name "TaskbarAl" -Value "0" -Force | Out-Null
+	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAnimations" -Value "0" -Force | Out-Null
+	Write-Host "Start Menu/Taskbar: Alignment - Left (Preference)" -ForegroundColor Green
+} else { Write-Host "Start Menu/Taskbar: Alignment - Center (Preference)" -ForegroundColor Green}
+
 }
 else {
 #Write-Host "Windows 10 Detected, Skipping."
