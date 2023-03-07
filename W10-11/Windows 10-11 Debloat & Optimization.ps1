@@ -789,6 +789,11 @@ if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Expl
 New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'LaunchTo' -Value 1 -PropertyType DWord -Force | Out-Null
 Write-Host "Explorer: Set Explorer to open with 'This PC' instead of 'Most Recent' (Preference)" -ForegroundColor Green
 
+# Install App Installer (app)/winget
+Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe | Out-Null
+winget uninstall --accept-source-agreements "Windows web experience pack" | Out-Null
+Write-Host "Explorer: Removed Widgets (Performance)" -ForegroundColor Green
+
 #Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -Value "2"
 #Write-Host "UAC: Disabled Prompt (Performance)" -ForegroundColor Green
 
