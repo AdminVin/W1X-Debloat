@@ -796,8 +796,12 @@ Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller
 winget uninstall --accept-source-agreements "Windows web experience pack" | Out-Null
 Write-Host "Explorer: Removed Widgets (Performance)" -ForegroundColor Green
 
-#Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -Value "2"
-#Write-Host "UAC: Disabled Prompt (Performance)" -ForegroundColor Green
+#Source: https://documentation.n-able.com/N-central/userguide/Content/Automation/Policies/Diagnostics/pol_UACEnabled_Check.htm
+Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -Value "0"
+Write-Host "Explorer: User Access Control - Disabled Prompt [Administrators] (Preference)" -ForegroundColor Green
+
+Set-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System' -Name "PromptOnSecureDesktop" -Value "0"
+Write-Host "Explorer: User Access Control - Desktop Dimming Disabled (Preference)" -ForegroundColor Green
 
 #Set-ItemProperty -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Value "1" -Force | Out-Null
 #Write-Host "Explorer: Disabled 'Recent Files' in Explorer (Performance) [Skipped]" -ForegroundColor Yellow
