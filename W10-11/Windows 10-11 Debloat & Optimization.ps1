@@ -617,8 +617,10 @@ if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
 	Write-Host "Start Menu/Taskbar: Alignment - Left (Preference)" -ForegroundColor Green
 } else { Write-Host "Start Menu/Taskbar: Alignment - Center (Preference)" -ForegroundColor Green}
 
-}
-else {
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarDa" -Type Dword -Value "0" -Force | Out-Null
+Write-Host "Explorer: Removed Weather Widget from Taskbar (Preference)" -ForegroundColor Green
+
+} else {
 #Write-Host "Windows 10 Detected, Skipping."
 }
 
