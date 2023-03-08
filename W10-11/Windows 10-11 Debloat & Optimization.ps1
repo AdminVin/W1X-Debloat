@@ -609,16 +609,16 @@ if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Expl
 New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'EnableSnapBar' -Value 0 -PropertyType DWord -Force | Out-Null
 Write-Host "Explorer: Disabled 'Snap Layout' Overlay (Preference)" -ForegroundColor Green
 
+#Source: https://vhorizon.co.uk/windows-11-start-menu-layout-group-policy/
 $result = [System.Windows.Forms.MessageBox]::Show("Would you like your start bar and task bar icons aligned to the left?", "Confirm", [System.Windows.Forms.MessageBoxButtons]::YesNo)
 if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
-	# Source: https://vhorizon.co.uk/windows-11-start-menu-layout-group-policy/
-	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -PropertyType "Dword" -Name "TaskbarAl" -Value "0" -Force | Out-Null
-	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAnimations" -Value "0" -Force | Out-Null
+	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Value "0" -Force | Out-Null
 	Write-Host "Start Menu/Taskbar: Alignment - Left (Preference)" -ForegroundColor Green
 } else { 
-	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -PropertyType "Dword" -Name "TaskbarAl" -Value "1" -Force | Out-Null
-	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAnimations" -Value "0" -Force | Out-Null
-	Write-Host "Start Menu/Taskbar: Alignment - Center (Preference)" -ForegroundColor Green}
+	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Value "1" -Force | Out-Null
+	Write-Host "Start Menu/Taskbar: Alignment - Center (Preference)" -ForegroundColor Green
+}
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAnimations" -Value "0" -Force | Out-Null
 
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarDa" -Type Dword -Value "0" -Force | Out-Null
 Write-Host "Explorer: Removed Weather Widget from Taskbar (Preference)" -ForegroundColor Green
