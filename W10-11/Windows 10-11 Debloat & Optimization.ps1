@@ -717,6 +717,7 @@ Write-host "Windows: Disabled Toast Notifications (Performance)" -ForegroundColo
 New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -PropertyType "Dword" -Name "ShowTaskViewButton" -Value "0" | Out-Null
 Write-host "Start Menu/Taskbar: Removed 'Task View' Button (Preference)" -ForegroundColor Green
 
+New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "SearchBoxTaskbarMode" -Value "0" -Type "DWord" -Force | Out-Null
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "SearchBoxTaskbarMode" -Value "0" -Type "DWord" -Force | Out-Null
 Write-host "Start Menu/Taskbar: Removed 'Search' Button (Preference)" -ForegroundColor Green
 
