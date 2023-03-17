@@ -623,6 +623,8 @@ Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarDa" -Type Dword -Value "0" -Force | Out-Null
 Write-Host "Explorer: Removed Weather Widget from Taskbar (Preference)" -ForegroundColor Green
 
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'DisableLogonBackgroundImage' -Value "1" -PropertyType "DWord" -Force | Out-Null
+Write-Host "Explorer: Removed Background on Login Screen (Performance)" -ForegroundColor Green
 } else {
 #Write-Host "Windows 10 Detected, Skipping."
 }
