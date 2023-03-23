@@ -782,8 +782,8 @@ Write-Host "Explorer: Drive letters PRE drive label [Example: '(C:) Windows vs. 
 # MarkC's Mouse Acceleration Fix (DPI 100% Scale - Default)
 # Source: http://donewmouseaccel.blogspot.com/
 # Smooth Mouse Curve
-New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xC0,0xCC,0x0C,0x00,0x00,0x00,0x00,0x00,0x80,0x99,0x19,0x00,0x00,0x00,0x00,0x00,0x40,0x66,0x26,0x00,0x00,0x00,0x00,0x00,0x00,0x33,0x33,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
-New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x38,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x70,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xA8,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xE0,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
+New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x	00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xB6,0xF5,0x08,0x00,0x00,0x00,0x00,0x00,0x	6C,0xEB,0x11,0x00,0x00,0x00,0x00,0x00,0x22,0xE1,0x1A,0x00,0x00,0x00,0x00,0x00,0xD8,0xD6,0x23,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
+New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x	00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xFA,0xFF,0x37,0x00,0x00,0x00,0x00,0x00,0x	F4,0xFF,0x6F,0x00,0x00,0x00,0x00,0x00,0xEE,0xFF,0xA7,0x00,0x00,0x00,0x00,0x00,0xE8,0xFF,0xDF,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
 # Disable 'Enhance pointer precision'
 Set-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'MouseSpeed' -Value '0' | Out-Null
 Set-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'MouseThreshold1' -Value '0' | Out-Null
@@ -815,8 +815,8 @@ Write-Host "Explorer: User Access Control - Desktop Dimming Disabled (Preference
 
 
 <#############################################################################################################################>
-#region 6.0 - Performance
-Write-Host "6.0 Performance" -ForegroundColor Green
+#region 6.0 - Power & Performance Settings
+Write-Host "6.0 Power & Performance Settings" -ForegroundColor Green
 Powercfg /Change monitor-timeout-ac 15
 Powercfg /Change monitor-timeout-dc 15
 Write-Host "Sleep Settings: Monitor (Battery: 15 Mins | AC: 15 Mins)" -ForegroundColor Green
@@ -843,13 +843,27 @@ New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\E
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings' -Name 'ShowHibernateOption' -Value 0 -PropertyType DWord -Force | Out-Null
 Write-Host "Sleep Settings: Disabled Sleep/Hibernate from Start Menu" -ForegroundColor Green
 
-Set-Itemproperty -path "HKCU:\Control Panel\Desktop" -Name 'MenuShowDelay' -value '50'
-Write-Host "Start Menu: Animation Time Reduced" -ForegroundColor Green
-
 $ActiveNetworkAdapter = Get-NetAdapter | Where-Object {$_.Status -eq 'Up'} | Select-Object Name
 $ActiveNetworkAdapterConverted = $ActiveNetworkAdapter.Name
-Disable-NetAdapterPowerManagement -Name "$ActiveNetworkAdapterConverted" -DeviceSleepOnDisconnect -NoRestart | Out-Null
+Disable-NetAdapterPowerManagement -Name "$ActiveNetworkAdapterConverted" -DeviceSleepOnDisconnect -NoRestart# | Out-Null
 Write-Host "Network: Disabled Ethernet/Wireless Power Saving Settings" -ForegroundColor Green
+
+$CurrentPowerPlan = (powercfg -getactivescheme).split()[-4]
+# USB 2.0 Ports
+powercfg -attributes SUB_USB /set {$CurrentPowerPlan} -ATTRIB_HIDE
+# USB 3.0 Ports
+powercfg -attributes SUB_USB3 /set {$CurrentPowerPlan} -ATTRIB_HIDE
+Write-Host "Sleep Settings: Disabled USB Selective Suspend" -ForegroundColor Green
+
+Set-Itemproperty -path "HKCU:\Control Panel\Desktop" -Name 'MenuShowDelay' -value '1'
+Write-Host "Start Menu: Animation Time Reduced" -ForegroundColor Green
+<#
+Set-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects' -Name 'VisualFXSetting' -Value 0
+Set-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects' -Name 'VisualFXSetting' -Value 393241
+New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Desktop' -Name 'UserPreferencesMask' -Value ([byte[]](0x10,0x32,0x07,0x80,0x10,0x00,0x00,0x00)) -PropertyType Binary -Force
+Write-Host "Explorer: Set Optimal Visual Settings" -ForegroundColor Green
+#>
+
 #endregion
 
 
