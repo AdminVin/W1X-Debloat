@@ -907,17 +907,14 @@ $ActiveNetworkAdapterConverted = $ActiveNetworkAdapter.Name
 Disable-NetAdapterPowerManagement -Name "$ActiveNetworkAdapterConverted" -DeviceSleepOnDisconnect -NoRestart# | Out-Null
 Write-Host "Network: Disabled Ethernet/Wireless Power Saving Settings" -ForegroundColor Green
 
-<#
-$CurrentPowerPlan = (powercfg -getactivescheme).split()[-4]
-# USB 2.0 Ports
-powercfg -attributes SUB_USB /set {$CurrentPowerPlan} -ATTRIB_HIDE
-# USB 3.0 Ports
-powercfg -attributes SUB_USB3 /set {$CurrentPowerPlan} -ATTRIB_HIDE
-Write-Host "Sleep Settings: Disabled USB Selective Suspend" -ForegroundColor Green
-#>
-
-Set-Itemproperty -path "HKCU:\Control Panel\Desktop" -Name 'MenuShowDelay' -value '1'
+Set-ItemProperty -path "HKCU:\Control Panel\Desktop" -Name "MenuShowDelay" -value "1"
 Write-Host "Start Menu: Animation Time Reduced" -ForegroundColor Green
+
+Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "AnimateMinimize" -Value "0"
+Write-Host "Explorer: Disabled Minimize Animation" -ForegroundColor Green
+
+Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "AnimateWindows" -Value "0"
+Write-Host "Explorer: Disabled Windows Opening/Closing Animation" -ForegroundColor Green
 
 <#
 Set-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects' -Name 'VisualFXSetting' -Value 0
