@@ -283,10 +283,10 @@ Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdate" -R
 Get-Service "edgeupdatem" | Stop-Service | Out-Null
 Get-Service "edgeupdatem" | Set-Service -StartupType Disabled | Out-Null
 Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdatem" -Recurse -Confirm:$false -Force
-Write-Host "Microsoft Edge - Auto Update Services [Disabled]" -ForegroundColor Green
+Write-Host "Microsoft Edge - Auto Update Services [DISABLED]" -ForegroundColor Green
 ## Scheduled Tasks
 Get-Scheduledtask "*edge*" | Disable-ScheduledTask | Out-Null
-Write-Host "Microsoft Edge - Auto Start - Scheduled Task [Disabled]" -ForegroundColor Green
+Write-Host "Microsoft Edge - Auto Start - Scheduled Task [DISABLED]" -ForegroundColor Green
 ## Auto Start
 Set-Location HKLM:
 if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft") -ne $true) {New-Item "HKLM:\SOFTWARE\Policies\Microsoft" -Force | Out-Null}
@@ -299,10 +299,10 @@ Remove-ItemProperty -Path . -Name "*MicrosoftEdge*" -Force | Out-Null
 Set-Location "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
 Remove-ItemProperty -Path . -Name "*MicrosoftEdge*" -Force | Out-Null
 Set-Location C:/
-Write-Host "Microsoft Edge - Auto Start - Startup Entry [Disabled]" -ForegroundColor Green
+Write-Host "Microsoft Edge - Auto Start - Startup Entry [DISABLED]" -ForegroundColor Green
 # Tracking
 Set-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main' -Name 'DoNotTrack' -Value '1'
-Write-Host "Microsoft Edge - Tracking [Disabled]" -ForegroundColor Green
+Write-Host "Microsoft Edge - Tracking [DISABLED]" -ForegroundColor Green
 # Addon IE to Edge Removal
 
 # 3.2.2 OneDrive
@@ -378,7 +378,7 @@ $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "Get-Child
 $trigger = New-ScheduledTaskTrigger -AtLogOn
 $STPrin = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount
 Register-ScheduledTask -Action $action -Trigger $trigger -TaskName "Internet Explorer - IEtoEDGE Addon Removal" -Description "Removes the Internet Explorer Addon IEtoEDGE.  This will permit the use of Internet Explorer." -Principal $STPrin | Out-Null
-Write-Host "Microsoft Edge - Addon: IE to Edge [Disabled]" -ForegroundColor Green
+Write-Host "Microsoft Edge - Addon: IE to Edge [DISABLED]" -ForegroundColor Green
 Write-Host "Internet Explorer - Addon - 'IE to Edge' [REMOVED]" -ForegroundColor Green
 
 ## One Note
