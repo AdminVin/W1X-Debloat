@@ -38,107 +38,107 @@ if ((Get-WMIObject win32_operatingsystem) | Where-Object { $_.Name -like "Micros
 {
 	Write-Host "3.1 Applications - Metro" -ForegroundColor Green
 	# Default Windows Bloatware
-	Get-AppxPackage -AllUsers "Microsoft.3DBuilder*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.549981C3F5F10*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.Appconnector*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.BingFinance*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.BingFoodAndDrink*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.BingHealthAndFitness*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.BingNews*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.BingSports*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.BingTranslator*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.BingTravel*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.CommsPhone*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.ConnectivityStore*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.WindowsFeedbackHub*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.GetHelp*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.Getstarted*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.Messaging*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.Microsoft3DViewer*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.MicrosoftOfficeHub*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.MicrosoftPowerBIForWindows*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.MixedReality.Portal*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.NetworkSpeedTest*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.Office.Sway*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.OneConnect*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.People*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.Print3D*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.MicrosoftSolitaireCollection" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.SkypeApp*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "MicrosoftTeams*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.Todos*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.Wallet*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.Whiteboard*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.WindowsMaps*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.WindowsPhone*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.WindowsReadingList*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.YourPhone*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.ZuneMusic*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.ZuneVideo*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.3DBuilder*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.549981C3F5F10*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Appconnector*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingFinance*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingFoodAndDrink*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingHealthAndFitness*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingNews*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingSports*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingTranslator*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingTravel*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.CommsPhone*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.ConnectivityStore*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.WindowsFeedbackHub*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.GetHelp*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Getstarted*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Messaging*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Microsoft3DViewer*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.MicrosoftOfficeHub*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.MicrosoftPowerBIForWindows*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.MixedReality.Portal*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.NetworkSpeedTest*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Office.Sway*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.OneConnect*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.People*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Print3D*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.MicrosoftSolitaireCollection" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.SkypeApp*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "MicrosoftTeams*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Todos*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Wallet*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Whiteboard*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.WindowsMaps*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.WindowsPhone*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.WindowsReadingList*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.YourPhone*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.ZuneMusic*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.ZuneVideo*" | Remove-AppxPackage | Out-Null
 	# Third Party General Bloatware
-	Get-AppxPackage -AllUsers "*ACGMediaPlayer*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*ActiproSoftwareLLC*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*AdobePhotoshopExpress*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Amazon.com.Amazon*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Asphalt8Airborne*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*AutodeskSketchBook*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*BubbleWitch3Saga*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*CaesarsSlotsFreeCasino*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*CandyCrush*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*COOKINGFEVER*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*CyberLinkMediaSuiteEssentials*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Disney*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*DrawboardPDF*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Duolingo-LearnLanguagesforFree*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*EclipseManager*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	#Get-AppxPackage -AllUsers "*Facebook*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null #FaceBook/Facebook Messenger (Social Media)
-	Get-AppxPackage -AllUsers "*FarmVille2CountryEscape*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*FitbitCoach*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Flipboard*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*HiddenCity*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Hulu*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*iHeartRadio*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	#Get-AppxPackage -AllUsers "*Instagram*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null # Instagram (Social Media)
-	Get-AppxPackage -AllUsers "*Keeper*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Kindle*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*LinkedInforWindows*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*MarchofEmpires*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*NYTCrossword*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*OneCalendar*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	#Get-AppxPackage -AllUsers "*Pandora*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null #Pandora (Music)
-	Get-AppxPackage -AllUsers "*PhototasticCollage*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*PicsArt-PhotoStudio*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*PolarrPhotoEditorAcademicEdition*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Prime*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*RoyalRevolt*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Shazam*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Sidia.LiveWallpaper*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*SlingTV*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Speed" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	#Get-AppxPackage -AllUsers "*SpotifyAB.SpotifyMusic*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null #Spotify (Music)
-	Get-AppxPackage -AllUsers "*Sway*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*TuneInRadio*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Twitter*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Viber*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*WinZipUniversal*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Wunderlist*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*XING*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "*ACGMediaPlayer*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*ActiproSoftwareLLC*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*AdobePhotoshopExpress*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*Amazon.com.Amazon*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*Asphalt8Airborne*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*AutodeskSketchBook*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*BubbleWitch3Saga*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*CaesarsSlotsFreeCasino*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*CandyCrush*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*COOKINGFEVER*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*CyberLinkMediaSuiteEssentials*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*Disney*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*DrawboardPDF*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*Duolingo-LearnLanguagesforFree*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*EclipseManager*" | Remove-AppxPackage | Out-Null
+	#Get-AppxPackage -AllUsers "*Facebook*" | Remove-AppxPackage | Out-Null #FaceBook/Facebook Messenger (Social Media)
+	Get-AppxPackage -AllUsers "*FarmVille2CountryEscape*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*FitbitCoach*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*Flipboard*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*HiddenCity*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*Hulu*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*iHeartRadio*" | Remove-AppxPackage | Out-Null
+	#Get-AppxPackage -AllUsers "*Instagram*" | Remove-AppxPackage | Out-Null # Instagram (Social Media)
+	Get-AppxPackage -AllUsers "*Keeper*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*Kindle*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*LinkedInforWindows*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*MarchofEmpires*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*NYTCrossword*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*OneCalendar*" | Remove-AppxPackage | Out-Null
+	#Get-AppxPackage -AllUsers "*Pandora*" | Remove-AppxPackage | Out-Null #Pandora (Music)
+	Get-AppxPackage -AllUsers "*PhototasticCollage*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*PicsArt-PhotoStudio*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*PolarrPhotoEditorAcademicEdition*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*Prime*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*RoyalRevolt*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*Shazam*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*Sidia.LiveWallpaper*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*SlingTV*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*Speed" | Remove-AppxPackage | Out-Null
+	#Get-AppxPackage -AllUsers "*SpotifyAB.SpotifyMusic*" | Remove-AppxPackage | Out-Null #Spotify (Music)
+	Get-AppxPackage -AllUsers "*Sway*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*TuneInRadio*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*Twitter*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*Viber*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*WinZipUniversal*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*Wunderlist*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "*XING*" | Remove-AppxPackage | Out-Null
 	# Samsung Bloatware
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.1412377A9806A*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.NewVoiceNote*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCoLtd.SamsungNotes*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCoLtd.SamsungFlux*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.StudioPlus*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungWelcome*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungUpdate*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungSecurity1.2*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungScreenRecording*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungQuickSearch*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungPCCleaner*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungCloudBluetoothSync*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.PCGallery*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.OnlineSupportSService*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "4AE8B7C2.BOOKING.COMPARTNERAPPSAMSUNGEDITION*" | Remove-AppxPackage -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.1412377A9806A*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.NewVoiceNote*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCoLtd.SamsungNotes*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCoLtd.SamsungFlux*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.StudioPlus*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungWelcome*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungUpdate*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungSecurity1.2*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungScreenRecording*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungQuickSearch*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungPCCleaner*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungCloudBluetoothSync*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.PCGallery*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.OnlineSupportSService*" | Remove-AppxPackage | Out-Null
+	Get-AppxPackage -AllUsers "4AE8B7C2.BOOKING.COMPARTNERAPPSAMSUNGEDITION*" | Remove-AppxPackage | Out-Null
 }
 else
 {
@@ -152,107 +152,107 @@ if ((Get-WMIObject win32_operatingsystem) | Where-Object { $_.Name -like "Micros
 {
 	Write-Host "3.1 Applications - Metro" -ForegroundColor Green
 	# Default Windows Bloatware
-	Get-AppxPackage -AllUsers "Microsoft.3DBuilder*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.549981C3F5F10*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.Appconnector*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.BingFinance*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.BingFoodAndDrink*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.BingHealthAndFitness*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.BingNews*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.BingSports*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.BingTranslator*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.BingTravel*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.CommsPhone*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.ConnectivityStore*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.WindowsFeedbackHub*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.GetHelp*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.Getstarted*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.Messaging*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.Microsoft3DViewer*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.MicrosoftOfficeHub*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.MicrosoftPowerBIForWindows*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.MixedReality.Portal*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.NetworkSpeedTest*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.Office.Sway*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.OneConnect*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.People*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.Print3D*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.MicrosoftSolitaireCollection" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.SkypeApp*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "MicrosoftTeams*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.Todos*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.Wallet*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.Whiteboard*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.WindowsMaps*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.WindowsPhone*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.WindowsReadingList*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.YourPhone*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.ZuneMusic*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "Microsoft.ZuneVideo*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.3DBuilder*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.549981C3F5F10*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Appconnector*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingFinance*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingFoodAndDrink*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingHealthAndFitness*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingNews*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingSports*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingTranslator*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.BingTravel*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.CommsPhone*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.ConnectivityStore*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.WindowsFeedbackHub*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.GetHelp*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Getstarted*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Messaging*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Microsoft3DViewer*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.MicrosoftOfficeHub*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.MicrosoftPowerBIForWindows*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.MixedReality.Portal*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.NetworkSpeedTest*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Office.Sway*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.OneConnect*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.People*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Print3D*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.MicrosoftSolitaireCollection" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.SkypeApp*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "MicrosoftTeams*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Todos*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Wallet*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.Whiteboard*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.WindowsMaps*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.WindowsPhone*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.WindowsReadingList*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.YourPhone*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.ZuneMusic*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "Microsoft.ZuneVideo*" | Remove-AppxPackage -AllUsers | Out-Null
 	# Third Party General Bloatware
-	Get-AppxPackage AllUsers "*ACGMediaPlayer*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*ActiproSoftwareLLC*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*AdobePhotoshopExpress*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Amazon.com.Amazon*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Asphalt8Airborne*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*AutodeskSketchBook*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*BubbleWitch3Saga*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*CaesarsSlotsFreeCasino*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*CandyCrush*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*COOKINGFEVER*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*CyberLinkMediaSuiteEssentials*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Disney*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*DrawboardPDF*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Duolingo-LearnLanguagesforFree*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*EclipseManager*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	#Get-AppxPackage -AllUsers "*Facebook*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null #FaceBook/Facebook Messenger (Social Media)
-	Get-AppxPackage -AllUsers "*FarmVille2CountryEscape*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*FitbitCoach*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Flipboard*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*HiddenCity*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Hulu*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*iHeartRadio*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	#Get-AppxPackage -AllUsers "*Instagram*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null # Instagram (Social Media)
-	Get-AppxPackage -AllUsers "*Keeper*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Kindle*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*LinkedInforWindows*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*MarchofEmpires*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*NYTCrossword*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*OneCalendar*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	#Get-AppxPackage -AllUsers "*Pandora*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null #Pandora (Music)
-	Get-AppxPackage -AllUsers "*PhototasticCollage*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*PicsArt-PhotoStudio*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*PolarrPhotoEditorAcademicEdition*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Prime*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*RoyalRevolt*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Shazam*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Sidia.LiveWallpaper*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*SlingTV*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Speed" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	#Get-AppxPackage -AllUsers "*SpotifyAB.SpotifyMusic*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null #Spotify (Music)
-	Get-AppxPackage -AllUsers "*Sway*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*TuneInRadio*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Twitter*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Viber*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*WinZipUniversal*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*Wunderlist*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "*XING*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage AllUsers "*ACGMediaPlayer*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*ActiproSoftwareLLC*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*AdobePhotoshopExpress*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*Amazon.com.Amazon*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*Asphalt8Airborne*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*AutodeskSketchBook*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*BubbleWitch3Saga*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*CaesarsSlotsFreeCasino*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*CandyCrush*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*COOKINGFEVER*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*CyberLinkMediaSuiteEssentials*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*Disney*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*DrawboardPDF*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*Duolingo-LearnLanguagesforFree*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*EclipseManager*" | Remove-AppxPackage -AllUsers | Out-Null
+	#Get-AppxPackage -AllUsers "*Facebook*" | Remove-AppxPackage -AllUsers | Out-Null #FaceBook/Facebook Messenger (Social Media)
+	Get-AppxPackage -AllUsers "*FarmVille2CountryEscape*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*FitbitCoach*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*Flipboard*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*HiddenCity*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*Hulu*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*iHeartRadio*" | Remove-AppxPackage -AllUsers | Out-Null
+	#Get-AppxPackage -AllUsers "*Instagram*" | Remove-AppxPackage -AllUsers | Out-Null # Instagram (Social Media)
+	Get-AppxPackage -AllUsers "*Keeper*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*Kindle*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*LinkedInforWindows*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*MarchofEmpires*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*NYTCrossword*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*OneCalendar*" | Remove-AppxPackage -AllUsers | Out-Null
+	#Get-AppxPackage -AllUsers "*Pandora*" | Remove-AppxPackage -AllUsers | Out-Null #Pandora (Music)
+	Get-AppxPackage -AllUsers "*PhototasticCollage*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*PicsArt-PhotoStudio*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*PolarrPhotoEditorAcademicEdition*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*Prime*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*RoyalRevolt*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*Shazam*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*Sidia.LiveWallpaper*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*SlingTV*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*Speed" | Remove-AppxPackage -AllUsers | Out-Null
+	#Get-AppxPackage -AllUsers "*SpotifyAB.SpotifyMusic*" | Remove-AppxPackage -AllUsers | Out-Null #Spotify (Music)
+	Get-AppxPackage -AllUsers "*Sway*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*TuneInRadio*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*Twitter*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*Viber*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*WinZipUniversal*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*Wunderlist*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "*XING*" | Remove-AppxPackage -AllUsers | Out-Null
 	# Samsung Bloatware
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.1412377A9806A*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.NewVoiceNote*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCoLtd.SamsungNotes*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCoLtd.SamsungFlux*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.StudioPlus*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungWelcome*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungUpdate*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungSecurity1.2*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungScreenRecording*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungQuickSearch*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungPCCleaner*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungCloudBluetoothSync*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.PCGallery*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.OnlineSupportSService*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
-	Get-AppxPackage -AllUsers "4AE8B7C2.BOOKING.COMPARTNERAPPSAMSUNGEDITION*" | Remove-AppxPackage -AllUsers -ErrorAction SilentlyContinue | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.1412377A9806A*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.NewVoiceNote*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCoLtd.SamsungNotes*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCoLtd.SamsungFlux*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.StudioPlus*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungWelcome*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungUpdate*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungSecurity1.2*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungScreenRecording*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungQuickSearch*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungPCCleaner*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.SamsungCloudBluetoothSync*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.PCGallery*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "SAMSUNGELECTRONICSCO.LTD.OnlineSupportSService*" | Remove-AppxPackage -AllUsers | Out-Null
+	Get-AppxPackage -AllUsers "4AE8B7C2.BOOKING.COMPARTNERAPPSAMSUNGEDITION*" | Remove-AppxPackage -AllUsers | Out-Null
 }
 else
 {
@@ -277,27 +277,27 @@ Write-Host "3.2 Applications - Desktop" -ForegroundColor Green
 # 3.2.1 Edge
 Write-Host "3.2.1 Microsoft Edge" -ForegroundColor Green
 ## Services
-Get-Service "edgeupdate" -ErrorAction SilentlyContinue | Stop-Service -ErrorAction SilentlyContinue | Out-Null
-Get-Service "edgeupdate" -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue | Out-Null
-Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdate" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue
-Get-Service "edgeupdatem" -ErrorAction SilentlyContinue | Stop-Service -ErrorAction SilentlyContinue | Out-Null
-Get-Service "edgeupdatem" -ErrorAction SilentlyContinue | Set-Service -StartupType Disabled | Out-Null
-Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdatem" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue
+Get-Service "edgeupdate" | Stop-Service | Out-Null
+Get-Service "edgeupdate" | Set-Service -StartupType Disabled | Out-Null
+Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdate" -Recurse -Confirm:$false -Force
+Get-Service "edgeupdatem" | Stop-Service | Out-Null
+Get-Service "edgeupdatem" | Set-Service -StartupType Disabled | Out-Null
+Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdatem" -Recurse -Confirm:$false -Force
 Write-Host "Disabled Microsoft Edge - Auto Update Services" -ForegroundColor Green
 ## Scheduled Tasks
-Get-Scheduledtask "*edge*" -erroraction silentlycontinue | Disable-ScheduledTask | Out-Null
+Get-Scheduledtask "*edge*" | Disable-ScheduledTask | Out-Null
 Write-Host "Disabled Microsoft Edge - Auto Start (Scheduled Task)" -ForegroundColor Green
 ## Auto Start
 Set-Location HKLM:
-if ((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft") -ne $true) { New-Item "HKLM:\SOFTWARE\Policies\Microsoft" -Force -ErrorAction SilentlyContinue | Out-Null }
-if ((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge") -ne $true) { New-Item "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge" -Force -ErrorAction SilentlyContinue | Out-Null }
-if ((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main") -ne $true) { New-Item "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main" -Force -ErrorAction SilentlyContinue | Out-Null }
-New-ItemProperty -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main" -Name "AllowPrelaunch" -Value "0" -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
+if ((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft") -ne $true) { New-Item "HKLM:\SOFTWARE\Policies\Microsoft" -Force | Out-Null }
+if ((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge") -ne $true) { New-Item "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge" -Force | Out-Null }
+if ((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main") -ne $true) { New-Item "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main" -Force | Out-Null }
+New-ItemProperty -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main" -Name "AllowPrelaunch" -Value "0" -PropertyType DWord -Force | Out-Null
 Set-Location HKCU:
 Set-Location "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run\"
-Remove-ItemProperty -Path . -Name "*MicrosoftEdge*" -Force -ErrorAction SilentlyContinue | Out-Null
+Remove-ItemProperty -Path . -Name "*MicrosoftEdge*" -Force | Out-Null
 Set-Location "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
-Remove-ItemProperty -Path . -Name "*MicrosoftEdge*" -Force -ErrorAction SilentlyContinue | Out-Null
+Remove-ItemProperty -Path . -Name "*MicrosoftEdge*" -Force | Out-Null
 Set-Location C:/
 Write-Host "Disabled Microsoft Edge - Auto Start (Startup Entry)" -ForegroundColor Green
 # Tracking
@@ -305,7 +305,11 @@ Set-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\M
 Write-Host "Disabled Microsoft Edge - Tracking" -ForegroundColor Green
 # Addon IE to Edge Removal
 Get-ChildItem -Path "C:\Program Files (x86)\Microsoft\Edge\Application" -Recurse -Filter "BHO" | Remove-Item -Force -Recurse | Out-Null
-Write-Host "Removed Microsoft Edge - Addon - IE to Edge" -ForegroundColor Green
+$action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "Get-ChildItem -Path 'C:\Program Files (x86)\Microsoft\Edge\Application' -Recurse -Filter 'BHO' | Remove-Item -Force -Recurse"
+$trigger = New-ScheduledTaskTrigger -AtLogOn
+$STPrin = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount
+Register-ScheduledTask -Action $action -Trigger $trigger -TaskName "Internet Explorer - IEtoEDGE Addon Removal" -Description "Removes the Internet Explorer Addon IEtoEDGE.  This will permit the use of Internet Explorer." -Principal $STPrin | Out-Null
+Write-Host "Removed Internet Explorer - Addon: IE to Edge Helper" -ForegroundColor Green
 
 # 3.2.2 OneDrive
 $result = [System.Windows.Forms.MessageBox]::Show("Do you use OneDrive to back up your files?`n`nYes will keep OneDrive on your computer.`nNo will remove OneDrive from your computer.`n`nIf you are not sure, clicking 'Yes' will not modify any OneDrive settings.", "Confirm", [System.Windows.Forms.MessageBoxButtons]::YesNo)
@@ -319,28 +323,28 @@ if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
 	
 		## Official Removal
 		# x86
-		Start-Process -FilePath "$Env:WinDir\System32\OneDriveSetup.exe" -WorkingDirectory "$Env:WinDir\System32\" -ArgumentList "/uninstall" -ErrorAction SilentlyContinue
+		Start-Process -FilePath "$Env:WinDir\System32\OneDriveSetup.exe" -WorkingDirectory "$Env:WinDir\System32\" -ArgumentList "/uninstall" | Out-Null
 		# x64
-		Start-Process -FilePath "$Env:WinDir\SysWOW64\OneDriveSetup.exe" -WorkingDirectory "$Env:WinDir\SysWOW64\" -ArgumentList "/uninstall" -ErrorAction SilentlyContinue
+		Start-Process -FilePath "$Env:WinDir\SysWOW64\OneDriveSetup.exe" -WorkingDirectory "$Env:WinDir\SysWOW64\" -ArgumentList "/uninstall" | Out-Null
 	
 		## Files Cleanup
 		# File Explorer - Navigation Bar
-		if((Test-Path -LiteralPath "HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}") -ne $true) {  New-Item "HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Force -ErrorAction SilentlyContinue | Out-Null }
-		New-ItemProperty -LiteralPath 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name '(default)' -Value 'OneDrive' -PropertyType String -Force -ErrorAction SilentlyContinue | Out-Null
-		New-ItemProperty -LiteralPath 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name 'System.IsPinnedToNameSpaceTree' -Value 0 -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
+		if((Test-Path -LiteralPath "HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}") -ne $true) {  New-Item "HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Force | Out-Null }
+		New-ItemProperty -LiteralPath 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name '(default)' -Value 'OneDrive' -PropertyType String -Force | Out-Null
+		New-ItemProperty -LiteralPath 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name 'System.IsPinnedToNameSpaceTree' -Value 0 -PropertyType DWord -Force | Out-Null
 		# AppData / Local
-		Remove-Item -Path "$env:localappdata\OneDrive" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue
+		Remove-Item -Path "$env:localappdata\OneDrive" -Recurse -Confirm:$false -Force
 		# ProgramData
-		Remove-Item -Path "$env:programdata\Microsoft OneDrive" -Recurse -Force -ErrorAction SilentlyContinue 
+		Remove-Item -Path "$env:programdata\Microsoft OneDrive" -Recurse -Force 
 		# Shortcuts
-		Remove-Item -Path "$env:userprofile\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" -Force -ErrorAction SilentlyContinue
-		Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" -Force -ErrorAction SilentlyContinue
+		Remove-Item -Path "$env:userprofile\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" -Force
+		Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" -Force
 		# Program Files
-		Remove-Item -LiteralPath "C:\Program Files (x86)\Microsoft OneDrive" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue
-		Remove-Item -LiteralPath "C:\Program Files\Microsoft OneDrive" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue
+		Remove-Item -LiteralPath "C:\Program Files (x86)\Microsoft OneDrive" -Recurse -Confirm:$false -Force
+		Remove-Item -LiteralPath "C:\Program Files\Microsoft OneDrive" -Recurse -Confirm:$false -Force
 	
 		## Scheduled Tasks
-		Get-ScheduledTask "*OneDrive*" | Unregister-ScheduledTask -Confirm:$false -ErrorAction SilentlyContinue
+		Get-ScheduledTask "*OneDrive*" | Unregister-ScheduledTask -Confirm:$false
 	
 		## Services
 		$ODUPdaterService = Get-WmiObject -Class Win32_Service -Filter "Name='OneDrive Updater Service'"
@@ -348,11 +352,11 @@ if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
 		
 		## Registry
 		# Remove Previous Accounts/Sync Options
-		Remove-Item -LiteralPath "HKCU:\Software\Microsoft\OneDrive" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue
+		Remove-Item -LiteralPath "HKCU:\Software\Microsoft\OneDrive" -Recurse -Confirm:$false -Force
 		# Remove previously set One Drive settings
-		Remove-Item -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue
+		Remove-Item -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Recurse -Confirm:$false -Force
 		# Remove Right Click Menu Context Options
-		Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\FileSyncHelper" -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue
+		Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\FileSyncHelper" -Recurse -Confirm:$false -Force
 		# Remove from 'Default' user account
 		reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
 		reg delete "HKEY_USERS\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v "OneDriveSetup" /f
@@ -366,16 +370,16 @@ if ((Get-WMIObject win32_operatingsystem) | Where-Object { $_.Name -like "Micros
 {
 	Write-Host "3.2.3 Internet Explorer" -ForegroundColor Green
 	# Addon 'Send to One Note'
-	Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{2670000A-7350-4f3c-8081-5663EE0C6C49}" -Force -ErrorAction SilentlyContinue | Out-Null
-	Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer\Extensions\{2670000A-7350-4f3c-8081-5663EE0C6C49}" -Force -ErrorAction SilentlyContinue | Out-Null
+	Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{2670000A-7350-4f3c-8081-5663EE0C6C49}" -Force | Out-Null
+	Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer\Extensions\{2670000A-7350-4f3c-8081-5663EE0C6C49}" -Force | Out-Null
 	Write-Host "Internet Explorer - Addon - REMOVED 'Send to One Note'" -ForegroundColor Green
 	# Addon 'OneNote Linked Notes'
-	Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{789FE86F-6FC4-46A1-9849-EDE0DB0C95CA}" -Force -ErrorAction SilentlyContinue | Out-Null
-	Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer\Extensions\{789FE86F-6FC4-46A1-9849-EDE0DB0C95CA}" -Force -ErrorAction SilentlyContinue | Out-Null
+	Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{789FE86F-6FC4-46A1-9849-EDE0DB0C95CA}" -Force | Out-Null
+	Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer\Extensions\{789FE86F-6FC4-46A1-9849-EDE0DB0C95CA}" -Force | Out-Null
 	Write-Host "Internet Explorer - Addon - REMOVED 'OneNote Linked Notes'" -ForegroundColor Green
 	# Addon 'Lync Click to Call'
-	Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{31D09BA0-12F5-4CCE-BE8A-2923E76605DA}" -Force -ErrorAction SilentlyContinue | Out-Null
-	Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects\{31D09BA0-12F5-4CCE-BE8A-2923E76605DA}" -Force -ErrorAction SilentlyContinue | Out-Null
+	Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{31D09BA0-12F5-4CCE-BE8A-2923E76605DA}" -Force | Out-Null
+	Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects\{31D09BA0-12F5-4CCE-BE8A-2923E76605DA}" -Force | Out-Null
 	Write-Host "Internet Explorer - Addon - REMOVED 'Lync Click to Call'" -ForegroundColor Green
 	# Addon IE to Edge Browser Helper Object
 	Get-ChildItem -Path "C:\Program Files (x86)\Microsoft\Edge\Application" -Recurse -Filter "BHO" | Remove-Item -Force -Recurse
@@ -388,7 +392,7 @@ else
 
 ## One Note
 Write-Host "3.2.4 One Note" -ForegroundColor Green
-Remove-Item -LiteralPath "C:\Users\$env:username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Send to OneNote.lnk" -Force -ErrorAction SilentlyContinue | Out-Null
+Remove-Item -LiteralPath "C:\Users\$env:username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Send to OneNote.lnk" -Force | Out-Null
 Write-Host "OneNote - REMOVED 'Send to OneNote'" -ForegroundColor Green
 
 ## Mozilla Firefox
@@ -398,21 +402,21 @@ Write-Host "Firefox - Disabled 'Periodic requests to set as default browser'" -F
 
 ## 3.2.6 Teams (Home / Small Business)
 Write-Host "3.2.6 Teams (Home / Small Business)" -ForegroundColor Green
-New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarMn' -Value '0' -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
-Set-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarMn' -Value '0' -Force -ErrorAction SilentlyContinue | Out-Null
+New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarMn' -Value '0' -PropertyType DWord -Force | Out-Null
+Set-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarMn' -Value '0' -Force | Out-Null
 Write-Host "Teams (Home / Small Business) - Removed Taskbar Shortcut" -ForegroundColor Green
 
 ## 3.2.7 Teams (Work or School)
 Write-Host "3.2.7 Teams (Work or School) - Disabled Auto Start" -ForegroundColor Green
-Remove-ItemProperty -LiteralPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "com.squirrel.Teams.Teams" -Force -ErrorAction SilentlyContinue
-Remove-ItemProperty -LiteralPath "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run" -Name "TeamsMachineInstaller" -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty -LiteralPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "com.squirrel.Teams.Teams" -Force
+Remove-ItemProperty -LiteralPath "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run" -Name "TeamsMachineInstaller" -Force
 Write-Host "Teams (Work or School) - Disabled Auto Start" -ForegroundColor Green
 
 ## 3.2.8 Screen Tips for Suggested Features (Popup Ads)
 # Source: https://admx.help/?Category=Office2016&Policy=office16.Office.Microsoft.Policies.Windows::L_ShowScreenTips
 Write-Host "3.2.8 Screen Tips for Suggested Features (Popup Ads)" -ForegroundColor Green
-if((Test-Path -LiteralPath "HKCU:\Software\Policies\Microsoft\office\16.0\common\toolbars") -ne $true) {  New-Item "HKCU:\Software\Policies\Microsoft\office\16.0\common\toolbars" -Force | Out-Null}
-New-ItemProperty -LiteralPath 'HKCU:\Software\Policies\Microsoft\office\16.0\common\toolbars' -Name 'screentipsheme' -Value 2 -PropertyType DWord -Force | Out-Null
+if((Test-Path -LiteralPath "HKCU:\Software\Policies\Microsoft\office\16.0\common\toolbars") -ne $true) {New-Item "HKCU:\Software\Policies\Microsoft\office\16.0\common\toolbars" -Force | Out-Null}
+New-ItemProperty -LiteralPath "HKCU:\Software\Policies\Microsoft\office\16.0\common\toolbars" -Name "screentipsheme" -Value "2" -PropertyType DWord -Force | Out-Null
 Write-Host "Screen Tips for Suggested Features (Popup Ads) - Disabled" -ForegroundColor Green
 
 ## 3.2.9 Sysinternals Installation
@@ -420,14 +424,16 @@ New-Item "C:/users/$env:username/Temp/" -ItemType Directory
 Invoke-WebRequest -Uri "https://download.sysinternals.com/files/PSTools.zip" -OutFile "C:/users/$env:username/PSTools.zip"
 Expand-Archive -Path "C:/users/$env:username/PSTools.zip" -DestinationPath "C:\Windows\System32" -Force
 Remove-Item "C:/users/$env:username/PSTools.zip" -Force
-Write-Host "Explorer: Installed Sysinternals Suite" -ForegroundColor Green
+Write-Host "3.2.9 Explorer: Installed Sysinternals Suite" -ForegroundColor Green
 Write-Host "Official Website: https://learn.microsoft.com/en-us/sysinternals/" -ForegroundColor Green
 #endregion
+
 #endregion
 
 
 <#############################################################################################################################>
 # 4.0 - Services and Scheduled Tasks
+
 #region Windows 10 - Services and Scheduled Tasks
 if((Get-WMIObject win32_operatingsystem) | Where-Object {$_.Name -like "Microsoft Windows 10*"}) 
 {
@@ -554,16 +560,9 @@ else {
 Write-Host "5.0 Quality of Life" -ForegroundColor Green
 
 
-<############### Windows 10 Tweaks ###############>
+<############################################### Windows 10 Tweaks ###############################################>
 if((Get-WMIObject win32_operatingsystem) | Where-Object {$_.Name -like "Microsoft Windows 10*"}) 
 {
-    if((Test-Path -LiteralPath "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32") -ne $true) {  New-Item "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" -Force | Out-Null }
-    New-ItemProperty -LiteralPath 'HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32' -Name '(default)' -Value '' -PropertyType String  -Force | Out-Null
-    Write-Host "Explorer: Restored W10 - Right Click Context Menu (Preference)" -ForegroundColor Green
-
-    Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSyncProviderNotifications" -Value "0" -Force | Out-Null
-Write-Host "Explorer: Disable Ads in File Explorer (Performance)" -ForegroundColor Green
-
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Personalization\Settings" -Name "AcceptedPrivacyPolicy" -Value "0" -Force | Out-Null
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\SettingSync\Groups\Language" -Name "Enabled" -Value "0" -Force | Out-Null
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization" -Name "RestrictImplicitTextCollection" -Value "0" -Force | Out-Null
@@ -571,67 +570,58 @@ Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization" -Name "Re
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization\TrainedDataStore" -Name "HarvestContacts" -Value "0" -Force | Out-Null
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Input\TIPC" -Name "Enabled" -Value "0"
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "HistoryViewEnabled" -Value "0" -Force | Out-Null
-Write-Host "Cortana - Disabled 'Microsoft from getting to know you' (Privacy)" -ForegroundColor Green
+Write-Host "Cortana - Disabled 'Microsoft from getting to know you'" -ForegroundColor Green
 
-Set-Itemproperty -Path 'HKCU:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'EnableActivityFeed' -Value '0' -Force | Out-Null
-Write-Host "Cortana: Disabled 'Activity Feed' in Start Menu (Privacy)" -ForegroundColor Green
+Set-Itemproperty -Path "HKCU:\SOFTWARE\Policies\Microsoft\Windows\System" -Name "EnableActivityFeed" -Value '0' -Force | Out-Null
+Write-Host "Cortana: Disabled 'Activity Feed' in Start Menu" -ForegroundColor Green
 
 Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SoftLandingEnabled" -Value "0" -Force | Out-Null
 Set-Itemproperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "RotatingLockScreenEnabled" -Value "0" -Force | Out-Null
 Set-Itemproperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "RotatingLockScreenOverlayEnabled" -Value "0" -Force | Out-Null
-Write-Host "Windows: Disabled Lockscreen suggestions and rotating pictures (Preference)" -ForegroundColor Green
+Write-Host "Windows: Disabled Lockscreen suggestions and rotating pictures" -ForegroundColor Green
 
-Set-Itemproperty -Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules" -Name "NumberOfSIUFInPeriod" -Value "0" -Force | Out-Null
-Set-Itemproperty -Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules" -Name "PeriodInNanoSeconds" -Value "0" -Force | Out-Null
-Set-Itemproperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "DoNotShowFeedbackNotifications" -Value "1" -Force | Out-Null
-Write-Host "Windows: Disabled Feedback Prompts (Privacy)" -ForegroundColor Green
 
-Set-Itemproperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Name "DisableSoftLanding" -Value "1" -Force | Out-Null
-Write-Host "Windows: Disabled Tips (Performance)" -ForegroundColor Green
+
 }
 else {
 #Write-Host "Windows 11 Detected, Skipping."
 }
 
 
-<############### Windows 11 Tweaks ###############>
+<############################################### Windows 11 Tweaks ###############################################>
 if((Get-WMIObject win32_operatingsystem) | Where-Object {$_.Name -like "Microsoft Windows 11*"}) 
 {
 if((Test-Path -LiteralPath "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32") -ne $true) {  New-Item "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" -Force | Out-Null }
 New-ItemProperty -LiteralPath 'HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32' -Name '(default)' -Value '' -PropertyType String  -Force | Out-Null
-Write-Host "Windows: Restored W10 - Right Click Context Menu (Preference)" -ForegroundColor Green
+Write-Host "Windows: Restored W10 - Right Click Context Menu" -ForegroundColor Green
 
 if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced") -ne $true) {  New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Force | Out-Null }
 New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'Start_Layout' -Value 1 -PropertyType DWord -Force | Out-Null
-Write-Host "Start Menu/Taskbar: Set Layout to reduce 'Recommened Apps' (Preference)" -ForegroundColor Green
+Write-Host "Start Menu/Taskbar: Set Layout to reduce 'Recommened Apps'" -ForegroundColor Green
 
 if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced") -ne $true) {  New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Force | Out-Null }
 New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'EnableSnapBar' -Value 0 -PropertyType DWord -Force | Out-Null
-Write-Host "Explorer: Disabled 'Snap Layout' Overlay (Preference)" -ForegroundColor Green
+Write-Host "Explorer: Disabled 'Snap Layout' Overlay" -ForegroundColor Green
 
 #Source: https://vhorizon.co.uk/windows-11-start-menu-layout-group-policy/
 $result = [System.Windows.Forms.MessageBox]::Show("Would you like your start bar and task bar icons aligned to the left?", "Confirm", [System.Windows.Forms.MessageBoxButtons]::YesNo)
 if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
 	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Value "0" -Force | Out-Null
-	Write-Host "Start Menu/Taskbar: Alignment - Left (Preference)" -ForegroundColor Green
+	Write-Host "Start Menu/Taskbar: Alignment - Left" -ForegroundColor Green
 } else { 
 	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Value "1" -Force | Out-Null
-	Write-Host "Start Menu/Taskbar: Alignment - Center (Preference)" -ForegroundColor Green
+	Write-Host "Start Menu/Taskbar: Alignment - Center" -ForegroundColor Green
 }
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAnimations" -Value "0" -Force | Out-Null
 
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarDa" -Value "0" -Force | Out-Null
-Write-Host "Explorer: Removed Weather Widget from Taskbar (Preference)" -ForegroundColor Green
-
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'DisableLogonBackgroundImage' -Value "1" -PropertyType "DWord" -Force | Out-Null
-Write-Host "Explorer: Removed Background on Login Screen (Performance)" -ForegroundColor Green
+Write-Host "Explorer: Removed Weather Widget from Taskbar" -ForegroundColor Green
 } else {
 #Write-Host "Windows 10 Detected, Skipping."
 }
 
 
-<### Windows 10/11 Tweaks ###>
-# Take Ownership (Right Click Menu)
+<############################################### Windows 10/11 Tweaks ###############################################>
+# Add "Take Ownership" to  Right Click Context Menu
 if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Classes\*\shell\runas") -ne $true) {  New-Item "HKLM:\SOFTWARE\Classes\*\shell\runas" -Force | Out-Null }
 if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Classes\*\shell\runas\command") -ne $true) {  New-Item "HKLM:\SOFTWARE\Classes\*\shell\runas\command" -Force | Out-Null }
 if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Classes\Directory\shell\runas") -ne $true) {  New-Item "HKLM:\SOFTWARE\Classes\Directory\shell\runas" -Force | Out-Null }
@@ -646,93 +636,7 @@ New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas\comm
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas\command' -Name 'IsolatedCommand' -Value 'cmd.exe /c takeown /f \"%1\" /r /d y && icacls \"%1\" /grant administrators:F /t' -PropertyType String -Force | Out-Null
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas\' -Name 'Icon' -Value 'imageres.dll,-5311' -PropertyType String -Force | Out-Null
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\*\shell\runas' -Name 'Icon' -Value 'imageres.dll,-5311' -PropertyType String -Force | Out-Null
-Write-Host "Windows: Adding File/Folder Take Ownership - Right Click Context Menu (Preference)" -ForegroundColor Green
-
-if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games") -ne $true) {  New-Item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games" -Force | Out-Null }
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games' -Name 'GPU Priority' -Value 8 -PropertyType DWord -Force | Out-Null
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games' -Name 'Priority' -Value 6 -PropertyType DWord -Force | Out-Null
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games' -Name 'Scheduling Category' -Value 'High' -PropertyType String -Force | Out-Null
-Write-Host "Windows: Updating 'MMCSS' to prioritize games with higher system resources (Performance)" -ForegroundColor Green
-
-if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile") -ne $true) {  New-Item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile" -Force | Out-Null }
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile' -Name 'NetworkThrottlingIndex' -Value -1 -PropertyType DWord -Force | Out-Null
-Write-Host "Network: Disabled Acceleration (Performance)" -ForegroundColor Green
-
-if((Test-Path -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power") -ne $true) {  New-Item "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power" -Force | Out-Null }
-New-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power' -Name 'HiberbootEnabled' -Value 0 -PropertyType DWord -Force | Out-Null
-Write-Host "Windows: Disabled Fast Startup - Restored 'Fresh' Reboot (Performance)" -ForegroundColor Green
-
-if((Test-Path -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management") -ne $true) {  New-Item "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" -Force | Out-Null }
-New-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' -Name 'ClearPageFileAtShutdown' -Value 1 -PropertyType DWord -Force | Out-Null
-Write-Host "Windows: Set paging file to clear at Shutdown (Privacy)" -ForegroundColor Green
-
-# Source: https://www.thewindowsclub.com/disable-windows-10-startup-delay-startupdelayinmsec (Default=10, New Default=0)
-if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Serialize") -ne $true) {  New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Serialize" -Force | Out-Null }
-New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Serialize' -Name 'StartupDelayInMSec' -Value 0 -PropertyType DWord -Force | Out-Null
-Write-Host "Windows: Disabled Startup Delay (Performance)" -ForegroundColor Green
-
-if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell\windows.copyaspath") -ne $true) {  New-Item "HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell\windows.copyaspath" -Force | Out-Null }
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell\windows.copyaspath' -Name '(default)' -Value 'Copy &as path' -PropertyType String -Force | Out-Null
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell\windows.copyaspath' -Name 'InvokeCommandOnSelection' -Value 1 -PropertyType DWord -Force | Out-Null
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell\windows.copyaspath' -Name 'VerbHandler' -Value '{f3d06e7c-1e45-4a26-847e-f9fcdee59be0}' -PropertyType String -Force | Out-Null
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell\windows.copyaspath' -Name 'VerbName' -Value 'copyaspath' -PropertyType String -Force | Out-Null
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell\windows.copyaspath' -Name 'Icon' -Value 'imageres.dll,-5302' -PropertyType String -Force | Out-Null
-Write-Host "File Explorer: Added 'Copy as Path' - Right Click Context Menu (Preference)" -ForegroundColor Green
-
-if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Classes\*\shell\pintohomefile") -ne $true) {  New-Item "HKLM:\SOFTWARE\Classes\*\shell\pintohomefile" -Force | Out-Null }
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\*\shell\pintohomefile' -Name 'ProgrammaticAccessOnly' -Value '' -PropertyType String -Force | Out-Null
-Write-Host "File Explorer: Removed 'Add to Favorites' - Right Click Context Menu (Preference)" -ForegroundColor Green
-
-Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\exefile\shell\runasuser' -Name 'Extended' -Force | Out-Null
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\exefile\shell\runasuser' -Name 'Icon' -Value 'imageres.dll,-5203' -PropertyType String -Force | Out-Null
-Write-Host "File Explorer: Added 'Run as different user' - Right Click Context Menu (Preference)" -ForegroundColor Green
-
-# Sticky Keys
-if((Test-Path -LiteralPath "HKCU:\Control Panel\Accessibility\StickyKeys") -ne $true) {  New-Item "HKCU:\Control Panel\Accessibility\StickyKeys" -Force | Out-Null }
-New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Accessibility\StickyKeys' -Name 'Flags' -Value '506' -PropertyType String -Force | Out-Null
-# Filter Keys
-if((Test-Path -LiteralPath "HKCU:\Control Panel\Accessibility\ToggleKeys") -ne $true) {  New-Item "HKCU:\Control Panel\Accessibility\ToggleKeys" -Force | Out-Null }
-New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Accessibility\ToggleKeys' -Name 'Flags' -Value '58' -PropertyType String -Force | Out-Null
-Write-Host "Windows: Disabled Filter & Sticky Keys (Preference)" -ForegroundColor Green
-
-Set-Itemproperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat" -Name "DisableUAR" -Value "1" -Force | Out-Null
-Write-Host "Windows: Disabled Troubleshooting 'Steps Recorder' (Performance)" -ForegroundColor Green
-
-# Source: https://www.majorgeeks.com/content/page/irpstacksize.html (Default 15-20 connections, increased to 50)
-if((Test-Path -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters") -ne $true) {  New-Item "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"  -Force | Out-Null }
-New-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters' -Name 'IRPStackSize' -Value 48 -PropertyType DWord -Force | Out-Null
-Write-Host "Network: Increased Performance for 'I/O Request Packet Stack Size (Performance)" -ForegroundColor Green
-
-#Source: https://www.elevenforum.com/t/enable-or-disable-store-activity-history-on-device-in-windows-11.7812/ #Note: Potentially needed for InTune
-if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System") -ne $true) {  New-Item "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Force | Out-Null }
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'PublishUserActivities' -Value 0 -PropertyType DWord -Force | Out-Null
-Write-Host "File Explorer: Disabled Activity Log (Privacy)" -ForegroundColor Green
-
-Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -name "fDenyTSConnections" -value "0" -Force | Out-Null
-Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
-Write-Host "Remote Desktop: Enabled (Preference)" -ForegroundColor Green
-
-Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Force | Out-Null
-New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications" -PropertyType "Dword" -Name "ToastEnabled" -Value "0" | Out-Null
-Write-host "Windows: Disabled Toast Notifications (Performance)" -ForegroundColor Green
-
-New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -PropertyType "Dword" -Name "ShowTaskViewButton" -Value "0" | Out-Null
-Write-host "Start Menu/Taskbar: Removed 'Task View' Button (Preference)" -ForegroundColor Green
-
-New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "SearchBoxTaskbarMode" -Value "0" -Type "DWord" -Force | Out-Null
-Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "SearchBoxTaskbarMode" -Value "0" -Type "DWord" -Force | Out-Null
-Write-host "Start Menu/Taskbar: Removed 'Search' Button (Preference)" -ForegroundColor Green
-
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Value "0" | Out-Null
-Write-Host "Explorer: Enabled Display of Known File Extensions (Preference)" -ForegroundColor Green
-
-if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer") -ne $true) {  New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Force }
-New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer' -Name 'ShowFrequent' -Value "0" -PropertyType DWord -Force | Out-Null
-Write-Host "Explorer: Disabled 'Recent Folders' in Quick Access (Performance)" -ForegroundColor Green
-
-if((Test-Path -LiteralPath "HKCU:\Control Panel\Desktop\WindowMetrics") -ne $true) {  New-Item "HKCU:\Control Panel\Desktop\WindowMetrics" -Force }
-New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Desktop\WindowMetrics' -Name 'MinAnimate' -Value '0' -PropertyType String -Force | Out-Null
-Write-Host "Explorer: Disabled Explorer Animations (Performance)" -ForegroundColor Green
+Write-Host "Windows: Adding File/Folder Take Ownership - Right Click Context Menu" -ForegroundColor Green
 
 # Add "Open with Powershell (Admin)" to Right Click Context Menu
 if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Classes\Directory\Background\shell\PowerShellAsAdmin") -ne $true) {  New-Item "HKLM:\SOFTWARE\Classes\Directory\Background\shell\PowerShellAsAdmin" -Force | Out-Null }
@@ -759,25 +663,135 @@ New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Drive\shell\PowerShellAsAd
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Drive\shell\PowerShellAsAdmin' -Name 'Icon' -Value 'powershell.exe' -PropertyType String -Force | Out-Null
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Drive\shell\PowerShellAsAdmin\command' -Name '(default)' -Value 'powershell -WindowStyle Hidden -NoProfile -Command "Start-Process -Verb RunAs powershell.exe -ArgumentList \"-NoExit -Command Push-Location \\\"\"%V/\\\"\"\"' -PropertyType String -Force | Out-Null
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System' -Name 'EnableLinkedConnections' -Value 1 -PropertyType DWord -Force | Out-Null
-Write-Host "Explorer: Added 'Open with PowerShell (Admin)' - Right Click Context Menu (Preference)" -ForegroundColor Green
+Write-Host "Explorer: Added 'Open with PowerShell (Admin)' - Right Click Context Menu" -ForegroundColor Green
+
+# Add "Run as Different User" to Right Click Context Menu
+Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\exefile\shell\runasuser' -Name 'Extended' -Force | Out-Null
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\exefile\shell\runasuser' -Name 'Icon' -Value 'imageres.dll,-5203' -PropertyType String -Force | Out-Null
+Write-Host "File Explorer: Added 'Run as different user' - Right Click Context Menu" -ForegroundColor Green
+
+# Add "Copy as Path" to Right Click Context Menu
+if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell\windows.copyaspath") -ne $true) {  New-Item "HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell\windows.copyaspath" -Force | Out-Null }
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell\windows.copyaspath' -Name '(default)' -Value 'Copy &as path' -PropertyType String -Force | Out-Null
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell\windows.copyaspath' -Name 'InvokeCommandOnSelection' -Value 1 -PropertyType DWord -Force | Out-Null
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell\windows.copyaspath' -Name 'VerbHandler' -Value '{f3d06e7c-1e45-4a26-847e-f9fcdee59be0}' -PropertyType String -Force | Out-Null
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell\windows.copyaspath' -Name 'VerbName' -Value 'copyaspath' -PropertyType String -Force | Out-Null
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell\windows.copyaspath' -Name 'Icon' -Value 'imageres.dll,-5302' -PropertyType String -Force | Out-Null
+Write-Host "File Explorer: Added 'Copy as Path' - Right Click Context Menu" -ForegroundColor Green
+
+Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSyncProviderNotifications" -Value "0" -Force | Out-Null
+Write-Host "Explorer: Disable Info/Ads in File Explorer" -ForegroundColor Green
+
+if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games") -ne $true) {  New-Item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games" -Force | Out-Null }
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games' -Name 'GPU Priority' -Value 8 -PropertyType DWord -Force | Out-Null
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games' -Name 'Priority' -Value 6 -PropertyType DWord -Force | Out-Null
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games' -Name 'Scheduling Category' -Value 'High' -PropertyType String -Force | Out-Null
+Write-Host "Windows: Updating 'MMCSS' to prioritize games with higher system resources" -ForegroundColor Green
+
+if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile") -ne $true) {  New-Item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile" -Force | Out-Null }
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile' -Name 'NetworkThrottlingIndex' -Value -1 -PropertyType DWord -Force | Out-Null
+Write-Host "Network: Disabled Acceleration" -ForegroundColor Green
+
+if((Test-Path -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power") -ne $true) {  New-Item "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power" -Force | Out-Null }
+New-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power' -Name 'HiberbootEnabled' -Value 0 -PropertyType DWord -Force | Out-Null
+Write-Host "Windows: Disabled Fast Startup - Restored 'Fresh' Reboot" -ForegroundColor Green
+
+if((Test-Path -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management") -ne $true) {  New-Item "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" -Force | Out-Null }
+New-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' -Name 'ClearPageFileAtShutdown' -Value 1 -PropertyType DWord -Force | Out-Null
+Write-Host "Windows: Set paging file to clear at Shutdown" -ForegroundColor Green
+
+# Source: https://www.thewindowsclub.com/disable-windows-10-startup-delay-startupdelayinmsec (Default=10, New Default=0)
+if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Serialize") -ne $true) {New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Serialize" -Force | Out-Null}
+New-ItemProperty -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Serialize" -Name "StartupDelayInMSec" -Value "5" -PropertyType DWord -Force | Out-Null
+Set-ItemProperty -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Serialize" -Name "StartupDelayInMSec" -Value "5" -Force | Out-Null
+Write-Host "Windows: Reduced Startup Delay" -ForegroundColor Green
+
+
+
+
+
+
+
+if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Classes\*\shell\pintohomefile") -ne $true) {  New-Item "HKLM:\SOFTWARE\Classes\*\shell\pintohomefile" -Force | Out-Null }
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\*\shell\pintohomefile' -Name 'ProgrammaticAccessOnly' -Value '' -PropertyType String -Force | Out-Null
+Write-Host "File Explorer: Removed 'Add to Favorites' - Right Click Context Menu" -ForegroundColor Green
+
+#Source: https://www.elevenforum.com/t/enable-or-disable-store-activity-history-on-device-in-windows-11.7812/ #Note: Potentially needed for InTune
+if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System") -ne $true) {  New-Item "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Force | Out-Null }
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'PublishUserActivities' -Value 0 -PropertyType DWord -Force | Out-Null
+Write-Host "File Explorer: Disabled Activity Log" -ForegroundColor Green
+
+Set-Itemproperty -Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules" -Name "NumberOfSIUFInPeriod" -Value "0" -Force | Out-Null
+Set-Itemproperty -Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules" -Name "PeriodInNanoSeconds" -Value "0" -Force | Out-Null
+Set-Itemproperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "DoNotShowFeedbackNotifications" -Value "1" -Force | Out-Null
+Write-Host "File Explorer: Disabled Feedback Notifications" -ForegroundColor Green
+
+
+
+# Sticky Keys
+if((Test-Path -LiteralPath "HKCU:\Control Panel\Accessibility\StickyKeys") -ne $true) {  New-Item "HKCU:\Control Panel\Accessibility\StickyKeys" -Force | Out-Null }
+New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Accessibility\StickyKeys' -Name 'Flags' -Value '506' -PropertyType String -Force | Out-Null
+# Filter Keys
+if((Test-Path -LiteralPath "HKCU:\Control Panel\Accessibility\ToggleKeys") -ne $true) {  New-Item "HKCU:\Control Panel\Accessibility\ToggleKeys" -Force | Out-Null }
+New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Accessibility\ToggleKeys' -Name 'Flags' -Value '58' -PropertyType String -Force | Out-Null
+Write-Host "Windows: Disabled Filter & Sticky Keys" -ForegroundColor Green
+
+Set-Itemproperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat" -Name "DisableUAR" -Value "1" -Force | Out-Null
+Write-Host "Windows: Disabled Troubleshooting 'Steps Recorder'" -ForegroundColor Green
+
+# Source: https://www.majorgeeks.com/content/page/irpstacksize.html (Default 15-20 connections, increased to 50)
+if((Test-Path -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters") -ne $true) {  New-Item "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"  -Force | Out-Null }
+New-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters' -Name 'IRPStackSize' -Value 48 -PropertyType DWord -Force | Out-Null
+Write-Host "Network: Increased Performance for 'I/O Request Packet Stack Size" -ForegroundColor Green
+
+
+
+Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -name "fDenyTSConnections" -value "0" -Force | Out-Null
+Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+Write-Host "Remote Desktop: Enabled" -ForegroundColor Green
+
+Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Force | Out-Null
+New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications" -PropertyType "Dword" -Name "ToastEnabled" -Value "0" | Out-Null
+Write-host "Windows: Disabled Toast Notifications" -ForegroundColor Green
+
+New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -PropertyType "Dword" -Name "ShowTaskViewButton" -Value "0" | Out-Null
+Write-host "Start Menu/Taskbar: Removed 'Task View' Button" -ForegroundColor Green
+
+New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "SearchBoxTaskbarMode" -Value "0" -Type "DWord" -Force | Out-Null
+Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "SearchBoxTaskbarMode" -Value "0" -Type "DWord" -Force | Out-Null
+Write-host "Start Menu/Taskbar: Removed 'Search' Button" -ForegroundColor Green
+
+
+
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Value "0" | Out-Null
+Write-Host "Explorer: Enabled Display of Known File Extensions" -ForegroundColor Green
+
+if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer") -ne $true) {  New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Force }
+New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer' -Name 'ShowFrequent' -Value "0" -PropertyType DWord -Force | Out-Null
+Write-Host "Explorer: Disabled 'Recent Folders' in Quick Access" -ForegroundColor Green
+
+
+
+
+
 
 # Disable 'High Precision Event Timer' to prevent input lag/delays
 bcdedit /deletevalue useplatformclock
 bcdedit /set useplatformtick yes
 bcdedit /set disabledynamictick yes
-Write-Host "Disabled 'High Precision Event Timer' - Formerly Multimedia Timer (Performance)" -ForegroundColor Green
+Write-Host "Disabled 'High Precision Event Timer' - Formerly Multimedia Timer" -ForegroundColor Green
 
-if((Test-Path -LiteralPath "HKCU:\Control Panel\Desktop") -ne $true) {  New-Item "HKCU:\Control Panel\Desktop" -Force | Out-Null}
-if((Test-Path -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Control") -ne $true) {  New-Item "HKLM:\SYSTEM\CurrentControlSet\Control" -Force | Out-Null }
+if((Test-Path -LiteralPath "HKCU:\Control Panel\Desktop") -ne $true) {New-Item "HKCU:\Control Panel\Desktop" -Force | Out-Null}
+if((Test-Path -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Control") -ne $true) {New-Item "HKLM:\SYSTEM\CurrentControlSet\Control" -Force | Out-Null}
 New-ItemProperty -LiteralPath "HKCU:\Control Panel\Desktop" -Name 'ForegroundLockTimeout' -Value 0 -PropertyType DWord -Force | Out-Null
 New-ItemProperty -LiteralPath "HKCU:\Control Panel\Desktop" -Name 'HungAppTimeout' -Value '400' -PropertyType String -Force | Out-Null
 New-ItemProperty -LiteralPath "HKCU:\Control Panel\Desktop" -Name 'WaitToKillAppTimeout' -Value '500' -PropertyType String -Force | Out-Null
 New-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Control' -Name 'WaitToKillServiceTimeout' -Value '500' -PropertyType String -Force | Out-Null
-Write-Host "Windows: Enabled Faster Shutdown (Performance)" -ForegroundColor Green
+Write-Host "Windows: Enabled Faster Shutdown" -ForegroundColor Green
 
 if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer") -ne $true) {  New-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Force | Out-Null }
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer' -Name 'ShowDriveLettersFirst' -Value 4 -PropertyType DWord -Force | Out-Null
-Write-Host "Explorer: Drive letters PRE drive label [Example: '(C:) Windows vs. Windows (C:)]' (Preference)" -ForegroundColor Green
+Write-Host "Explorer: Drive letters PRE drive label [Example: '(C:) Windows vs. Windows (C:)]'" -ForegroundColor Green
 
 # MarkC's Mouse Acceleration Fix (DPI 100% Scale - Default)
 # Source: http://donewmouseaccel.blogspot.com/
@@ -792,84 +806,94 @@ $MouseSensitivity = (Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "M
 IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity").MouseSensitivity -eq 1) {
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x94,0x1E,0x05,0x00,0x00,0x00,0x00,0x00,0x28,0x3D,0x0A,0x00,0x00,0x00,0x00,0x00,0xBC,0x5B,0x0F,0x00,0x00,0x00,0x00,0x00,0x50,0x7A,0x14,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xEC,0xFF,0xDF,0x00,0x00,0x00,0x00,0x00,0xD8,0xFF,0xBF,0x01,0x00,0x00,0x00,0x00,0xC4,0xFF,0x9F,0x02,0x00,0x00,0x00,0x00,0xB0,0xFF,0x7F,0x03,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
-	Write-Host "Mouse: 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity.  (Performance/Preference)" -ForegroundColor Yellow;Start-Sleep 5
+	Write-Host "Mouse: 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Yellow;Start-Sleep 5
 }
 <# Mouse Speed 2 (Windows Setting) #>
 IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity").MouseSensitivity -eq 2) {
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xAE,0x1E,0x05,0x00,0x00,0x00,0x00,0x00,0x5C,0x3D,0x0A,0x00,0x00,0x00,0x00,0x00,0x0A,0x5C,0x0F,0x00,0x00,0x00,0x00,0x00,0xB8,0x7A,0x14,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0xFF,0x6F,0x00,0x00,0x00,0x00,0x00,0xFE,0xFF,0xDF,0x00,0x00,0x00,0x00,0x00,0xFD,0xFF,0x4F,0x01,0x00,0x00,0x00,0x00,0xFC,0xFF,0xBF,0x01,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
-	Write-Host "Mouse: 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity.  (Performance/Preference)" -ForegroundColor Yellow;Start-Sleep 5
+	Write-Host "Mouse: 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Yellow;Start-Sleep 5
 }
 <# Mouse Speed 3 (Windows Setting) #>
 IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity").MouseSensitivity -eq 3) {
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xFC,0xD6,0x03,0x00,0x00,0x00,0x00,0x00,0xF8,0xAD,0x07,0x00,0x00,0x00,0x00,0x00,0xF4,0x84,0x0B,0x00,0x00,0x00,0x00,0x00,0xF0,0x5B,0x0F,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
 New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0xFF,0x37,0x00,0x00,0x00,0x00,0x00,0xFE,0xFF,0x6F,0x00,0x00,0x00,0x00,0x00,0xFD,0xFF,0xA7,0x00,0x00,0x00,0x00,0x00,0xFC,0xFF,0xDF,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
-	Write-Host "Mouse: 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity.  (Performance/Preference)" -ForegroundColor Yellow;Start-Sleep 5
+	Write-Host "Mouse: 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Yellow;Start-Sleep 5
 }
 <# Mouse Speed 4 (Windows Setting) #>
 IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity").MouseSensitivity -eq 4) {
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xAE,0x1E,0x05,0x00,0x00,0x00,0x00,0x00,0x5C,0x3D,0x0A,0x00,0x00,0x00,0x00,0x00,0x0A,0x5C,0x0F,0x00,0x00,0x00,0x00,0x00,0xB8,0x7A,0x14,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
 New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x38,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x70,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xA8,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xE0,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
-	Write-Host "Mouse: 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity.  (Performance/Preference)" -ForegroundColor Yellow;Start-Sleep 5
+	Write-Host "Mouse: 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Yellow;Start-Sleep 5
 }
 <# Mouse Speed 5 (Windows Setting) #>
 IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity").MouseSensitivity -eq 5) {
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x60,0x66,0x06,0x00,0x00,0x00,0x00,0x00,0xC0,0xCC,0x0C,0x00,0x00,0x00,0x00,0x00,0x20,0x33,0x13,0x00,0x00,0x00,0x00,0x00,0x80,0x99,0x19,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x38,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x70,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xA8,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xE0,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
-	Write-Host "Mouse: 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity.  (Performance/Preference)" -ForegroundColor Yellow;Start-Sleep 5
+	Write-Host "Mouse: 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Yellow;Start-Sleep 5
 }
 <# Mouse Speed 6 (Windows Setting) #>
 IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity").MouseSensitivity -eq 6) {
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x04,0xAE,0x07,0x00,0x00,0x00,0x00,0x00,0x08,0x5C,0x0F,0x00,0x00,0x00,0x00,0x00,0x0C,0x0A,0x17,0x00,0x00,0x00,0x00,0x00,0x10,0xB8,0x1E,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xF9,0xFF,0x37,0x00,0x00,0x00,0x00,0x00,0xF2,0xFF,0x6F,0x00,0x00,0x00,0x00,0x00,0xEB,0xFF,0xA7,0x00,0x00,0x00,0x00,0x00,0xE4,0xFF,0xDF,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force
-	Write-Host "Mouse: 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity.  (Performance/Preference)" -ForegroundColor Yellow;Start-Sleep 5
+	Write-Host "Mouse: 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Yellow;Start-Sleep 5
 }
 <# Mouse Speed 7 (Windows Setting) #>
 IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity").MouseSensitivity -eq 7) {
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xB6,0xF5,0x08,0x00,0x00,0x00,0x00,0x00,0x6C,0xEB,0x11,0x00,0x00,0x00,0x00,0x00,0x22,0xE1,0x1A,0x00,0x00,0x00,0x00,0x00,0xD8,0xD6,0x23,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xFA,0xFF,0x37,0x00,0x00,0x00,0x00,0x00,0xF4,0xFF,0x6F,0x00,0x00,0x00,0x00,0x00,0xEE,0xFF,0xA7,0x00,0x00,0x00,0x00,0x00,0xE8,0xFF,0xDF,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
-	Write-Host "Mouse: 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity.  (Performance/Preference)" -ForegroundColor Yellow;Start-Sleep 5
+	Write-Host "Mouse: 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Yellow;Start-Sleep 5
 }
 <# Mouse Speed 8 (Windows Setting) #>
 IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity").MouseSensitivity -eq 8) {
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x5C,0x3D,0x0A,0x00,0x00,0x00,0x00,0x00,0xB8,0x7A,0x14,0x00,0x00,0x00,0x00,0x00,0x14,0xB8,0x1E,0x00,0x00,0x00,0x00,0x00,0x70,0xF5,0x28,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x38,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x70,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xA8,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xE0,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
-	Write-Host "Mouse: 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity.  (Performance/Preference)" -ForegroundColor Yellow;Start-Sleep 5
+	Write-Host "Mouse: 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Yellow;Start-Sleep 5
 }
 <# Mouse Speed 9 (Windows Setting) #>
 IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity").MouseSensitivity -eq 9) {
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x0E,0x85,0x0B,0x00,0x00,0x00,0x00,0x00,0x1C,0x0A,0x17,0x00,0x00,0x00,0x00,0x00,0x2A,0x8F,0x22,0x00,0x00,0x00,0x00,0x00,0x38,0x14,0x2E,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x38,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x70,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xA8,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xE0,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
-	Write-Host "Mouse: 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity.  (Performance/Preference)" -ForegroundColor Yellow;Start-Sleep 5
+	Write-Host "Mouse: 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Yellow;Start-Sleep 5
 }
 <# Mouse Speed 10 (Windows Setting) [Default Setting] #>
 IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity").MouseSensitivity -eq 10) {
-		New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xC0,0xCC,0x0C,0x00,0x00,0x00,0x00,0x00,0x80,0x99,0x19,0x00,0x00,0x00,0x00,0x00,0x40,0x66,0x26,0x00,0x00,0x00,0x00,0x00,0x00,0x33,0x33,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
-		New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x38,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x70,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xA8,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xE0,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
-		Write-Host "Mouse: 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity.  (Performance/Preference)" -ForegroundColor Yellow;Start-Sleep 5
+	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xC0,0xCC,0x0C,0x00,0x00,0x00,0x00,0x00,0x80,0x99,0x19,0x00,0x00,0x00,0x00,0x00,0x40,0x66,0x26,0x00,0x00,0x00,0x00,0x00,0x00,0x33,0x33,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
+	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x38,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x70,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xA8,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xE0,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
+	Write-Host "Mouse: 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Yellow;Start-Sleep 5
 }
 
 if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced") -ne $true) {New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -force | Out-Null}
 New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'LaunchTo' -Value "1" -PropertyType DWord -Force | Out-Null
-Write-Host "Explorer: Set Explorer to open with 'This PC' instead of 'Most Recent' (Preference)" -ForegroundColor Green
+Write-Host "Explorer: Set Explorer to open with 'This PC' instead of 'Most Recent'" -ForegroundColor Green
 
-# Install App Installer (app)/winget
+# Remove Widgets/Install App Installer (app)/winget
 Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe | Out-Null
 winget uninstall --accept-source-agreements "Windows web experience pack" | Out-Null
-Write-Host "Explorer: Removed Widgets (Performance)" -ForegroundColor Green
+Write-Host "Explorer: Removed Widgets" -ForegroundColor Green
+
+
+
 
 #Source: https://documentation.n-able.com/N-central/userguide/Content/Automation/Policies/Diagnostics/pol_UACEnabled_Check.htm
 Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -Value "0"
-Write-Host "Explorer: User Access Control - Disabled Prompt [Administrators] (Preference)" -ForegroundColor Green
+Write-Host "Explorer: User Access Control - Disabled Prompt [Administrators]" -ForegroundColor Green
 
 Set-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System' -Name "PromptOnSecureDesktop" -Value "0"
-Write-Host "Explorer: User Access Control - Desktop Dimming Disabled (Preference)" -ForegroundColor Green
+Write-Host "Explorer: User Access Control - Desktop Dimming Disabled" -ForegroundColor Green
 
 #Set-ItemProperty -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Value "1" -Force | Out-Null
-#Write-Host "Explorer: Disabled 'Recent Files' in Explorer (Performance) [Skipped]" -ForegroundColor Yellow
+#Write-Host "Explorer: Disabled 'Recent Files' in Explorer [Skipped]" -ForegroundColor Yellow
 
 #Set-ItemProperty -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackDocs" -Value "1" -Force | Out-Null
-#Write-Host "Explorer: Disabled Recent Files/Folders in Start Menu and Explorer (Performance) [Skipped]" -ForegroundColor Yellow
+#Write-Host "Explorer: Disabled Recent Files/Folders in Start Menu and Explorer [Skipped]" -ForegroundColor Yellow
+
+New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'DisableLogonBackgroundImage' -Value "1" -PropertyType "DWord" -Force | Out-Null
+Write-Host "Explorer: Removed Background on Login Screen" -ForegroundColor Green
+
+Set-Itemproperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Name "DisableSoftLanding" -Value "1" -Force | Out-Null
+Write-Host "Windows: Disabled Tips" -ForegroundColor Green
+
 #endregion
 
 
@@ -907,14 +931,19 @@ $ActiveNetworkAdapterConverted = $ActiveNetworkAdapter.Name
 Disable-NetAdapterPowerManagement -Name "$ActiveNetworkAdapterConverted" -DeviceSleepOnDisconnect -NoRestart# | Out-Null
 Write-Host "Network: Disabled Ethernet/Wireless Power Saving Settings" -ForegroundColor Green
 
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAnimations" -Value "0" -Force | Out-Null
+Write-Host "Explorer: Disabled Start Menu/Task Bar Animations" -ForegroundColor Green
+
 Set-ItemProperty -path "HKCU:\Control Panel\Desktop" -Name "MenuShowDelay" -value "1"
-Write-Host "Start Menu: Animation Time Reduced" -ForegroundColor Green
+Write-Host "Explorer: Start Menu Animation Time Reduced" -ForegroundColor Green
 
 Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "AnimateMinimize" -Value "0"
-Write-Host "Explorer: Disabled Minimize Animation" -ForegroundColor Green
+if((Test-Path -LiteralPath "HKCU:\Control Panel\Desktop\WindowMetrics") -ne $true) {New-Item "HKCU:\Control Panel\Desktop\WindowMetrics" -Force}
+New-ItemProperty -LiteralPath "HKCU:\Control Panel\Desktop\WindowMetrics" -Name "MinAnimate" -Value "0" -PropertyType String -Force | Out-Null
+Write-Host "Explorer: Disabled Window Minimizing Animation" -ForegroundColor Green
 
 Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "AnimateWindows" -Value "0"
-Write-Host "Explorer: Disabled Windows Opening/Closing Animation" -ForegroundColor Green
+Write-Host "Explorer: Disabled Window Opening/Closing Animation" -ForegroundColor Green
 
 <#
 Set-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects' -Name 'VisualFXSetting' -Value 0
