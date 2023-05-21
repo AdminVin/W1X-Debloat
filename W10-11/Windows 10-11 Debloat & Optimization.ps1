@@ -667,7 +667,7 @@ if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Expl
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer' -Name 'ShowDriveLettersFirst' -Value 4 -PropertyType DWord -Force | Out-Null
 Write-Host "Explorer: Drive letters PRE drive label [Example: '(C:) Windows vs. Windows (C:)]'" -ForegroundColor Green
 
-#Source: https://documentation.n-able.com/N-central/userguide/Content/Automation/Policies/Diagnostics/pol_UACEnabled_Check.htm
+# Source: https://documentation.n-able.com/N-central/userguide/Content/Automation/Policies/Diagnostics/pol_UACEnabled_Check.htm
 Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -Value "0"
 Write-Host "Explorer: User Access Control - Prompt for Admins [DISABLED]" -ForegroundColor Green
 
@@ -681,6 +681,10 @@ Write-Host "Explorer: Animations - Window Minimizing [DISABLED]" -ForegroundColo
 
 Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "AnimateWindows" -Value "0"
 Write-Host "Explorer: Animations - Window Opening/Closing [DISABLED]" -ForegroundColor Green
+
+# Source: https://www.neowin.net/news/microsoft-windows-11-also-haunted-by-this-sata-bios-bug-just-like-windows-7-8-81-and-10/
+New-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Services\storahci\Parameters\Device' -Name 'TreatAsInternalPort' -Value @("0") -PropertyType MultiString -Force
+Write-Host "Explorer: 'Safely Remove and Eject Media' for Intenal Drives [DISABLED]" -ForegroundColor Green
 
 <###################################### EXPLORER TWEAKS (End) ######################################>
 
