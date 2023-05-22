@@ -683,7 +683,7 @@ Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "AnimateWindows" -Val
 Write-Host "Explorer: Animations - Window Opening/Closing [DISABLED]" -ForegroundColor Green
 
 # Source: https://www.neowin.net/news/microsoft-windows-11-also-haunted-by-this-sata-bios-bug-just-like-windows-7-8-81-and-10/
-New-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Services\storahci\Parameters\Device' -Name 'TreatAsInternalPort' -Value @("0") -PropertyType MultiString -Force
+New-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Services\storahci\Parameters\Device' -Name 'TreatAsInternalPort' -Value @("0") -PropertyType MultiString -Force | Out-Null
 Write-Host "Explorer: 'Safely Remove and Eject Media' for Intenal Drives [DISABLED]" -ForegroundColor Green
 
 <###################################### EXPLORER TWEAKS (End) ######################################>
