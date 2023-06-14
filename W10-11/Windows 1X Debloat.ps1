@@ -686,6 +686,10 @@ Write-Host "Explorer: Animations - Window Opening/Closing [DISABLED]" -Foregroun
 New-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Services\storahci\Parameters\Device' -Name 'TreatAsInternalPort' -Value @("0") -PropertyType MultiString -Force | Out-Null
 Write-Host "Explorer: 'Safely Remove and Eject Media' for Intenal Drives [DISABLED]" -ForegroundColor Green
 
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\AppHost" -Name "EnableWebContentEvaluation" -Value "0" -Force | Out-Null
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Name "EnableSmartScreen" -Value "0" -Type DWORD -Force | Out-Null
+Write-Host "Explorer: App Smart Screening [DISABLED]" -ForegroundColor Green
+
 <###################################### EXPLORER TWEAKS (End) ######################################>
 
 
