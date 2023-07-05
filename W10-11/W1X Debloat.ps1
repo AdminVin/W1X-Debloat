@@ -303,7 +303,6 @@ Write-Host "Microsoft Edge - Auto Start - Startup Entry [DISABLED]" -ForegroundC
 # Tracking
 Set-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main' -Name 'DoNotTrack' -Value '1'
 Write-Host "Microsoft Edge - Tracking [DISABLED]" -ForegroundColor Green
-# Addon IE to Edge Removal
 
 # 3.2.2 OneDrive
 $result = [System.Windows.Forms.MessageBox]::Show("Do you use OneDrive to back up your files?`n`nYes will keep OneDrive on your computer.`nNo will remove OneDrive from your computer.`n`nIf you are not sure, clicking 'Yes' will not modify any OneDrive settings.", "Confirm", [System.Windows.Forms.MessageBoxButtons]::YesNo)
