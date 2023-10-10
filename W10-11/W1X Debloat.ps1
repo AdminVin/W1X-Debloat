@@ -692,6 +692,11 @@ Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\AppHost"
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Name "EnableSmartScreen" -Value "0" -Type DWORD -Force | Out-Null
 Write-Host "Explorer: App Smart Screening [DISABLED]" -ForegroundColor Green
 
+# Source: https://www.elevenforum.com/t/add-or-remove-gallery-in-file-explorer-navigation-pane-in-windows-11.14178/
+New-Item -Path "HKCU:\Software\Classes\CLSID\{e88865ea-0e1c-4e20-9aa6-edcd0212c87c}" -Force
+New-ItemProperty -Path "HKCU:\Software\Classes\CLSID\{e88865ea-0e1c-4e20-9aa6-edcd0212c87c}" -Name "System.IsPinnedToNameSpaceTree" -Value 0 -PropertyType DWORD -Force | Out-Null
+Write-Host "Explorer: 'Gallery' Shorcut [REMOVED]" -ForegroundColor Green
+
 <###################################### EXPLORER TWEAKS (End) ######################################>
 
 
@@ -732,6 +737,15 @@ Write-Host "Start Menu: Animations - Icons [DISABLED]" -ForegroundColor Green
 
 Set-ItemProperty -path "HKCU:\Control Panel\Desktop" -Name "MenuShowDelay" -value "1"
 Write-Host "Start Menu: Animations - Appear/Load Time [REDUCED]" -ForegroundColor Green
+
+# Add 'Devices and Printers' to Start Menu
+$ShortcutPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("CommonPrograms"), "Devices & Printers.lnk")
+$WshShell = New-Object -ComObject WScript.Shell
+$Shortcut = $WshShell.CreateShortcut($ShortcutPath)
+$Shortcut.TargetPath = "shell:::{A8A91A66-3A7D-4424-8D24-04E180695C7A}"
+$Shortcut.Save()
+[System.Runtime.Interopservices.Marshal]::ReleaseComObject($WshShell) | Out-Null
+Write-Host "Start Menu: 'Devices & Printers' [ADDED]" -ForegroundColor Green
 
 <###################################### START MENU TWEAKS (End) ######################################>
 
