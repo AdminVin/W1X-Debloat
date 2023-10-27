@@ -808,6 +808,8 @@ Write-Host "Network: Increased Performance for 'I/O Request Packet Stack Size" -
 # Source: https://ttcshelbyville.wordpress.com/2017/10/14/network-throttling-index/
 if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile") -ne $true) {New-Item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile" -Force | Out-Null}
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile' -Name 'NetworkThrottlingIndex' -Value -1 -PropertyType DWord -Force | Out-Null
+if (-not (Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Psched")) {New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Psched" -Force | Out-Null}
+New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Psched" -Name "NonBestEffortLimit" -Type Dword -Value "0" | Out-Null
 Write-Host "Network: Throttling Index [DISABLED]" -ForegroundColor Green
 
 <###################################### NETWORK TWEAKS (End) ######################################>
@@ -905,6 +907,7 @@ IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity")
 # Sticky Keys
 if((Test-Path -LiteralPath "HKCU:\Control Panel\Accessibility\StickyKeys") -ne $true) {New-Item "HKCU:\Control Panel\Accessibility\StickyKeys" -Force | Out-Null}
 New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Accessibility\StickyKeys' -Name 'Flags' -Value '506' -PropertyType String -Force | Out-Null
+
 # Filter Keys
 if((Test-Path -LiteralPath "HKCU:\Control Panel\Accessibility\ToggleKeys") -ne $true) {New-Item "HKCU:\Control Panel\Accessibility\ToggleKeys" -Force | Out-Null}
 New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Accessibility\ToggleKeys' -Name 'Flags' -Value '58' -PropertyType String -Force | Out-Null
@@ -945,6 +948,13 @@ New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization\TrainedDat
 New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Input\TIPC" -Name "Enabled" -Value "0" -Force | Out-Null
 New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "HistoryViewEnabled" -Value "0" -PropertyType DWord -Force | Out-Null
 Write-Host "Windows: 'Microsoft from getting to know you' [DISABLED]" -ForegroundColor Green
+
+# Split Service Host Threshold for increased reliablity
+# Source: https://www.tenforums.com/tutorials/94628-change-split-threshold-svchost-exe-windows-10-a.html
+$RamInKB = (Get-CimInstance -ClassName Win32_PhysicalMemory | Measure-Object -Property Capacity -Sum).Sum / 1KB
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control" -Name "SvcHostSplitThresholdInKB" -Value $RamInKB -Force
+Write-Host "Windows: Reduced Service Host Threshold [UPDATED]" -ForegroundColor Green
+
 
 <###################################### WINDOWS TWEAKS (End) ######################################>
 
