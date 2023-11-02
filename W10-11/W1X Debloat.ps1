@@ -698,7 +698,7 @@ Write-Host "Explorer: 'Recent Folders' in Quick Access [DISABLED]" -ForegroundCo
 # Remove Widgets/Install App Installer (app)/winget
 Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe | Out-Null
 winget uninstall --accept-source-agreements "Windows web experience pack" | Out-Null
-Write-Host "Explorer: Widgets [DISABLED]" -ForegroundColor Green
+Write-Host "Explorer: Widgets [REMOVED]" -ForegroundColor Green
 
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'DisableLogonBackgroundImage' -Value "1" -PropertyType "DWord" -Force | Out-Null
 Write-Host "Explorer: Background on Login Screen [DISABLED]" -ForegroundColor Green
