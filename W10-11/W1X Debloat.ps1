@@ -955,6 +955,13 @@ $RamInKB = (Get-CimInstance -ClassName Win32_PhysicalMemory | Measure-Object -Pr
 Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control" -Name "SvcHostSplitThresholdInKB" -Value $RamInKB -Force
 Write-Host "Windows: Reduced Service Host Threshold [UPDATED]" -ForegroundColor Green
 
+# Windows Update Delivery Optimization - Disable sending/receiving updates from PCs on local network.
+# Source: https://www.elevenforum.com/t/turn-on-or-off-windows-update-delivery-optimization-in-windows-11.3136
+if((Test-Path -LiteralPath "Registry::\HKEY_USERS\S-1-5-20\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Settings") -ne $true) {New-Item "Registry::\HKEY_USERS\S-1-5-20\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Settings" -Force | Out-Null}
+New-ItemProperty -LiteralPath 'Registry::\HKEY_USERS\S-1-5-20\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Settings' -Name 'DownloadMode' -Value "0" -PropertyType DWord -Force | Out-Null
+Set-ItemProperty -LiteralPath 'Registry::\HKEY_USERS\S-1-5-20\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Settings' -Name 'DownloadMode' -Value "0" -Force | Out-Null
+Write-Host "Windows: Update Delivery Optimization - Direct Download [UPDATED]" -ForegroundColor Green
+
 
 <###################################### WINDOWS TWEAKS (End) ######################################>
 
