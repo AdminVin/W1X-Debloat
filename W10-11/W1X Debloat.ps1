@@ -696,6 +696,7 @@ New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\E
 Write-Host "Explorer: 'Recent Folders' in Quick Access [DISABLED]" -ForegroundColor Green
 
 # Remove Widgets/Install App Installer (app)/winget
+# Reinstall Source: https://apps.microsoft.com/detail/windows-web-experience-pack/9MSSGKG348SP?hl=en-us&gl=US
 Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe | Out-Null
 winget uninstall --accept-source-agreements "Windows web experience pack" | Out-Null
 Write-Host "Explorer: Widgets [REMOVED]" -ForegroundColor Green
