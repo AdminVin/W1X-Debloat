@@ -692,11 +692,11 @@ $result = [System.Windows.Forms.MessageBox]::Show("Do you use Microsoft Co-Pilot
 if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
 	New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Force | Out-Null
 	Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Name "TurnOffWindowsCopilot" -Value "1" -Force | Out-Null
-	Write-Host "Explorer: Microsoft Co-Pilot [DISABLED]" -ForegroundColor Yellow
+	Write-Host "Microsoft Co-Pilot [DISABLED]" -ForegroundColor Yellow
 } else {
 	New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Force | Out-Null
 	Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Name "TurnOffWindowsCopilot" -Value "0" -Force | Out-Null
-	Write-Host "Explorer: Microsoft Co-Pilot [ENABLED]" -ForegroundColor Yellow
+	Write-Host "Microsoft Co-Pilot [ENABLED]" -ForegroundColor Yellow
 }
 
 
