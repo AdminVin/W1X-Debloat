@@ -425,127 +425,74 @@ Write-Host "Official Website: https://learn.microsoft.com/en-us/sysinternals/" -
 
 
 <#############################################################################################################################>
-# 4.0 - Services and Scheduled Tasks
+#region 4.0 - Services and Scheduled Tasks
 Write-Host "`n`n4.0 - Services and Scheduled Tasks" -ForegroundColor Green
-
-#region Windows 10 - Services and Scheduled Tasks
-if((Get-WMIObject win32_operatingsystem) | Where-Object {$_.Name -like "Microsoft Windows 10*"}) 
-{
-# Services
+## Services
 Write-Host "4.1 Services" -ForegroundColor Green
-Get-Service Diagtrack,Fax,PhoneSvc,WMPNetworkSvc,DmwApPushService,WpcMonSvc | Stop-Service | Set-Service -StartupType Disabled
-# Scheduled Tasks
+# Services - Disable
+$services = @(
+    "MapsBroker",						# Bing Downloaded Maps Manager
+    "autotimesvc",						# Celluar Time
+    "WpcMonSvc",						# Parental Controls
+    "PhoneSvc",							# Phone Service
+    "WPDBusEnum",						# Portable Device Enumerator Service
+    "PcaSvc",							# Program Compatibility Assistant Service
+    "RemoteRegistry",					# Remote Registry
+    "RetailDemo",						# Retail Demo
+    "Themes",							# Themes
+    "wisvc",							# Windows Insider Service
+    "icssvc",							# Windows Mobile Hotspot Service
+    "DiagTrack",						# Windows Connected User Experiences and Telemetry (InTune related / Does not break sync)
+	"WerSvc",							# Windows Error Reporting Service
+    "WMPNetworkSvc",					# Windows Media Player Network Share
+    "MixedRealityOpenXRSvc",			# Windows Mixed Reality OpenXR Service
+    "WpnService",						# Windows Push Notification System Service
+    "CscService"						# Windows Offline Files
+)
+
+foreach ($service in $services) {
+    $serviceName = (Get-Service $service).DisplayName
+    Get-Service $service | Stop-Service | Out-Null
+    Get-Service $service | Set-Service -StartupType Disabled | Out-Null
+    Write-Host "Service: $serviceName [DISABLED]" -ForegroundColor Green
+}
+# Services - Set to Manual
+$services = @(
+    "BTAGService",						# Bluetooth (Setting to Manual in the event BT is used.)
+    "bthserv"							# Bluetooth (Setting to Manual in the event BT is used.)
+)
+
+foreach ($service in $services) {
+    $serviceName = (Get-Service $service).DisplayName
+    Get-Service $service | Stop-Service | Out-Null
+    Get-Service $service | Set-Service -StartupType Manual | Out-Null
+    Write-Host "Service: $serviceName [Set to Manual]" -ForegroundColor Green
+}
+
+
+## Scheduled Tasks
 Write-Host "4.2 Scheduled Tasks" -ForegroundColor Green
-Get-Scheduledtask "UpdateLibrary" | Disable-ScheduledTask | Out-Null
-Get-Scheduledtask "Proxy" | Disable-ScheduledTask | Out-Null 
-Get-Scheduledtask "SmartScreenSpecific" | Disable-ScheduledTask | Out-Null 
-Get-Scheduledtask "Microsoft Compatibility Appraiser" | Disable-ScheduledTask | Out-Null 
-Get-Scheduledtask "Consolidator" | Disable-ScheduledTask | Out-Null 
-Get-Scheduledtask "KernelCeipTask" | Disable-ScheduledTask | Out-Null 
-Get-Scheduledtask "UsbCeip" | Disable-ScheduledTask | Out-Null 
-Get-Scheduledtask "Microsoft-Windows-DiskDiagnosticDataCollector" | Disable-ScheduledTask | Out-Null #Required for InTune
-Get-Scheduledtask "GatherNetworkInfo" | Disable-ScheduledTask | Out-Null  #Required for InTune
-Get-Scheduledtask "QueueReporting" | Disable-ScheduledTask | Out-Null 
-}
-else {
-#Write-Host "Windows 11 Detected, Skipping."
-}
-#endregion
-
-
-#region Windows 11 - Services and Scheduled Tasks
-if((Get-WMIObject win32_operatingsystem) | Where-Object {$_.Name -like "Microsoft Windows 11*"}) 
-{
-# Services
-Write-Host "4.1 Services" -ForegroundColor Green
-# Bing Downloaded Maps Manager
-Get-Service "MapsBroker" | Stop-Service | Out-Null
-Get-Service "MapsBroker" | Set-Service -StartupType Disabled | Out-Null
-Write-Host "Bing Downloaded Maps Manager [DISABLED]" -ForegroundColor Green
-# Bluetooth (Setting to Manual in the event BT is used.)
-Get-Service "BTAGService" | Stop-Service | Out-Null
-Get-Service "BTAGService" | Set-Service -StartupType Manual | Out-Null
-Get-Service "bthserv" | Stop-Service | Out-Null
-Get-Service "bthserv" | Set-Service -StartupType Manual | Out-Null
-Write-Host "Set to Manual: Bluetooth" -ForegroundColor Green
-# Celluar Time
-Get-Service "autotimesvc" | Stop-Service | Out-Null
-Get-Service "autotimesvc" | Set-Service -StartupType Disabled | Out-Null
-Write-Host "Celluar Time [DISABLED]" -ForegroundColor Green
-# Parental Controls
-Get-Service "WpcMonSvc" | Stop-Service | Out-Null
-Get-Service "WpcMonSvc" | Set-Service -StartupType Disabled | Out-Null
-Write-Host "Parental Controls [DISABLED]" -ForegroundColor Green
-# Phone Service
-Get-Service "PhoneSvc" | Stop-Service | Out-Null
-Get-Service "PhoneSvc" | Set-Service -StartupType Disabled | Out-Null
-Write-Host "Phone Service [DISABLED]" -ForegroundColor Green
-# Portable Device Enumerator Service
-Get-Service "WPDBusEnum" | Stop-Service | Out-Null
-Get-Service "WPDBusEnum" | Set-Service -StartupType Disabled | Out-Null
-Write-Host "Portable Device Enumeration Service [DISABLED]" -ForegroundColor Green
-# Program Compatibility Assistant Service
-Get-Service "PcaSvc" | Stop-Service | Out-Null
-Get-Service "PcaSvc" | Set-Service -StartupType Disabled | Out-Null
-Write-Host "Program Compatibility Assistant Service [DISABLED]" -ForegroundColor Green
-# Remote Registry
-Get-Service "RemoteRegistry" | Stop-Service | Out-Null
-Get-Service "RemoteRegistry" | Set-Service -StartupType Disabled | Out-Null
-Write-Host "Remote Registry (Security Increased) [DISABLED]" -ForegroundColor Green
-# Retail Demo
-Get-Service "RetailDemo" | Stop-Service | Out-Null
-Get-Service "RetailDemo" | Set-Service -StartupType Disabled | Out-Null
-Write-Host "Retail Demo [DISABLED]" -ForegroundColor Green
-# Themes
-Get-Service "Themes" | Stop-Service | Out-Null
-Get-Service "Themes" | Set-Service -StartupType Disabled | Out-Null
-Write-Host "Touch Keyboard and Handwritting Panel [DISABLED]" -ForegroundColor Green
-# Windows Insider Service
-Get-Service "wisvc" | Stop-Service | Out-Null
-Get-Service "wisvc" | Set-Service -StartupType Disabled | Out-Null
-Write-Host "Windows Insider Service [DISABLED]" -ForegroundColor Green
-# Windows Mobile Hotspot Service
-Get-Service "icssvc" | Stop-Service | Out-Null
-Get-Service "icssvc" | Set-Service -StartupType Disabled | Out-Null
-Write-Host "Windows Mobile Hotspot Service [DISABLED]" -ForegroundColor Green
-# Windows Connected User Experiences and Telemetry #InTune
-Get-Service "DiagTrack" | Stop-Service | Out-Null
-Get-Service "DiagTrack" | Set-Service -StartupType Disabled | Out-Null
-Write-Host "Windows Connected User Experiences and Telemetry [DISABLED]" -ForegroundColor Green
-# Windows Media Player Network Share
-Get-Service "WMPNetworkSvc" | Stop-Service | Out-Null
-Get-Service "WMPNetworkSvc" | Set-Service -StartupType Disabled | Out-Null
-Write-Host "Windows Media Player Network Share [DISABLED]" -ForegroundColor Green
-# Windows Mixed Reality OpenXR Service
-Get-Service "MixedRealityOpenXRSvc" | Stop-Service | Out-Null
-Get-Service "MixedRealityOpenXRSvc" | Set-Service -StartupType Disabled | Out-Null
-Write-Host "Windows Mixed Reality OpenXR Service [DISABLED]" -ForegroundColor Green
-# Windows Offline Files
-Get-Service "CscService" | Stop-Service | Out-Null
-Get-Service "CscService" | Set-Service -StartupType Disabled | Out-Null
-Write-Host "Windows Offline Files [DISABLED]" -ForegroundColor Green
-
-# Scheduled Tasks
-Write-Host "4.2 Scheduled Tasks" -ForegroundColor Green
-Get-Scheduledtask "Proxy" | Disable-ScheduledTask | Out-Null
-Get-Scheduledtask "SmartScreenSpecific" | Disable-ScheduledTask | Out-Null
-Get-Scheduledtask "Microsoft Compatibility Appraiser" | Disable-ScheduledTask | Out-Null
-Get-Scheduledtask "Consolidator" | Disable-ScheduledTask | Out-Null
-Get-Scheduledtask "KernelCeipTask" | Disable-ScheduledTask | Out-Null
-Get-Scheduledtask "UsbCeip" | Disable-ScheduledTask | Out-Null
-Get-Scheduledtask "Microsoft-Windows-DiskDiagnosticDataCollector" | Disable-ScheduledTask | Out-Null
-Get-Scheduledtask "GatherNetworkInfo" | Disable-ScheduledTask | Out-Null
-Get-Scheduledtask "QueueReporting" | Disable-ScheduledTask | Out-Null
-Get-Scheduledtask "UpdateLibrary" | Disable-ScheduledTask | Out-Null
-Get-Scheduledtask "Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser" | Disable-ScheduledTask | Out-Null
-Get-Scheduledtask "Microsoft\Windows\Application Experience\ProgramDataUpdater" | Disable-ScheduledTask | Out-Null
-Get-Scheduledtask "Microsoft\Windows\Autochk\Proxy" | Disable-ScheduledTask | Out-Null
-Get-Scheduledtask "Microsoft\Windows\Customer Experience Improvement Program\Consolidator" | Disable-ScheduledTask | Out-Null
-Get-Scheduledtask "Microsoft\Windows\Customer Experience Improvement Program\UsbCeip" | Disable-ScheduledTask | Out-Null
-Get-Scheduledtask "Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector" | Disable-ScheduledTask | Out-Null
-}
-else {
-#Write-Host "Windows 10 Detected, Skipping."
+$tasks = @(
+    "Proxy",
+    "SmartScreenSpecific",
+    "Microsoft Compatibility Appraiser",
+    "Consolidator",
+    "KernelCeipTask",
+    "UsbCeip",
+    "Microsoft-Windows-DiskDiagnosticDataCollector",
+    "GatherNetworkInfo",
+    "QueueReporting",
+    "UpdateLibrary",
+    "Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser",
+    "Microsoft\Windows\Application Experience\ProgramDataUpdater",
+    "Microsoft\Windows\Autochk\Proxy",
+    "Microsoft\Windows\Customer Experience Improvement Program\Consolidator",
+    "Microsoft\Windows\Customer Experience Improvement Program\UsbCeip",
+    "Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector"
+)
+foreach ($task in $tasks) {
+    Disable-ScheduledTask -TaskName $task | Out-Null
+    Write-Host "Task: '$task' [DISABLED]" -ForegroundColor Green
 }
 #endregion
 
