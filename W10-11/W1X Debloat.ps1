@@ -305,7 +305,7 @@ Set-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\M
 Write-Host "Microsoft Edge - Tracking [DISABLED]" -ForegroundColor Green
 
 # 3.2.2 OneDrive
-$result = [System.Windows.Forms.MessageBox]::Show("Do you use OneDrive to back up your files?`n`nYes will keep OneDrive on your computer.`nNo will remove OneDrive from your computer.`n`nIf you are not sure, clicking 'Yes' will not modify any OneDrive settings.", "Confirm", [System.Windows.Forms.MessageBoxButtons]::YesNo)
+$result = [System.Windows.Forms.MessageBox]::Show("Do you use OneDrive to back up your files?`n`n`nYes will keep OneDrive on your computer.`n`nNo will remove OneDrive from your computer.`n`n`n`nIf you are not sure, clicking 'Yes' will not modify any OneDrive settings.", "One Drive (Prompt 1/3)", [System.Windows.Forms.MessageBoxButtons]::YesNo)
 
 if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
 	Write-Host "3.2.2 Microsoft One Drive Removal [Skipped]" -ForegroundColor Yellow
@@ -472,28 +472,80 @@ foreach ($service in $services) {
 
 ## Scheduled Tasks
 Write-Host "4.2 Scheduled Tasks" -ForegroundColor Green
-$tasks = @(
-    "Proxy",
-    "SmartScreenSpecific",
-    "Microsoft Compatibility Appraiser",
-    "Consolidator",
-    "KernelCeipTask",
-    "UsbCeip",
-    "Microsoft-Windows-DiskDiagnosticDataCollector",
-    "GatherNetworkInfo",
-    "QueueReporting",
-    "UpdateLibrary",
-    "Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser",
-    "Microsoft\Windows\Application Experience\ProgramDataUpdater",
-    "Microsoft\Windows\Autochk\Proxy",
-    "Microsoft\Windows\Customer Experience Improvement Program\Consolidator",
-    "Microsoft\Windows\Customer Experience Improvement Program\UsbCeip",
-    "Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector"
+$taskData = @(
+    @{
+        TaskName = "Proxy"
+        DisplayName = "Proxy Task"
+    },
+    @{
+        TaskName = "SmartScreenSpecific"
+        DisplayName = "SmartScreen Specific Task"
+    },
+    @{
+        TaskName = "Microsoft Compatibility Appraiser"
+        DisplayName = "Microsoft Compatibility Appraiser Task"
+    },
+    @{
+        TaskName = "Consolidator"
+        DisplayName = "Consolidator Task"
+    },
+    @{
+        TaskName = "KernelCeipTask"
+        DisplayName = "Kernel CEIP Task"
+    },
+    @{
+        TaskName = "UsbCeip"
+        DisplayName = "USB CEIP Task"
+    },
+    @{
+        TaskName = "Microsoft-Windows-DiskDiagnosticDataCollector"
+        DisplayName = "Disk Diagnostic Data Collector Task"
+    },
+    @{
+        TaskName = "GatherNetworkInfo"
+        DisplayName = "Gather Network Info Task"
+    },
+    @{
+        TaskName = "QueueReporting"
+        DisplayName = "Queue Reporting Task"
+    },
+    @{
+        TaskName = "UpdateLibrary"
+        DisplayName = "Update Library Task"
+    },
+    @{
+        TaskName = "Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser"
+        DisplayName = "Microsoft Compatibility Appraiser Task"
+    },
+    @{
+        TaskName = "Microsoft\Windows\Application Experience\ProgramDataUpdater"
+        DisplayName = "Program Data Updater Task"
+    },
+    @{
+        TaskName = "Microsoft\Windows\Autochk\Proxy"
+        DisplayName = "Proxy Task"
+    },
+    @{
+        TaskName = "Microsoft\Windows\Customer Experience Improvement Program\Consolidator"
+        DisplayName = "Consolidator Task"
+    },
+    @{
+        TaskName = "Microsoft\Windows\Customer Experience Improvement Program\UsbCeip"
+        DisplayName = "USB CEIP Task"
+    },
+    @{
+        TaskName = "Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector"
+        DisplayName = "Disk Diagnostic Data Collector Task"
+    }
 )
-foreach ($task in $tasks) {
-    Disable-ScheduledTask -TaskName $task | Out-Null
-    Write-Host "Task: '$task' [DISABLED]" -ForegroundColor Green
-}
+
+foreach ($taskInfo in $taskData) {
+    $taskName = $taskInfo.TaskName
+    $displayName = $taskInfo.DisplayName
+	Disable-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue | Out-Null
+	Write-Host "Task: '$displayName' [DISABLED]" -ForegroundColor Green
+    }
+
 #endregion
 
 <#############################################################################################################################>
@@ -687,16 +739,21 @@ New-Item -Path "HKCU:\Software\Classes\CLSID\{e88865ea-0e1c-4e20-9aa6-edcd0212c8
 New-ItemProperty -Path "HKCU:\Software\Classes\CLSID\{e88865ea-0e1c-4e20-9aa6-edcd0212c87c}" -Name "System.IsPinnedToNameSpaceTree" -Value 0 -PropertyType DWORD -Force | Out-Null
 Write-Host "Explorer: 'Gallery' Shorcut [REMOVED]" -ForegroundColor Green
 
-$result = [System.Windows.Forms.MessageBox]::Show("Do you use Microsoft Co-Pilot?`n`nYes will keep Microsoft Co-Pilot on your computer.`nNo will turn off Micrsoft Co-Pilot from your computer.`n`nIf you are not sure, clicking 'Yes' will leave Microsoft Co-Pilot as they currently are.", "Confirm", [System.Windows.Forms.MessageBoxButtons]::YesNo)
+if ((Get-WMIObject win32_operatingsystem) | Where-Object { $_.Name -like "Microsoft Windows 11*" })
+{
+$result = [System.Windows.Forms.MessageBox]::Show("Do you use Microsoft Co-Pilot?`n`n`n`nYes will keep Microsoft Co-Pilot on your computer.`n`nNo will turn off Micrsoft Co-Pilot from your computer.`n`n`n`nIf you are not sure, clicking 'Yes' will leave Microsoft Co-Pilot as they currently are.", "Co-Pilot (Prompt 2/3)", [System.Windows.Forms.MessageBoxButtons]::YesNo)
 
 if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
 	New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Force | Out-Null
 	Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Name "TurnOffWindowsCopilot" -Value "1" -Force | Out-Null
-	Write-Host "Explorer: Microsoft Co-Pilot [DISABLED]" -ForegroundColor Yellow
+	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowCopilotButton" -Value "1" | Out-Null
+	Write-Host "Explorer: Microsoft Co-Pilot [ENABLED]" -ForegroundColor Yellow
 } else {
 	New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Force | Out-Null
 	Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Name "TurnOffWindowsCopilot" -Value "0" -Force | Out-Null
-	Write-Host "Explorer: Microsoft Co-Pilot [ENABLED]" -ForegroundColor Yellow
+	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowCopilotButton" -Value "0" | Out-Null
+	Write-Host "Explorer: Microsoft Co-Pilot [DISABLED]" -ForegroundColor Yellow
+}
 }
 
 
@@ -709,7 +766,7 @@ if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
 if ((Get-WMIObject win32_operatingsystem) | Where-Object { $_.Name -like "Microsoft Windows 11*" })
 {
 #Source: https://vhorizon.co.uk/windows-11-start-menu-layout-group-policy/
-$result = [System.Windows.Forms.MessageBox]::Show("Would you like your start bar and task bar icons aligned to the left?", "Confirm", [System.Windows.Forms.MessageBoxButtons]::YesNo)
+$result = [System.Windows.Forms.MessageBox]::Show("Would you like your start bar and task bar icons aligned to the left?", "Start Bar/Task Bar (Prompt 3/3)", [System.Windows.Forms.MessageBoxButtons]::YesNo)
 if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
 	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Value "0" -Force | Out-Null
 	Write-Host "Start Menu: Alignment - Left" -ForegroundColor Green
