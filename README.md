@@ -10,8 +10,11 @@ https://github.com/AdminVin/Debloat/blob/main/W10-11/x64/W1X%20Debloat.exe
 (Select the three dots at the top right > Download)
 
 ## How to run the Cleanup?
-Right click the executable you downloaded, and select "Run as Administrator".  A small window will pop up and it will run through all the setting changes.  After it completes, restart your system for everything to take effect.
+- Right click the executable you downloaded, and select "Run as Administrator".
+- A small window will pop up and it will run through all the setting changes.  
+- After it completes, restart your system for everything to take effect.
 
 ## How can I trust you?
 The source code is provided in the GitHub and located here:
+
 https://github.com/AdminVin/Debloat/blob/main/W10-11/W1X%20Debloat.ps1
