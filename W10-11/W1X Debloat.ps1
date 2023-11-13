@@ -134,7 +134,7 @@ $Apps = @(
     "4AE8B7C2.BOOKING.COMPARTNERAPPSAMSUNGEDITION*"
 )
 foreach ($App in $Apps) {
-    Write-Host " - Removed: "$App -ForegroundColor DarkYellow
+    Write-Host " - Removed: "$App -ForegroundColor Green
     Remove-AppxPackage $App -AllUsers -ErrorAction SilentlyContinue
 }
 
@@ -184,7 +184,9 @@ Set-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\M
 Write-Host "Microsoft Edge - Tracking [DISABLED]" -ForegroundColor Green
 
 # 3.2.2 OneDrive
-$result = [System.Windows.Forms.MessageBox]::Show("Do you use OneDrive to back up your files?`n`n`nYes will keep OneDrive on your computer.`n`nNo will remove OneDrive from your computer.`n`n`n`nIf you are not sure, clicking 'Yes' will not modify any OneDrive settings.", "One Drive (Prompt 1/3)", [System.Windows.Forms.MessageBoxButtons]::YesNo)
+$ownerForm = New-Object System.Windows.Forms.Form
+$result = [System.Windows.Forms.MessageBox]::Show($ownerForm, "Do you use OneDrive to back up your files?`n`n`nYes will keep OneDrive on your computer.`n`nNo will remove OneDrive from your computer.`n`n`n`nIf you are not sure, clicking 'Yes' will not modify any OneDrive settings.", "W1X Debloat - One Drive (Prompt 1/3)", [System.Windows.Forms.MessageBoxButtons]::YesNo)
+$ownerForm.Dispose()
 
 if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
 	Write-Host "3.2.2 Microsoft One Drive Removal [Skipped]" -ForegroundColor Yellow
@@ -340,7 +342,7 @@ foreach ($service in $services) {
     $serviceName = (Get-Service $service).DisplayName
     Get-Service $service | Stop-Service | Out-Null
     Get-Service $service | Set-Service -StartupType Disabled | Out-Null
-    Write-Host "Service: $serviceName [DISABLED]" -ForegroundColor Green
+    Write-Host " - Service: $serviceName [DISABLED]" -ForegroundColor Green
 }
 # Services - Set to Manual
 $services = @(
@@ -352,7 +354,7 @@ foreach ($service in $services) {
     $serviceName = (Get-Service $service).DisplayName
     Get-Service $service | Stop-Service | Out-Null
     Get-Service $service | Set-Service -StartupType Manual | Out-Null
-    Write-Host "Service: $serviceName [Set to Manual]" -ForegroundColor Green
+    Write-Host " - Service: $serviceName [Set to Manual]" -ForegroundColor Green
 }
 
 
@@ -428,10 +430,14 @@ $taskData = @(
 foreach ($taskInfo in $taskData) {
     $taskName = $taskInfo.TaskName
     $displayName = $taskInfo.DisplayName
-	Disable-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue | Out-Null
-	Write-Host "Task: '$displayName' [DISABLED]" -ForegroundColor Green
-    }
 
+    try {
+        Disable-ScheduledTask -TaskName $taskName -ErrorAction Stop | Out-Null
+        Write-Host " - Task: '$displayName' [DISABLED]" -ForegroundColor Green
+    } catch {
+        #
+    }
+}
 #endregion
 
 <#############################################################################################################################>
@@ -482,7 +488,7 @@ New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Drive\shell\PowerShellAsAd
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Drive\shell\PowerShellAsAdmin' -Name 'Icon' -Value 'powershell.exe' -PropertyType String -Force | Out-Null
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Drive\shell\PowerShellAsAdmin\command' -Name '(default)' -Value 'powershell -WindowStyle Hidden -NoProfile -Command "Start-Process -Verb RunAs powershell.exe -ArgumentList \"-NoExit -Command Push-Location \\\"\"%V/\\\"\"\"' -PropertyType String -Force | Out-Null
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System' -Name 'EnableLinkedConnections' -Value "1" -PropertyType DWord -Force | Out-Null
-Write-Host "Explorer: 'Open with PowerShell 5.1 (Admin)' - Right Click Context Menu [ADDED]" -ForegroundColor Green #>
+Write-Host "Explorer: 'Open with PowerShell 5.1 (Admin)' - Right Click Context Menu [ADDED]" -ForegroundColor Green
 
 
 # Add "Open with Powershell 7 (Admin)" to Right Click Context Menu
@@ -622,19 +628,21 @@ Write-Host "Explorer: 'Gallery' Shorcut [REMOVED]" -ForegroundColor Green
 
 if ((Get-WMIObject win32_operatingsystem) | Where-Object { $_.Name -like "Microsoft Windows 11*" })
 {
-$result = [System.Windows.Forms.MessageBox]::Show("Do you use Microsoft Co-Pilot?`n`n`n`nYes will keep Microsoft Co-Pilot on your computer.`n`nNo will turn off Micrsoft Co-Pilot from your computer.`n`n`n`nIf you are not sure, clicking 'Yes' will leave Microsoft Co-Pilot as they currently are.", "Co-Pilot (Prompt 2/3)", [System.Windows.Forms.MessageBoxButtons]::YesNo)
-
-if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
-	New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Force | Out-Null
-	Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Name "TurnOffWindowsCopilot" -Value "1" -Force | Out-Null
-	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowCopilotButton" -Value "1" | Out-Null
-	Write-Host "Explorer: Microsoft Co-Pilot [ENABLED]" -ForegroundColor Yellow
-} else {
-	New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Force | Out-Null
-	Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Name "TurnOffWindowsCopilot" -Value "0" -Force | Out-Null
-	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowCopilotButton" -Value "0" | Out-Null
-	Write-Host "Explorer: Microsoft Co-Pilot [DISABLED]" -ForegroundColor Yellow
-}
+    $ownerForm = New-Object System.Windows.Forms.Form
+    $result = [System.Windows.Forms.MessageBox]::Show($ownerForm, "Do you use Microsoft Co-Pilot?`n`n`n`nYes will keep Microsoft Co-Pilot on your computer.`n`nNo will turn off Micrsoft Co-Pilot from your computer.`n`n`n`nIf you are not sure, clicking 'Yes' will leave Microsoft Co-Pilot settings as they currently are.", "W1X Debloat - Co-Pilot (Prompt 2/3)", [System.Windows.Forms.MessageBoxButtons]::YesNo)
+    $ownerForm.Dispose()
+    
+    if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
+        New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Force | Out-Null
+        Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Name "TurnOffWindowsCopilot" -Value "1" -Force | Out-Null
+        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowCopilotButton" -Value "1" | Out-Null
+        Write-Host "Explorer: Microsoft Co-Pilot [ENABLED]" -ForegroundColor Yellow
+    } else {
+        New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Force | Out-Null
+        Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Name "TurnOffWindowsCopilot" -Value "0" -Force | Out-Null
+        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowCopilotButton" -Value "0" | Out-Null
+        Write-Host "Explorer: Microsoft Co-Pilot [DISABLED]" -ForegroundColor Green
+    }
 }
 
 
@@ -647,7 +655,9 @@ if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
 if ((Get-WMIObject win32_operatingsystem) | Where-Object { $_.Name -like "Microsoft Windows 11*" })
 {
 #Source: https://vhorizon.co.uk/windows-11-start-menu-layout-group-policy/
-$result = [System.Windows.Forms.MessageBox]::Show("Would you like your start bar and task bar icons aligned to the left?", "Start Bar/Task Bar (Prompt 3/3)", [System.Windows.Forms.MessageBoxButtons]::YesNo)
+$ownerForm = New-Object System.Windows.Forms.Form
+$result = [System.Windows.Forms.MessageBox]::Show($ownerForm, "Would you like your start bar and task bar icons aligned to the left?", "W1X Debloat - Start Bar/Task Bar (Prompt 3/3)", [System.Windows.Forms.MessageBoxButtons]::YesNo)
+$ownerForm.Dispose()
 if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
 	Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Value "0" -Force | Out-Null
 	Write-Host "Start Menu: Alignment - Left" -ForegroundColor Green
@@ -755,52 +765,52 @@ $MouseSensitivity = (Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "M
 IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity").MouseSensitivity -eq 1) {
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x94,0x1E,0x05,0x00,0x00,0x00,0x00,0x00,0x28,0x3D,0x0A,0x00,0x00,0x00,0x00,0x00,0xBC,0x5B,0x0F,0x00,0x00,0x00,0x00,0x00,0x50,0x7A,0x14,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xEC,0xFF,0xDF,0x00,0x00,0x00,0x00,0x00,0xD8,0xFF,0xBF,0x01,0x00,0x00,0x00,0x00,0xC4,0xFF,0x9F,0x02,0x00,0x00,0x00,0x00,0xB0,0xFF,0x7F,0x03,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
-	Write-Host "Windows: Mouse 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Yellow;Start-Sleep 5
+	Write-Host "Windows: Mouse 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Green;
 }
 IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity").MouseSensitivity -eq 2) {
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xAE,0x1E,0x05,0x00,0x00,0x00,0x00,0x00,0x5C,0x3D,0x0A,0x00,0x00,0x00,0x00,0x00,0x0A,0x5C,0x0F,0x00,0x00,0x00,0x00,0x00,0xB8,0x7A,0x14,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0xFF,0x6F,0x00,0x00,0x00,0x00,0x00,0xFE,0xFF,0xDF,0x00,0x00,0x00,0x00,0x00,0xFD,0xFF,0x4F,0x01,0x00,0x00,0x00,0x00,0xFC,0xFF,0xBF,0x01,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
-	Write-Host "Windows: Mouse 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Yellow;Start-Sleep 5
+	Write-Host "Windows: Mouse 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Green;
 }
 IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity").MouseSensitivity -eq 3) {
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xFC,0xD6,0x03,0x00,0x00,0x00,0x00,0x00,0xF8,0xAD,0x07,0x00,0x00,0x00,0x00,0x00,0xF4,0x84,0x0B,0x00,0x00,0x00,0x00,0x00,0xF0,0x5B,0x0F,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
 New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xFF,0xFF,0x37,0x00,0x00,0x00,0x00,0x00,0xFE,0xFF,0x6F,0x00,0x00,0x00,0x00,0x00,0xFD,0xFF,0xA7,0x00,0x00,0x00,0x00,0x00,0xFC,0xFF,0xDF,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
-	Write-Host "Windows: Mouse 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Yellow;Start-Sleep 5
+	Write-Host "Windows: Mouse 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Green;
 }
 IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity").MouseSensitivity -eq 4) {
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xAE,0x1E,0x05,0x00,0x00,0x00,0x00,0x00,0x5C,0x3D,0x0A,0x00,0x00,0x00,0x00,0x00,0x0A,0x5C,0x0F,0x00,0x00,0x00,0x00,0x00,0xB8,0x7A,0x14,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
 New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x38,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x70,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xA8,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xE0,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
-	Write-Host "Windows: Mouse 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Yellow;Start-Sleep 5
+	Write-Host "Windows: Mouse 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Green;
 }
 IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity").MouseSensitivity -eq 5) {
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x60,0x66,0x06,0x00,0x00,0x00,0x00,0x00,0xC0,0xCC,0x0C,0x00,0x00,0x00,0x00,0x00,0x20,0x33,0x13,0x00,0x00,0x00,0x00,0x00,0x80,0x99,0x19,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x38,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x70,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xA8,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xE0,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
-	Write-Host "Windows: Mouse 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Yellow;Start-Sleep 5
+	Write-Host "Windows: Mouse 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Green;
 }
 IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity").MouseSensitivity -eq 6) {
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x04,0xAE,0x07,0x00,0x00,0x00,0x00,0x00,0x08,0x5C,0x0F,0x00,0x00,0x00,0x00,0x00,0x0C,0x0A,0x17,0x00,0x00,0x00,0x00,0x00,0x10,0xB8,0x1E,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xF9,0xFF,0x37,0x00,0x00,0x00,0x00,0x00,0xF2,0xFF,0x6F,0x00,0x00,0x00,0x00,0x00,0xEB,0xFF,0xA7,0x00,0x00,0x00,0x00,0x00,0xE4,0xFF,0xDF,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force
-	Write-Host "Windows: Mouse 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Yellow;Start-Sleep 5
+	Write-Host "Windows: Mouse 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Green;
 }
 IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity").MouseSensitivity -eq 7) {
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xB6,0xF5,0x08,0x00,0x00,0x00,0x00,0x00,0x6C,0xEB,0x11,0x00,0x00,0x00,0x00,0x00,0x22,0xE1,0x1A,0x00,0x00,0x00,0x00,0x00,0xD8,0xD6,0x23,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xFA,0xFF,0x37,0x00,0x00,0x00,0x00,0x00,0xF4,0xFF,0x6F,0x00,0x00,0x00,0x00,0x00,0xEE,0xFF,0xA7,0x00,0x00,0x00,0x00,0x00,0xE8,0xFF,0xDF,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
-	Write-Host "Windows: Mouse 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Yellow;Start-Sleep 5
+	Write-Host "Windows: Mouse 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Green;
 }
 IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity").MouseSensitivity -eq 8) {
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x5C,0x3D,0x0A,0x00,0x00,0x00,0x00,0x00,0xB8,0x7A,0x14,0x00,0x00,0x00,0x00,0x00,0x14,0xB8,0x1E,0x00,0x00,0x00,0x00,0x00,0x70,0xF5,0x28,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x38,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x70,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xA8,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xE0,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
-	Write-Host "Windows: Mouse 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Yellow;Start-Sleep 5
+	Write-Host "Windows: Mouse 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Green;
 }
 IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity").MouseSensitivity -eq 9) {
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x0E,0x85,0x0B,0x00,0x00,0x00,0x00,0x00,0x1C,0x0A,0x17,0x00,0x00,0x00,0x00,0x00,0x2A,0x8F,0x22,0x00,0x00,0x00,0x00,0x00,0x38,0x14,0x2E,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x38,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x70,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xA8,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xE0,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
-	Write-Host "Windows: Mouse 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Yellow;Start-Sleep 5
+	Write-Host "Windows: Mouse 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Green;
 }
 IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity").MouseSensitivity -eq 10) {
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseXCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xC0,0xCC,0x0C,0x00,0x00,0x00,0x00,0x00,0x80,0x99,0x19,0x00,0x00,0x00,0x00,0x00,0x40,0x66,0x26,0x00,0x00,0x00,0x00,0x00,0x00,0x33,0x33,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
 	New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'SmoothMouseYCurve' -Value ([byte[]](0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x38,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x70,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xA8,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xE0,0x00,0x00,0x00,0x00,0x00)) -PropertyType Binary -Force | Out-Null
-	Write-Host "Windows: Mouse 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Yellow;Start-Sleep 5
+	Write-Host "Windows: Mouse 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Green;
 }
 
 # Sticky Keys
@@ -985,9 +995,18 @@ Write-Host "Log file located at $LogFile" -ForegroundColor Yellow
 Write-Host " "
 Write-Host " "
 Write-Host "***************************************************************" -ForegroundColor Green
-Write-Host "*    Windows 10-11 Debloat & Optimization has completed!      *" -ForegroundColor Green
 Write-Host "*                                                             *" -ForegroundColor Green
+Write-Host "*             W1X Debloat v2.0 has finished!                  *" -ForegroundColor Green
 Write-Host "*                                                             *" -ForegroundColor Green
-Write-Host "* For all changes to take effect please reboot your computer! *" -ForegroundColor Green
 Write-Host "***************************************************************" -ForegroundColor Green
+$ownerForm = New-Object System.Windows.Forms.Form
+$result = [System.Windows.Forms.MessageBox]::Show($ownerForm, "Reboot now to apply changes?", "W1X Debloat - Reboot", [System.Windows.Forms.MessageBoxButtons]::YesNo)
+$ownerForm.Dispose()
+if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
+    Write-Host "Rebooting now!" -ForegroundColor Green
+    Restart-Computer -Force
+} else {
+    Write-Host "`n`nYou can close this window." -ForegroundColor Green
+}
+
 #endregion
