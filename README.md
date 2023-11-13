@@ -2,7 +2,9 @@
 
 
 ## What is W1X Debloat?
-W1X Debloat is a small PowerShell script that fine tunes your Windows 10 or Windows 11 installation to remove ALL bloatware.  In addition, it clears up background processes not used by most users to free up system resources giving you the best Windows experience.
+W1X Debloat is a small PowerShell script compiled into an executable for easier access.  I initially created this script for myself when I would re-image my computer and had to turn off all the annoying bloatware that Microsoft included.
+
+The script optimizes your Windows 10 or Windows 11 computer to remove all bloatware and increase performance.
 
 ## How do I get W1X Debloat?
 You can download the executable here:
