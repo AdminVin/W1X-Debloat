@@ -22,6 +22,6 @@ https://github.com/AdminVin/Debloat/blob/main/W10-11/x64/W1X%20Debloat.exe
 
 
 ## How can I trust you?
-The source code is provided in the GitHub and located here:
+The source code is provided in this repository and located here:
 
 https://github.com/AdminVin/Debloat/blob/main/W10-11/W1X%20Debloat.ps1
