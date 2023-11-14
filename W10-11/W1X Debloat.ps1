@@ -665,7 +665,7 @@ if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
 	Write-Host "Start Menu: Alignment - Left" -ForegroundColor Green
 	New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'Start_Layout' -Value "1" -PropertyType DWord -Force | Out-Null
     Set-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'Start_Layout' -Value "1" -Force | Out-Null
-Write-Host "Start Menu: Set Layout to reduce 'Recommened Apps'" -ForegroundColor Green
+Write-Host "Start Menu: Set Layout to reduce 'Recommended Apps'" -ForegroundColor Green
 } else { 
     if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced") -ne $true) {New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Force | Out-Null}
     New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Value "1" -Type Dword -Force | Out-Null
@@ -673,7 +673,7 @@ Write-Host "Start Menu: Set Layout to reduce 'Recommened Apps'" -ForegroundColor
 	Write-Host "Start Menu: Alignment - Center" -ForegroundColor Green
 	New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'Start_Layout' -Value "1" -PropertyType DWord -Force | Out-Null
     Set-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'Start_Layout' -Value "1" -Force | Out-Null
-Write-Host "Start Menu: Set Layout to reduce 'Recommened Apps'" -ForegroundColor Green
+Write-Host "Start Menu: Set Layout to reduce 'Recommended Apps'" -ForegroundColor Green
 }
 }
 
