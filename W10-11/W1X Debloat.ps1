@@ -875,6 +875,9 @@ New-ItemProperty -LiteralPath 'Registry::\HKEY_USERS\S-1-5-20\Software\Microsoft
 Set-ItemProperty -LiteralPath 'Registry::\HKEY_USERS\S-1-5-20\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Settings' -Name 'DownloadMode' -Value "0" -Force | Out-Null
 Write-Host "Windows: Update Delivery Optimization - Direct Download [UPDATED]" -ForegroundColor Green
 
+# Windows > Display 'Ease cursor Movement between displays'
+New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Cursors' -Name 'CursorDeadzoneJumpingSetting' -Value "0" -PropertyType DWord -Force | Out-Null
+Set-ItemProperty -LiteralPath 'HKCU:\Control Panel\Cursors' -Name 'CursorDeadzoneJumpingSetting' -Value "0" -PropertyType DWord -Force | Out-Null
 
 <###################################### WINDOWS TWEAKS (End) ######################################>
 
