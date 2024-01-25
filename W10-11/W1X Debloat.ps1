@@ -495,7 +495,6 @@ Write-Host "Explorer: 'Open with PowerShell 5.1 (Admin)' - Right Click Context M
 # Install PS7
 if (-not (Test-Path "C:\Program Files\PowerShell\7\pwsh.exe")) {
     New-Item -Path "C:\PSTemp" -ItemType Directory | Out-Null
-
     $PS7InstallerPath = "C:\PSTemp\PowerShell-7.3.9-win-x64.msi"  # Version 7.3.9
     $PS7InstallerURL = "https://github.com/PowerShell/PowerShell/releases/download/v7.3.8/PowerShell-7.3.9-win-x64.msi"
     Invoke-WebRequest -Uri $PS7InstallerURL -OutFile $PS7InstallerPath
