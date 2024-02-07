@@ -877,7 +877,7 @@ Write-Host "Windows: Update Delivery Optimization - Direct Download [UPDATED]" -
 
 # Windows > Display 'Ease cursor Movement between displays'
 New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Cursors' -Name 'CursorDeadzoneJumpingSetting' -Value "0" -PropertyType DWord -Force | Out-Null
-Set-ItemProperty -LiteralPath 'HKCU:\Control Panel\Cursors' -Name 'CursorDeadzoneJumpingSetting' -Value "0" -PropertyType DWord -Force | Out-Null
+Set-ItemProperty -LiteralPath 'HKCU:\Control Panel\Cursors' -Name 'CursorDeadzoneJumpingSetting' -Value "0" -Force | Out-Null
 
 <###################################### WINDOWS TWEAKS (End) ######################################>
 
