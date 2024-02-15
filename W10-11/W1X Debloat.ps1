@@ -189,6 +189,22 @@ $result = [System.Windows.Forms.MessageBox]::Show($ownerForm, "Do you use OneDri
 $ownerForm.Dispose()
 
 if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
+    if (-not (Test-Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive')) {
+        New-Item -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Force | Out-Null
+    }
+    # DisableFileSync
+    if ((Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -ErrorAction SilentlyContinue) -eq $null) {
+        New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Value 0 -PropertyType DWord -Force | Out-Null
+    } else {
+        Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Value 0 | Out-Null
+    }
+    
+    # DisableFileSyncNGSC
+    if ((Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -ErrorAction SilentlyContinue) -eq $null) {
+        New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Value 0 -PropertyType DWord -Force | Out-Null
+    } else {
+        Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Value 0 | Out-Null
+    }    
 	Write-Host "3.2.2 Microsoft One Drive Removal [Skipped]" -ForegroundColor Yellow
 } else {
 	    ## Close OneDrive (if running in background)
@@ -235,7 +251,24 @@ if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
 		reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
 		reg delete "HKEY_USERS\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v "OneDriveSetup" /f
 		reg unload "hku\Default"
-		### DISABLE ONE DRIVE FROM BEING USED ###
+		#########################################
+        ### DISABLE ONE DRIVE FROM BEING USED ###
+        #########################################
+        if (-not (Test-Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive')) {
+            New-Item -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Force | Out-Null
+        }
+        # DisableFileSync
+        if ((Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -ErrorAction SilentlyContinue) -eq $null) {
+            New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Value 1 -PropertyType DWord -Force | Out-Null
+        } else {
+            Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Value 1 | Out-Null
+        }
+        # DisableFileSyncNGSC
+        if ((Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -ErrorAction SilentlyContinue) -eq $null) {
+            New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Value 1 -PropertyType DWord -Force | Out-Null
+        } else {
+            Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Value 1 | Out-Null
+        }
 		Set-ItemProperty -Path "HKLM\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Name "DisableFileSync" -Value "1" | Out-Null
 		New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Value "1" -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
 		Write-Host "3.2.2 Microsoft One Drive [Removed]" -ForegroundColor Yellow
