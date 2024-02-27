@@ -482,7 +482,7 @@ Write-Host "`n`n5.0 Quality of Life" -ForegroundColor Green
 
 <###################################### EXPLORER TWEAKS (Start) ######################################>
 
-# Add "Take Ownership" to  Right Click Context Menu
+# Add "Take Ownership" to Right Click Context Menu
 <# Old Code
 if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Classes\*\shell\runas") -ne $true) {New-Item "HKLM:\SOFTWARE\Classes\*\shell\runas" -Force | Out-Null}
 if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Classes\*\shell\runas\command") -ne $true) {New-Item "HKLM:\SOFTWARE\Classes\*\shell\runas\command" -Force | Out-Null}
@@ -499,11 +499,36 @@ New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas\comm
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas\' -Name 'Icon' -Value 'imageres.dll,-5311' -PropertyType String -Force | Out-Null
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\*\shell\runas' -Name 'Icon' -Value 'imageres.dll,-5311' -PropertyType String -Force | Out-Null
 #>
-<# WIP
-# Removal of Old 'Take Ownership'
-Remove-Item "HKLM:\SOFTWARE\Classes\*\shell\runas" -Recurse -Force | Out-Null
-Remove-Item "HKLM:\SOFTWARE\Classes\Directory\shell\runas" -Recurse -Force | Out-Null
-#>
+# Removal of Old 'Take Ownership' (Broken)
+Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\*\shell\runas\command' -Name 'IsolatedCommand' -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\*\shell\runas\command' -Name '(default)' -Force -ErrorAction SilentlyContinue
+Remove-Item -LiteralPath "HKLM:\SOFTWARE\Classes\*\shell\runas\command" -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\*\shell\runas' -Name 'Icon' -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\*\shell\runas' -Name 'NoWorkingDirectory' -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\*\shell\runas' -Name '(default)' -Force -ErrorAction SilentlyContinue
+Remove-Item -LiteralPath "HKLM:\SOFTWARE\Classes\*\shell\runas" -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas\command' -Name 'IsolatedCommand' -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas\command' -Name '(default)' -Force -ErrorAction SilentlyContinue
+Remove-Item -LiteralPath "HKLM:\SOFTWARE\Classes\Directory\shell\runas\command" -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas' -Name 'Icon' -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas' -Name 'NoWorkingDirectory' -Force -ErrorAction SilentlyContinue
+Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas' -Name '(default)' -Force -ErrorAction SilentlyContinue
+Remove-Item -LiteralPath "HKLM:\SOFTWARE\Classes\Directory\shell\runas" -Force -ErrorAction SilentlyContinue
+# Re-Add of 'Take Ownership'
+# Create the base key for files
+$basePathFiles = "HKLM:\SOFTWARE\Classes\*\shell\TakeOwnership"
+New-Item -Path $basePathFiles -Force | Out-Null
+
+# Add the default command and icon
+New-ItemProperty -Path $basePathFiles -Name "(default)" -Value "Take Ownership" -PropertyType String -Force | Out-Null
+New-ItemProperty -Path $basePathFiles -Name "Icon" -Value "imageres.dll,-5311" -PropertyType String -Force | Out-Null
+
+# Create the command key and set the command for files
+$commandPathFiles = "$basePathFiles\command"
+New-Item -Path $commandPathFiles -Force | Out-Null
+New-ItemProperty -Path $commandPathFiles -Name "(default)" -Value "powershell.exe -command \"takeown /f \`\"%1\`\" && icacls \`\"%1\`\" /grant *S-1-5-32-544:F\"" -PropertyType String -Force | Out-Null
+
+
 #Write-Host "Explorer: 'Take Ownership' - Right Click Context Menu [ADDED]" -ForegroundColor Green
 
 Add "Open with Powershell 5.1 (Admin)" to Right Click Context Menu
