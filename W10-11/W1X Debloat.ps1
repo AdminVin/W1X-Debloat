@@ -514,21 +514,6 @@ Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas' 
 Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas' -Name 'NoWorkingDirectory' -Force -ErrorAction SilentlyContinue
 Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas' -Name '(default)' -Force -ErrorAction SilentlyContinue
 Remove-Item -LiteralPath "HKLM:\SOFTWARE\Classes\Directory\shell\runas" -Force -ErrorAction SilentlyContinue
-# Re-Add of 'Take Ownership'
-# Create the base key for files
-$basePathFiles = "HKLM:\SOFTWARE\Classes\*\shell\TakeOwnership"
-New-Item -Path $basePathFiles -Force | Out-Null
-
-# Add the default command and icon
-New-ItemProperty -Path $basePathFiles -Name "(default)" -Value "Take Ownership" -PropertyType String -Force | Out-Null
-New-ItemProperty -Path $basePathFiles -Name "Icon" -Value "imageres.dll,-5311" -PropertyType String -Force | Out-Null
-
-# Create the command key and set the command for files
-$commandPathFiles = "$basePathFiles\command"
-New-Item -Path $commandPathFiles -Force | Out-Null
-New-ItemProperty -Path $commandPathFiles -Name "(default)" -Value "powershell.exe -command \"takeown /f \`\"%1\`\" && icacls \`\"%1\`\" /grant *S-1-5-32-544:F\"" -PropertyType String -Force | Out-Null
-
-
 #Write-Host "Explorer: 'Take Ownership' - Right Click Context Menu [ADDED]" -ForegroundColor Green
 
 Add "Open with Powershell 5.1 (Admin)" to Right Click Context Menu
