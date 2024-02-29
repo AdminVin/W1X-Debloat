@@ -697,7 +697,9 @@ if ((Get-WMIObject win32_operatingsystem) | Where-Object { $_.Name -like "Micros
     }
 }
 
-
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Value 0
+Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Value 0
+Write-Host "Explorer: Game Bar [DISABLED]" -ForegroundColor Green
 <###################################### EXPLORER TWEAKS (End) ######################################>
 
 
