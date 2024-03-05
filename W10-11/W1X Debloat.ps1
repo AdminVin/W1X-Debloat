@@ -68,6 +68,7 @@ $Apps = @(
     "Microsoft.Wallet*",
     "Microsoft.Whiteboard*",
     "Microsoft.WindowsMaps*",
+    "*maps*",
     "Microsoft.WindowsPhone*",
     "Microsoft.WindowsReadingList*",
     "Microsoft.YourPhone*",
