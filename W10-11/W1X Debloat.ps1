@@ -185,11 +185,11 @@ Set-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\M
 Write-Host "Microsoft Edge - Tracking [DISABLED]" -ForegroundColor Green
 
 # 3.2.2 OneDrive
-$ownerForm = New-Object System.Windows.Forms.Form
-$result = [System.Windows.Forms.MessageBox]::Show($ownerForm, "Do you use OneDrive to back up your files?`n`n`nYes will keep OneDrive on your computer.`n`nNo will remove OneDrive from your computer.`n`n`n`nIf you are not sure, clicking 'Yes' will not modify any OneDrive settings.", "W1X Debloat - One Drive (Prompt 1/3)", [System.Windows.Forms.MessageBoxButtons]::YesNo)
-$ownerForm.Dispose()
-
-if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
+Write-Host "3.2.2 One Drive" -ForegroundColor Green
+# Detect if One Drive is being used currently (1 = Yes/Signed In | 0 = Never Signed In)
+$ClientEverSignedInKey = Get-ItemProperty -Path 'HKCU:\Software\Microsoft\OneDrive' -Name 'ClientEverSignedIn' -ErrorAction SilentlyContinue
+if ($ClientEverSignedInKey -and $ClientEverSignedInKey.ClientEverSignedIn -eq 1) {
+    # Result: 1 (One Drive is being Used)
     if (-not (Test-Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive')) {
         New-Item -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Force | Out-Null
     }
@@ -208,7 +208,8 @@ if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
     }    
 	Write-Host "3.2.2 Microsoft One Drive Removal [Skipped]" -ForegroundColor Yellow
 } else {
-	    ## Close OneDrive (if running in background)
+    # Result: 0 (One Drive is NOT being used)
+    	## Close OneDrive (if running in background)
 		taskkill /f /im OneDrive.exe
 		taskkill /f /im FileCoAuth.exe
 	
@@ -275,7 +276,7 @@ if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
 		Write-Host "3.2.2 Microsoft One Drive [Removed]" -ForegroundColor Yellow
 }
 
-## Internet Explorer
+## 3.2.3 Internet Explorer
 Write-Host "3.2.3 Internet Explorer" -ForegroundColor Green
 # Addon 'Send to One Note'
 Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{2670000A-7350-4f3c-8081-5663EE0C6C49}" -Force | Out-Null
@@ -301,12 +302,13 @@ if ($existingTask -eq $null) {
 Write-Host "Microsoft Edge - Addon: IE to Edge [DISABLED]" -ForegroundColor Green
 Write-Host "Internet Explorer - Addon - 'IE to Edge' [REMOVED]" -ForegroundColor Green
 
-## One Note
+## 3.2.4 One Note
 Write-Host "3.2.4 One Note" -ForegroundColor Green
 Remove-Item -LiteralPath "C:\Users\$env:username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Send to OneNote.lnk" -Force | Out-Null
 Write-Host "OneNote - 'Send to OneNote' [REMOVED]" -ForegroundColor Green
 
-## Mozilla Firefox
+## 3.2.5 Mozilla Firefox
+Write-Host "3.2.5 Mozilla Firefox" -ForegroundColor Green
 # Scheduled Tasks
 Get-ScheduledTask "*Firefox Default*" | Unregister-ScheduledTask -Confirm:$false
 Write-Host "Firefox - 'Periodic requests to set as default browser' [DISABLED]" -ForegroundColor Green
@@ -331,11 +333,12 @@ New-ItemProperty -LiteralPath "HKCU:\Software\Policies\Microsoft\office\16.0\com
 Write-Host "Screen Tips for Suggested Features (Popup Ads) [DISABLED]" -ForegroundColor Green
 
 ## 3.2.9 Sysinternals Installation
+Write-Host "3.2.9 Sysinternals" -ForegroundColor Green
 New-Item "C:/users/$env:username/Temp/" -ItemType Directory
 Invoke-WebRequest -Uri "https://download.sysinternals.com/files/PSTools.zip" -OutFile "C:/users/$env:username/PSTools.zip"
 Expand-Archive -Path "C:/users/$env:username/PSTools.zip" -DestinationPath "C:\Windows\System32" -Force
 Remove-Item "C:/users/$env:username/PSTools.zip" -Force
-Write-Host "3.2.9 Explorer: Sysinternals Suite [INSTALLED]" -ForegroundColor Green
+Write-Host "Sysinternals Suite [INSTALLED]" -ForegroundColor Green
 Write-Host "Official Website: https://learn.microsoft.com/en-us/sysinternals/" -ForegroundColor Green
 
 ## 3.3.0 Cortana
@@ -679,24 +682,10 @@ New-Item -Path "HKCU:\Software\Classes\CLSID\{e88865ea-0e1c-4e20-9aa6-edcd0212c8
 New-ItemProperty -Path "HKCU:\Software\Classes\CLSID\{e88865ea-0e1c-4e20-9aa6-edcd0212c87c}" -Name "System.IsPinnedToNameSpaceTree" -Value 0 -PropertyType DWORD -Force | Out-Null
 Write-Host "Explorer: 'Gallery' Shorcut [REMOVED]" -ForegroundColor Green
 
-if ((Get-WMIObject win32_operatingsystem) | Where-Object { $_.Name -like "Microsoft Windows 11*" })
-{
-    $ownerForm = New-Object System.Windows.Forms.Form
-    $result = [System.Windows.Forms.MessageBox]::Show($ownerForm, "Do you use Microsoft Co-Pilot?`n`n`n`nYes will keep Microsoft Co-Pilot on your computer.`n`nNo will turn off Micrsoft Co-Pilot from your computer.`n`n`n`nIf you are not sure, clicking 'Yes' will leave Microsoft Co-Pilot settings as they currently are.", "W1X Debloat - Co-Pilot (Prompt 2/3)", [System.Windows.Forms.MessageBoxButtons]::YesNo)
-    $ownerForm.Dispose()
-    
-    if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
-        New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Force | Out-Null
-        Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Name "TurnOffWindowsCopilot" -Value "1" -Force | Out-Null
-        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowCopilotButton" -Value "1" | Out-Null
-        Write-Host "Explorer: Microsoft Co-Pilot [ENABLED]" -ForegroundColor Yellow
-    } else {
-        New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Force | Out-Null
-        Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Name "TurnOffWindowsCopilot" -Value "0" -Force | Out-Null
-        Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowCopilotButton" -Value "0" | Out-Null
-        Write-Host "Explorer: Microsoft Co-Pilot [DISABLED]" -ForegroundColor Green
-    }
-}
+New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Force | Out-Null
+Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Name "TurnOffWindowsCopilot" -Value "0" -Force | Out-Null
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowCopilotButton" -Value "0" | Out-Null
+Write-Host "Explorer: Microsoft Co-Pilot SHORTCUT [REMOVED]" -ForegroundColor Green
 
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Value 0
 Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Value 0
@@ -711,7 +700,7 @@ if ((Get-WMIObject win32_operatingsystem) | Where-Object { $_.Name -like "Micros
 {
 #Source: https://vhorizon.co.uk/windows-11-start-menu-layout-group-policy/
 $ownerForm = New-Object System.Windows.Forms.Form
-$result = [System.Windows.Forms.MessageBox]::Show($ownerForm, "Would you like your start bar and task bar icons aligned to the left?", "W1X Debloat - Start Bar/Task Bar (Prompt 3/3)", [System.Windows.Forms.MessageBoxButtons]::YesNo)
+$result = [System.Windows.Forms.MessageBox]::Show($ownerForm, "Would you like your start bar and task bar icons aligned to the left?", "W1X Debloat - Start Bar/Task Bar", [System.Windows.Forms.MessageBoxButtons]::YesNo)
 $ownerForm.Dispose()
 if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
     if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced") -ne $true) {New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Force | Out-Null}
