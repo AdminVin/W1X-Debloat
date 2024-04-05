@@ -19,15 +19,11 @@ Note: This file gets **FALSELY FLAGGED** in Edge and Chrome for being malicious.
 2. Hold Control and press "J"
 - Edge: Download window openes at the top right > click on the three dots **on the right of the file** > Select "Keep"
 - Chrome: Download tab opens > click on the three dots **on the right of the file** > Select "Continue download"
+3. Right click the executable you downloaded, and select "Run as Administrator".
+4. After it completes, you will be asked to restart your computer.
 <br> 
 <br>
-
-## How to run the Cleanup?
-- Right click the executable you downloaded, and select "Run as Administrator".
-- A small window will pop up, and start updating your computer.
-- After it completes, you will be asked to restart your computer.
-<br>
-<br>
+Alternatively, you can copy the code from [HERE](https://github.com/AdminVin/Debloat/blob/main/W10-11/W1X%20Debloat.ps1) and paste into a PowerShell window with administrative rights.
 
 ## How can I trust you?
 The source code is provided in this repository and located here:
