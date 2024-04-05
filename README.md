@@ -14,11 +14,11 @@ You can download the executable here:
 
 https://github.com/AdminVin/Debloat/blob/main/W10-11/x64/W1X%20Debloat.exe
 
-- Select the three dots at the top right > Download
+1. Select the three dots at the top right > Download
 <br><br>
 Note: This file gets **FALSELY FLAGGED** in Edge and Chrome for being malicious.
-1. After clicking download, hold Control and press "J"
-2. Download window > click on the three dots **on the right of the file** > Select "Keep" (for Edge) or Select "Continue download" (for Chrome).
+2. After clicking download, hold Control and press "J"
+3. Download window > click on the three dots **on the right of the file** > Select "Keep" (for Edge) or Select "Continue download" (for Chrome).
 <br> 
 <br>
 
