@@ -690,6 +690,19 @@ Write-Host "Explorer: Microsoft Co-Pilot SHORTCUT [REMOVED]" -ForegroundColor Gr
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Value "0"
 Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Value "0"
 Write-Host "Explorer: Game Bar [DISABLED]" -ForegroundColor Green
+
+# Right Click Context Menu "Convert to JPG"
+$key = "HKLM:\SOFTWARE\Classes\SystemFileAssociations\.jfif\shell\ConvertToJPG"
+if (!(Test-Path $key)) {
+    $value = "Convert to JPG"
+    $command = "powershell.exe Rename-Item -Path '%1' -NewName ('%1.jpg')"
+    New-Item -Path $key -Force | Out-Null
+    Set-ItemProperty -Path $key -Name "(Default)" -Value $value
+    New-ItemProperty -LiteralPath $key -Name 'Icon' -Value 'shell32.dll,-16805' -PropertyType String -Force | Out-Null
+    $commandKey = Join-Path $key "command"
+    New-Item -Path $commandKey -Force | Out-Null
+    Set-ItemProperty -Path $commandKey -Name "(Default)" -Value $command
+    Write-Host "Explorer: File .JFIF to .JPG Conversion [ADDED]" -ForegroundColor Green}
 <###################################### EXPLORER TWEAKS (End) ######################################>
 
 
