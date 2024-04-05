@@ -16,10 +16,9 @@ https://github.com/AdminVin/Debloat/blob/main/W10-11/x64/W1X%20Debloat.exe
 
 - Select the three dots at the top right > Download
 <br><br>
-Note:
-This file gets falsely flagged in Edge and Chrome for being malicious.
-- If the file doesn't download after clicking 'download', hold Control and press "J"
-Download window > click on the three dots **on the right of the file**
+Note: This file gets **FALSELY FLAGGED** in Edge and Chrome for being malicious.
+1. After clicking download, hold Control and press "J"
+2. Download window > click on the three dots **on the right of the file**
 - Select "Keep" (for Edge)
 - Select "Continue download" (for Chrome).
 <br> 
