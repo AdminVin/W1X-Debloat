@@ -23,7 +23,7 @@ Note: This file gets **FALSELY FLAGGED** in Edge and Chrome for being malicious.
 4. After it completes you will be asked to restart your computer to apply all changes.
 <br> 
 <br>
-Alternatively, you can copy the code from the link below and paste into a PowerShell window with administrative rights.
+Alternatively, you can copy the code from the link below. Open 'PowerShell ISE' (right click and run as administrator), and paste the code in.
 
 ## How can I trust you?
 The source code is provided in this repository and located here:
