@@ -325,12 +325,37 @@ Remove-ItemProperty -LiteralPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersio
 Remove-ItemProperty -LiteralPath "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run" -Name "TeamsMachineInstaller" -Force
 Write-Host "Teams (Work or School) - Auto Start [DISABLED]" -ForegroundColor Green
 
-## 3.2.8 Screen Tips for Suggested Features (Popup Ads)
-# Source: https://admx.help/?Category=Office2016&Policy=office16.Office.Microsoft.Policies.Windows::L_ShowScreenTips
-Write-Host "3.2.8 Screen Tips for Suggested Features (Popup Ads)" -ForegroundColor Green
-if((Test-Path -LiteralPath "HKCU:\Software\Policies\Microsoft\office\16.0\common\toolbars") -ne $true) {New-Item "HKCU:\Software\Policies\Microsoft\office\16.0\common\toolbars" -Force | Out-Null}
-New-ItemProperty -LiteralPath "HKCU:\Software\Policies\Microsoft\office\16.0\common\toolbars" -Name "screentipsheme" -Value "2" -PropertyType DWord -Force | Out-Null
-Write-Host "Screen Tips for Suggested Features (Popup Ads) [DISABLED]" -ForegroundColor Green
+## 3.2.8 Tips/Ticks/Suggestions Pop Ups
+Write-Host "3.2.8 Tips/Ticks/Suggestions Pop Ups" -ForegroundColor Green
+# Source: https://www.elevenforum.com/t/disable-ads-in-windows-11.8004/
+# Lock Screen Suggestions 
+New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Force | Out-Null
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "RotatingLockScreenOverlayEnabled" -Value 0 | Out-Null
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338387Enabled" -Value 0 | Out-Null
+Write-Host "Lock Screen Suggestions [DISABLED]" -ForegroundColor Green
+# Settings App Suggestions
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338393Enabled" -Value 0 | Out-Null
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353694Enabled" -Value 0 | Out-Null
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353696Enabled" -Value 0 | Out-Null
+Write-Host "Settings App Suggestions [DISABLED]" -ForegroundColor Green
+# Windows Tips/Suggestions
+Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338389Enabled" -Value 0 | Out-Null
+Write-Host "Windows Tips [DISABLED]" -ForegroundColor Green
+# Windows 'Get most of out this device' Suggestions
+New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement" -Force | Out-Null
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement" -Name "ScoobeSystemSettingEnabled" -Value 0 | Out-Null
+Write-Host "Windows 'Getting most out of this device' [DISABLED]" -ForegroundColor Green
+# Windows Welcome Experience
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-310093Enabled" -Value 0 | Out-Null
+Write-Host "Windows 'Welcome' Experience [DISABLED]" -ForegroundColor Green
+# Personalized Ads
+New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AdvertisingInfo" -Force | Out-Null
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AdvertisingInfo" -Name "DisabledByGroupPolicy" -Value 1 | Out-Null
+Write-Host "Windows Personalized Ads [DISABLED]" -ForegroundColor Green
+# Tailored Experience
+New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\CloudContent" -Force | Out-Null
+Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\CloudContent" -Name "DisableTailoredExperiencesWithDiagnosticData" -Value 1 | Out-Null
+Write-Host "Windows Tailored Experience [DISABLED]" -ForegroundColor Green
 
 ## 3.2.9 Sysinternals Installation
 Write-Host "3.2.9 Sysinternals" -ForegroundColor Green
@@ -596,9 +621,6 @@ New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell\windows.copyaspath' -Name 'VerbName' -Value 'copyaspath' -PropertyType String -Force | Out-Null
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell\windows.copyaspath' -Name 'Icon' -Value 'imageres.dll,-5302' -PropertyType String -Force | Out-Null
 Write-Host "Explorer: 'Copy as Path' - Right Click Context Menu [ADDED]" -ForegroundColor Green
-
-Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowSyncProviderNotifications" -Value "0" -Force | Out-Null
-Write-Host "Explorer: Info/Ads in File Explorer [DISABLED]" -ForegroundColor Green
 
 if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced") -ne $true) {New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Force | Out-Null}
 New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'EnableSnapBar' -Value "0" -PropertyType DWord -Force | Out-Null
