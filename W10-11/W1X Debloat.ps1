@@ -328,11 +328,6 @@ Write-Host "Teams (Work or School) - Auto Start [DISABLED]" -ForegroundColor Gre
 ## 3.2.8 Tips/Ticks/Suggestions Pop Ups
 Write-Host "3.2.8 Tips/Ticks/Suggestions Pop Ups" -ForegroundColor Green
 # Source: https://www.elevenforum.com/t/disable-ads-in-windows-11.8004/
-# Lock Screen Suggestions 
-New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Force | Out-Null
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "RotatingLockScreenOverlayEnabled" -Value 0 | Out-Null
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338387Enabled" -Value 0 | Out-Null
-Write-Host "Lock Screen Suggestions [DISABLED]" -ForegroundColor Green
 # Settings App Suggestions
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338393Enabled" -Value 0 | Out-Null
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353694Enabled" -Value 0 | Out-Null
@@ -372,6 +367,10 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortanaAboveLock" -Value "0" -Force | Out-Null
 Get-AppxPackage -AllUsers Microsoft.549981C3F5F10 | Remove-AppxPackage | Out-Null
 Write-Host "3.3.0 Explorer: Cortana [DISABLED]" -ForegroundColor Green
+
+## 3.4.0 Dynamic Lighting
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Lighting" -Name "AmbientLightingEnabled" -Value "0"
+Write-Host "3.4.0 Microsoft Dynamic Lighting (RGB Fix) [Disabled]"
 #endregion
 
 #endregion
@@ -690,6 +689,10 @@ Write-Host "Explorer: Animations - Window Minimizing [DISABLED]" -ForegroundColo
 
 Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "AnimateWindows" -Value "0"
 Write-Host "Explorer: Animations - Window Opening/Closing [DISABLED]" -ForegroundColor Green
+
+# Settings > Accessibility > Visual Effects > Transparency Effects
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "EnableTransparency" -Value "0" | Out-Null
+Write-Host "Explorer: Windows Transparency [Disabled]"
 
 # Source: https://www.neowin.net/news/microsoft-windows-11-also-haunted-by-this-sata-bios-bug-just-like-windows-7-8-81-and-10/
 New-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Services\storahci\Parameters\Device' -Name 'TreatAsInternalPort' -Value @("0") -PropertyType MultiString -Force | Out-Null
