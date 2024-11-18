@@ -1080,14 +1080,53 @@ Write-Host "Windows: Telementry Internet Connection [DISABLED]" -ForegroundColor
 
 
 <#############################################################################################################################>
-#region 8.0 - Script Settings
+#region 8.0 - Space Cleanup
+Write-Host "`n`n8.0 Space Cleanup" -ForegroundColor Green
+function Remove-ItemRecursively {
+    param (
+        [string]$Path
+    )
+    
+    Get-ChildItem -Path $Path -Recurse -Force | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path $Path -Recurse -Force -ErrorAction SilentlyContinue
+}
+
+## Free Space - Retrieve Existing Free Space
+$FreeSpaceBefore = (Get-PSDrive -Name C).Free / 1GB
+Write-Host " - Disk Space Free (before): $("{0:N2} GB" -f $FreeSpaceBefore)" -ForegroundColor DarkYellow
+## Temporary Files
+# Temp - User
+Remove-ItemRecursively -Path "$env:TEMP\*" -Recurse -Force
+Write-Host " - Clearing C:\User\$env:username\Temp" -ForegroundColor Yellow
+# Temp - Windows
+Remove-ItemRecursively -Path "C:\Windows\Temp\*"
+Write-Host " - Clearing C:\Windows\Temp\" -ForegroundColor Yellow
+## Windows Update
+Write-Host " - Clearing old Windows Updates" -ForegroundColor Yellow
+Write-Host "`n*NOTE* This may take some time and is expected. Especially if this is the first run the script is running." -ForegroundColor Red
+# SoftwareDistribution
+Stop-Service -Name wuauserv
+Rename-Item -Path "C:\Windows\SoftwareDistribution" -NewName "SoftwareDistribution.old"
+Remove-ItemRecursively -Path "C:\Windows\SoftwareDistribution.old" -Recurse -Force -Confirm:$false
+Start-Service -Name wuauserv
+# WinSxS
+# Service Pack Backups / Superseded Updates / Replaced Componets
+Start-Process powershell.exe -ArgumentList "-NoExit", "-Command", "dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase"
+## Free Space - Retrieve Updated Free Space
+$FreeSpaceAfter = (Get-PSDrive -Name C).Free / 1GB
+Write-Host "`n - Disk Space Free (after): $("{0:N2} GB" -f $FreeSpaceAfter)" -ForegroundColor Yellow
+Write-Host " - Actual Space Freed: $("{0:N2} GB" -f ($FreeSpaceAfter - $FreeSpaceBefore))" -ForegroundColor Green
+
+
+<#############################################################################################################################>
+#region 9.0 - Script Settings
 ### Log - End
 # Log Locally
 "Script Duration" | Out-File -Append -FilePath $LogFile
 $Timer.Elapsed | Select-Object Hours, Minutes, Seconds | Format-Table | Out-File -Append -FilePath $LogFile
 $Timer.Stop()
 $TimerFinal = $Timer.Elapsed | Select-Object Hours, Minutes, Seconds | Format-Table
-Write-Host "`n`n8.0 Log: Script Duration" -ForegroundColor Green
+Write-Host "`n`n9.0 Log: Script Duration" -ForegroundColor Green
 $TimerFinal
 Write-Host "Log file located at $LogFile" -ForegroundColor Yellow
 #endregion
@@ -1111,5 +1150,4 @@ if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
 } else {
     Write-Host "`n`nYou can close this window." -ForegroundColor Green
 }
-
 #endregion
