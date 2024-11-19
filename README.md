@@ -11,6 +11,7 @@ I initially created this script for myself, specifically when I would re-install
 
 ## How do I get W1X Debloat?
 You can download the script here:
+
 https://github.com/AdminVin/W1X-Debloat/blob/main/W10-11/W1X%20Debloat.ps1
 
 1. Select the three dots at the top right > Download
