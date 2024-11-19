@@ -1111,7 +1111,7 @@ Remove-ItemRecursively -Path "C:\Windows\SoftwareDistribution.old" -Recurse -For
 Start-Service -Name wuauserv
 # WinSxS
 # Service Pack Backups / Superseded Updates / Replaced Componets
-Start-Process powershell.exe -ArgumentList "-NoExit", "-Command", "dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase"
+dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase
 ## Free Space - Retrieve Updated Free Space
 $FreeSpaceAfter = (Get-PSDrive -Name C).Free / 1GB
 Write-Host "`n - Disk Space Free (after): $("{0:N2} GB" -f $FreeSpaceAfter)" -ForegroundColor Yellow

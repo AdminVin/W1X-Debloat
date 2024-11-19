@@ -3,29 +3,20 @@
 # W1X Debloat
 
 ## What is W1X Debloat?
-W1X Debloat is a small PowerShell script compiled into an executable for easier access.  The script optimizes your Windows 10 or Windows 11 computer to remove all bloatware and increase performance.
+W1X Debloat is a small PowerShell script compiled into an executable for easier access. The script optimizes your Windows 10/11 computer to remove all bloatware and increase performance.
 
-I initially created this script for myself, specifically when I would re-install Windows on my computer, and had to turn off all the annoying bloatware that Microsoft included.  After it helped a few of my friends computers, I decided to make it publicly available.  Enjoy!
+I initially created this script for myself, specifically when I would re-install Windows on my computer, and had to turn off all the annoying bloatware that Microsoft included.  After it helped a few of my friends computers, I decided to make it publicly available. Enjoy!
 <br>
 <br>
 
 ## How do I get W1X Debloat?
-You can download the executable here:
+You can download the script here:
 
-https://github.com/AdminVin/Debloat/blob/main/W10-11/x64/W1X%20Debloat.exe
+https://github.com/AdminVin/W1X-Debloat/blob/main/W10-11/W1X%20Debloat.ps1
 
-1. Select the three dots at the top right > Download<br>
-Note: This file gets **FALSELY FLAGGED** in Edge and Chrome for being malicious.
-2. Hold Control and press "J"
-- Edge: Download window openes at the top right > click on the three dots **on the right of the file** > Select "Keep"
-- Chrome: Download tab opens > click on the three dots **on the right of the file** > Select "Continue download"
-3. Right click the file you downloaded, and select "Run as Administrator".
-4. After it completes you will be asked to restart your computer to apply all changes.
-<br> 
-<br>
-Alternatively, you can copy the code from the link below. Then open 'PowerShell ISE' (right click and run as administrator), paste the code in, and run.
-
-## How can I trust you?
-The source code is provided in this repository and located here:
-
-https://github.com/AdminVin/Debloat/blob/main/W10-11/W1X%20Debloat.ps1
+1. Select the three dots at the top right > Download
+2. Search for **PowerShell ISE** on your computer > Right Click > Run As Administrator
+3. File > Open > Browse to the file downloaded "W1X Debloat.ps1" > Click the "Green Arrow" or press F5 to run.
+   - There are two prompts that pop up.
+    - First prompt is if you are on Windows 11, Do you wish to move your Start button to the left.
+    - Second prompt is to reboot to apply all changes.
