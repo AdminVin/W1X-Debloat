@@ -20,5 +20,5 @@ https://github.com/AdminVin/W1X-Debloat/blob/main/W10-11/W1X%20Debloat.ps1
 
 3. File > Open > Browse to the file downloaded "W1X Debloat.ps1" > Click the "Green Arrow" or press F5 to run.
    - There are two prompts that pop up.
-    - First prompt is if you are on Windows 11, and it asks do you want to move the Start button to the bottom left.
+    - First prompt is if you are on Windows 11, and it asks do you want to move the Start button.
     - Second prompt is to reboot to apply all changes.
