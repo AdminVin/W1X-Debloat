@@ -11,13 +11,12 @@ I initially created this script for myself, specifically when I would re-install
 
 ## How do I get W1X Debloat?
 You can download the script here:
-
 https://github.com/AdminVin/W1X-Debloat/blob/main/W10-11/W1X%20Debloat.ps1
 
 1. Select the three dots at the top right > Download
-<br>
+
 2. Search for **PowerShell ISE** on your computer > Right Click > Run As Administrator
-<br>
+
 3. File > Open > Browse to the file downloaded "W1X Debloat.ps1" > Click the "Green Arrow" or press F5 to run.
    - There are two prompts that pop up.
     - First prompt is if you are on Windows 11, Do you wish to move your Start button to the left.
