@@ -965,7 +965,12 @@ Write-Host "Windows: Update Delivery Optimization - Direct Download [UPDATED]" -
 # Windows > Display 'Ease cursor Movement between displays'
 New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Cursors' -Name 'CursorDeadzoneJumpingSetting' -Value "0" -PropertyType DWord -Force | Out-Null
 Set-ItemProperty -LiteralPath 'HKCU:\Control Panel\Cursors' -Name 'CursorDeadzoneJumpingSetting' -Value "0" -Force | Out-Null
+Write-Host "Windows: 'Ease cursor Movement between displays' [DISABLED]" -ForegroundColor Green
 
+# Windows Background (Spotlight) - Remove "Learn About This Background"
+Remove-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\{2cc5ca98-6485-489a-920e-b3e88a6ccce3}" -Force
+Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{2cc5ca98-6485-489a-920e-b3e88a6ccce3}" -Value 1
+Write-Host "Windows: Background (Spotlight) - 'Learn About This Background' [REMOVED]" -ForegroundColor Green
 <###################################### WINDOWS TWEAKS (End) ######################################>
 
 
