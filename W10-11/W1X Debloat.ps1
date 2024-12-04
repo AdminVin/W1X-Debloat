@@ -692,7 +692,7 @@ Write-Host "Explorer: Animations - Window Opening/Closing [DISABLED]" -Foregroun
 
 # Settings > Accessibility > Visual Effects > Transparency Effects
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "EnableTransparency" -Value "0" | Out-Null
-Write-Host "Explorer: Windows Transparency [Disabled]"
+Write-Host "Explorer: Windows Transparency [DISABLED]" ForegroundColor Green
 
 # Source: https://www.neowin.net/news/microsoft-windows-11-also-haunted-by-this-sata-bios-bug-just-like-windows-7-8-81-and-10/
 New-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Services\storahci\Parameters\Device' -Name 'TreatAsInternalPort' -Value @("0") -PropertyType MultiString -Force | Out-Null
