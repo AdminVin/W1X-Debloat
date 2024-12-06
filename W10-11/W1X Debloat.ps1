@@ -1110,9 +1110,17 @@ Write-Host " - Clearing C:\Windows\Temp\" -ForegroundColor Yellow
 Write-Host " - Clearing old Windows Updates" -ForegroundColor Yellow
 Write-Host "`n*NOTE* This may take some time and is expected. Especially, if this is the first run the script is running." -ForegroundColor Red
 # SoftwareDistribution
+## Windows Update
+# SoftwareDistribution
 Stop-Service -Name wuauserv
+if (Test-Path "C:\Windows\SoftwareDistribution.old") {
+    Remove-Item -Path "C:\Windows\SoftwareDistribution.old" -Recurse -Force -ErrorAction SilentlyContinue
+    if (Test-Path "C:\Windows\SoftwareDistribution.old") {
+        Write-Host "Forcing removal of SoftwareDistribution.old via system process..."
+        cmd.exe /c rd /s /q "C:\Windows\SoftwareDistribution.old"
+    }
+}
 Rename-Item -Path "C:\Windows\SoftwareDistribution" -NewName "SoftwareDistribution.old"
-Remove-ItemRecursively -Path "C:\Windows\SoftwareDistribution.old" -Recurse -Force -Confirm:$false
 Start-Service -Name wuauserv
 # WinSxS
 # Service Pack Backups / Superseded Updates / Replaced Componets
