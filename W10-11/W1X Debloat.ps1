@@ -1116,7 +1116,7 @@ Stop-Service -Name wuauserv
 if (Test-Path "C:\Windows\SoftwareDistribution.old") {
     Remove-Item -Path "C:\Windows\SoftwareDistribution.old" -Recurse -Force -ErrorAction SilentlyContinue
     if (Test-Path "C:\Windows\SoftwareDistribution.old") {
-        Write-Host "Forcing removal of SoftwareDistribution.old via system process..."
+        Write-Host "  - Forcing removal of SoftwareDistribution.old via system process..." -ForegroundColor Yellow
         cmd.exe /c rd /s /q "C:\Windows\SoftwareDistribution.old"
     }
 }
