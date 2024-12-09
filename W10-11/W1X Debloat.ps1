@@ -17,6 +17,9 @@ if (Test-Path -Path "C:\ProgramData\AV\Cleanup") {
 $Date | Out-File -Append -FilePath $LogFile
 Write-Host "1.0 Log: Script started at $Date" -ForegroundColor Green
 $Timer = [System.Diagnostics.Stopwatch]::StartNew()
+# Free Space - Retrieve Existing Free Space
+$FreeSpaceBefore = (Get-PSDrive -Name C).Free / 1GB
+Write-Host " - Disk Space Free (before): $("{0:N2} GB" -f $FreeSpaceBefore)" -ForegroundColor Yellow
 #endregion
 
 
@@ -727,13 +730,16 @@ if (!(Test-Path $key)) {
     $commandKey = Join-Path $key "command"
     New-Item -Path $commandKey -Force | Out-Null
     Set-ItemProperty -Path $commandKey -Name "(Default)" -Value $command
-    Write-Host "Explorer: File .JFIF to .JPG Conversion [ADDED]" -ForegroundColor Green}
+    Write-Host "Explorer: File .JFIF to .JPG Conversion [ADDED]" -ForegroundColor Green
+} ELSE {
+    Write-Host "Explorer: File .JFIF to .JPG Conversion [ADDED (Previously)]" -ForegroundColor Green
+}
 <###################################### EXPLORER TWEAKS (End) ######################################>
 
 
 
 <###################################### START MENU TWEAKS (Start) ######################################>
-
+Write-Host "Start Menu: Alignment - Left [PROMPT - Pending User Interaction]" -ForegroundColor Yellow
 if ((Get-WMIObject win32_operatingsystem) | Where-Object { $_.Name -like "Microsoft Windows 11*" })
 {
 #Source: https://vhorizon.co.uk/windows-11-start-menu-layout-group-policy/
@@ -1095,10 +1101,6 @@ function Remove-ItemRecursively {
     Get-ChildItem -Path $Path -Recurse -Force | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
     Remove-Item -Path $Path -Recurse -Force -ErrorAction SilentlyContinue
 }
-
-## Free Space - Retrieve Existing Free Space
-$FreeSpaceBefore = (Get-PSDrive -Name C).Free / 1GB
-Write-Host " - Disk Space Free (before): $("{0:N2} GB" -f $FreeSpaceBefore)" -ForegroundColor DarkYellow
 ## Temporary Files
 # Temp - User
 Remove-ItemRecursively -Path "$env:TEMP\*" -Recurse -Force
@@ -1154,6 +1156,7 @@ Write-Host "*                                                             *" -Fo
 Write-Host "*             W1X Debloat v2.0 has finished!                  *" -ForegroundColor Green
 Write-Host "*                                                             *" -ForegroundColor Green
 Write-Host "***************************************************************" -ForegroundColor Green
+Write-Host "`nREBOOT PROMPT - PENDING USER INTERACTION`n" -ForegroundColor Yellow
 $ownerForm = New-Object System.Windows.Forms.Form
 $result = [System.Windows.Forms.MessageBox]::Show($ownerForm, "Reboot now to apply changes?", "W1X Debloat - Reboot", [System.Windows.Forms.MessageBoxButtons]::YesNo)
 $ownerForm.Dispose()
