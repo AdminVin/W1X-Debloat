@@ -373,7 +373,7 @@ Write-Host "3.3.0 Explorer: Cortana [DISABLED]" -ForegroundColor Green
 
 ## 3.4.0 Dynamic Lighting
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Lighting" -Name "AmbientLightingEnabled" -Value "0"
-Write-Host "3.4.0 Microsoft Dynamic Lighting (RGB Fix) [Disabled]"
+Write-Host "3.4.0 Microsoft Dynamic Lighting (RGB Fix) [Disabled]" -ForegroundColor Green
 #endregion
 
 #endregion
