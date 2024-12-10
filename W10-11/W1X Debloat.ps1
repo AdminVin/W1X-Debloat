@@ -411,6 +411,16 @@ foreach ($service in $services) {
     Get-Service $service | Set-Service -StartupType Disabled | Out-Null
     Write-Host " - Service: $serviceName [DISABLED]" -ForegroundColor Green
 }
+# Services - Superfetch/Prefetch Disable (if running SSD)
+$disk = Get-PhysicalDisk | Where-Object { $_.DeviceID -eq (Get-Disk -Number (Get-Partition -DriveLetter C).DiskNumber).Number }
+if ($disk.MediaType -eq 'SSD' -or $disk.MediaType -eq $null) {
+    Stop-Service -Name SysMain -Force
+    Set-Service -Name SysMain -StartupType Disabled
+    Write-Host " - Service: Superfetch/Prefetch [DISABLED]" -ForegroundColor Green
+} else {
+    Write-Host " - Service: Superfetch/Prefetch [UNMODIFIED (HDD Detected)]" -ForegroundColor Green
+}
+
 # Services - Set to Manual
 $services = @(
     "BTAGService",						# Bluetooth (Setting to Manual in the event BT is used.)
