@@ -381,7 +381,7 @@ Write-Host "3.4.0 Microsoft Dynamic Lighting (RGB Fix) [Disabled]" -ForegroundCo
 
 <#############################################################################################################################>
 #region 4.0 - Services and Scheduled Tasks
-Write-Host "`n`n4.0 - Services and Scheduled Tasks" -ForegroundColor Green
+Write-Host "`n`n4.0 Services and Scheduled Tasks" -ForegroundColor Green
 ## Services
 Write-Host "4.1 Services" -ForegroundColor Green
 # Services - Disable
