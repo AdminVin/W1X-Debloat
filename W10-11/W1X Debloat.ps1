@@ -167,6 +167,8 @@ Get-Service "edgeupdatem" | Stop-Service | Out-Null
 Get-Service "edgeupdatem" | Set-Service -StartupType Disabled | Out-Null
 Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdatem" -Recurse -Confirm:$false -Force
 Write-Host "Microsoft Edge - Auto Update Services [DISABLED]" -ForegroundColor Green
+Get-WmiObject -Query "SELECT * FROM Win32_Product WHERE Name LIKE '%Microsoft Search in Bing%'" | ForEach-Object { $_.Uninstall() > $null 2>&1 }
+Write-Host "Microsoft Edge - Bloat Search Application [REMOVED]" -ForegroundColor Green
 ## Scheduled Tasks
 Get-Scheduledtask "*edge*" | Disable-ScheduledTask | Out-Null
 Write-Host "Microsoft Edge - Auto Start - Scheduled Task [DISABLED]" -ForegroundColor Green
