@@ -49,6 +49,7 @@ $Apps = @(
     "Microsoft.BingSports*",
     "Microsoft.BingTranslator*",
     "Microsoft.BingTravel*",
+    "*Clipchamp*",
     "Microsoft.CommsPhone*",
     "Microsoft.ConnectivityStore*",
     "Microsoft.WindowsFeedbackHub*",
@@ -139,7 +140,7 @@ $Apps = @(
 )
 foreach ($App in $Apps) {
     Write-Host " - Removed: "$App -ForegroundColor Green
-    Remove-AppxPackage $App -AllUsers -ErrorAction SilentlyContinue
+    Get-AppxPackage -AllUsers $App | Remove-AppxPackage
 }
 
 # Microsoft Store - Disable SILENT installation of NEW third party apps.
