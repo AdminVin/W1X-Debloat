@@ -71,6 +71,7 @@ $Apps = @(
     "Microsoft.Todos*",
     "Microsoft.Wallet*",
     "Microsoft.Whiteboard*",
+    "MicrosoftWindows.Client.WebExperience",
     "Microsoft.WindowsMaps*",
     "*maps*",
     "Microsoft.WindowsPhone*",
@@ -441,70 +442,26 @@ foreach ($service in $services) {
 ## Scheduled Tasks
 Write-Host "4.2 Scheduled Tasks" -ForegroundColor Green
 $taskData = @(
-    @{
-        TaskName = "Proxy"
-        DisplayName = "Proxy Task"
-    },
-    @{
-        TaskName = "SmartScreenSpecific"
-        DisplayName = "SmartScreen Specific Task"
-    },
-    @{
-        TaskName = "Microsoft Compatibility Appraiser"
-        DisplayName = "Microsoft Compatibility Appraiser Task"
-    },
-    @{
-        TaskName = "Consolidator"
-        DisplayName = "Consolidator Task"
-    },
-    @{
-        TaskName = "KernelCeipTask"
-        DisplayName = "Kernel CEIP Task"
-    },
-    @{
-        TaskName = "UsbCeip"
-        DisplayName = "USB CEIP Task"
-    },
-    @{
-        TaskName = "Microsoft-Windows-DiskDiagnosticDataCollector"
-        DisplayName = "Disk Diagnostic Data Collector Task"
-    },
-    @{
-        TaskName = "GatherNetworkInfo"
-        DisplayName = "Gather Network Info Task"
-    },
-    @{
-        TaskName = "QueueReporting"
-        DisplayName = "Queue Reporting Task"
-    },
-    @{
-        TaskName = "UpdateLibrary"
-        DisplayName = "Update Library Task"
-    },
-    @{
-        TaskName = "Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser"
-        DisplayName = "Microsoft Compatibility Appraiser Task"
-    },
-    @{
-        TaskName = "Microsoft\Windows\Application Experience\ProgramDataUpdater"
-        DisplayName = "Program Data Updater Task"
-    },
-    @{
-        TaskName = "Microsoft\Windows\Autochk\Proxy"
-        DisplayName = "Proxy Task"
-    },
-    @{
-        TaskName = "Microsoft\Windows\Customer Experience Improvement Program\Consolidator"
-        DisplayName = "Consolidator Task"
-    },
-    @{
-        TaskName = "Microsoft\Windows\Customer Experience Improvement Program\UsbCeip"
-        DisplayName = "USB CEIP Task"
-    },
-    @{
-        TaskName = "Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector"
-        DisplayName = "Disk Diagnostic Data Collector Task"
-    }
+    @{ TaskName = "Proxy"; DisplayName = "Proxy Task" },
+    @{ TaskName = "SmartScreenSpecific"; DisplayName = "SmartScreen Specific Task" },
+    @{ TaskName = "Microsoft Compatibility Appraiser"; DisplayName = "Microsoft Compatibility Appraiser Task" },
+    @{ TaskName = "Consolidator"; DisplayName = "Consolidator Task" },
+    @{ TaskName = "KernelCeipTask"; DisplayName = "Kernel CEIP Task" },
+    @{ TaskName = "UsbCeip"; DisplayName = "USB CEIP Task" },
+    @{ TaskName = "Microsoft-Windows-DiskDiagnosticDataCollector"; DisplayName = "Disk Diagnostic Data Collector Task" },
+    @{ TaskName = "GatherNetworkInfo"; DisplayName = "Gather Network Info Task" },
+    @{ TaskName = "QueueReporting"; DisplayName = "Queue Reporting Task" },
+    @{ TaskName = "UpdateLibrary"; DisplayName = "Update Library Task" },
+    @{ TaskName = "Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser"; DisplayName = "Microsoft Compatibility Appraiser Task" },
+    @{ TaskName = "Microsoft\Windows\Application Experience\ProgramDataUpdater"; DisplayName = "Program Data Updater Task" },
+    @{ TaskName = "Microsoft\Windows\Autochk\Proxy"; DisplayName = "Proxy Task" },
+    @{ TaskName = "Microsoft\Windows\Customer Experience Improvement Program\Consolidator"; DisplayName = "Consolidator Task" },
+    @{ TaskName = "Microsoft\Windows\Customer Experience Improvement Program\UsbCeip"; DisplayName = "USB CEIP Task" },
+    @{ TaskName = "Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector"; DisplayName = "Disk Diagnostic Data Collector Task" },
+    @{ TaskName = "Microsoft\Windows\Maintenance\WinSAT"; DisplayName = "Windows System Assessment Tool" },
+    @{ TaskName = "Microsoft\Windows\Power Efficiency Diagnostics\AnalyzeSystem"; DisplayName = "Power Efficiency Diagnostics" },
+    @{ TaskName = "Microsoft\Windows\Windows Error Reporting\QueueReporting"; DisplayName = "Windows Error Reporting Queue" },
+    @{ TaskName = "Microsoft\Windows\Application Experience\AitAgent"; DisplayName = "Application Experience AIT Agent" }
 )
 
 foreach ($taskInfo in $taskData) {
@@ -525,40 +482,6 @@ foreach ($taskInfo in $taskData) {
 Write-Host "`n`n5.0 Quality of Life" -ForegroundColor Green
 
 <###################################### EXPLORER TWEAKS (Start) ######################################>
-
-# Add "Take Ownership" to Right Click Context Menu
-<# Old Code
-if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Classes\*\shell\runas") -ne $true) {New-Item "HKLM:\SOFTWARE\Classes\*\shell\runas" -Force | Out-Null}
-if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Classes\*\shell\runas\command") -ne $true) {New-Item "HKLM:\SOFTWARE\Classes\*\shell\runas\command" -Force | Out-Null}
-if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Classes\Directory\shell\runas") -ne $true) {New-Item "HKLM:\SOFTWARE\Classes\Directory\shell\runas" -Force | Out-Null}
-if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Classes\Directory\shell\runas\command") -ne $true) {New-Item "HKLM:\SOFTWARE\Classes\Directory\shell\runas\command" -Force | Out-Null}
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\*\shell\runas' -Name '(default)' -Value 'Take Ownership' -PropertyType String -Force | Out-Null
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\*\shell\runas' -Name 'NoWorkingDirectory' -Value "" -PropertyType String -Force | Out-Null
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\*\shell\runas\command' -Name '(default)' -Value 'cmd.exe /c takeown /f \"%1\" && icacls \"%1\" /grant administrators:F' -PropertyType String -Force | Out-Null
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\*\shell\runas\command' -Name 'IsolatedCommand' -Value 'cmd.exe /c takeown /f \"%1\" && icacls \"%1\" /grant administrators:F' -PropertyType String -Force | Out-Null
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas' -Name '(default)' -Value 'Take Ownership' -PropertyType String -Force | Out-Null
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas' -Name 'NoWorkingDirectory' -Value "" -PropertyType String -Force | Out-Null
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas\command' -Name '(default)' -Value 'cmd.exe /c takeown /f \"%1\" /r /d y && icacls \"%1\" /grant administrators:F /t' -PropertyType String -Force | Out-Null
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas\command' -Name 'IsolatedCommand' -Value 'cmd.exe /c takeown /f \"%1\" /r /d y && icacls \"%1\" /grant administrators:F /t' -PropertyType String -Force | Out-Null
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas\' -Name 'Icon' -Value 'imageres.dll,-5311' -PropertyType String -Force | Out-Null
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\*\shell\runas' -Name 'Icon' -Value 'imageres.dll,-5311' -PropertyType String -Force | Out-Null
-#>
-# Removal of Old 'Take Ownership' (Broken)
-Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\*\shell\runas\command' -Name 'IsolatedCommand' -Force -ErrorAction SilentlyContinue
-Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\*\shell\runas\command' -Name '(default)' -Force -ErrorAction SilentlyContinue
-Remove-Item -LiteralPath "HKLM:\SOFTWARE\Classes\*\shell\runas\command" -Force -ErrorAction SilentlyContinue
-Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\*\shell\runas' -Name 'Icon' -Force -ErrorAction SilentlyContinue
-Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\*\shell\runas' -Name 'NoWorkingDirectory' -Force -ErrorAction SilentlyContinue
-Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\*\shell\runas' -Name '(default)' -Force -ErrorAction SilentlyContinue
-Remove-Item -LiteralPath "HKLM:\SOFTWARE\Classes\*\shell\runas" -Force -ErrorAction SilentlyContinue
-Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas\command' -Name 'IsolatedCommand' -Force -ErrorAction SilentlyContinue
-Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas\command' -Name '(default)' -Force -ErrorAction SilentlyContinue
-Remove-Item -LiteralPath "HKLM:\SOFTWARE\Classes\Directory\shell\runas\command" -Force -ErrorAction SilentlyContinue
-Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas' -Name 'Icon' -Force -ErrorAction SilentlyContinue
-Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas' -Name 'NoWorkingDirectory' -Force -ErrorAction SilentlyContinue
-Remove-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\Directory\shell\runas' -Name '(default)' -Force -ErrorAction SilentlyContinue
-Remove-Item -LiteralPath "HKLM:\SOFTWARE\Classes\Directory\shell\runas" -Force -ErrorAction SilentlyContinue
-#Write-Host "Explorer: 'Take Ownership' - Right Click Context Menu [ADDED]" -ForegroundColor Green
 
 Add "Open with Powershell 5.1 (Admin)" to Right Click Context Menu
 if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Classes\Directory\Background\shell\PowerShellAsAdmin") -ne $true) {New-Item "HKLM:\SOFTWARE\Classes\Directory\Background\shell\PowerShellAsAdmin" -Force | Out-Null}
@@ -592,8 +515,8 @@ Write-Host "Explorer: 'Open with PowerShell 5.1 (Admin)' - Right Click Context M
 # Install PS7
 if (-not (Test-Path "C:\Program Files\PowerShell\7\pwsh.exe")) {
     New-Item -Path "C:\PSTemp" -ItemType Directory | Out-Null
-    $PS7InstallerPath = "C:\PSTemp\PowerShell-7.3.9-win-x64.msi"  # Version 7.3.9
-    $PS7InstallerURL = "https://github.com/PowerShell/PowerShell/releases/download/v7.4.1/PowerShell-7.4.1-win-x64.msi"
+    $PS7InstallerPath = "C:\PSTemp\PowerShell-7.msi"  # Version 7.3.9
+    $PS7InstallerURL = "https://github.com/PowerShell/PowerShell/releases/download/v7.5.0/PowerShell-7.5.0-win-x64.msi"
     Invoke-WebRequest -Uri $PS7InstallerURL -OutFile $PS7InstallerPath
     Start-Process -FilePath msiexec -ArgumentList "/i $PS7InstallerPath /qn" -Wait
     Remove-Item -Path "C:\PSTemp" -Recurse -Force | Out-Null
@@ -678,6 +601,8 @@ Write-Host "Explorer: 'Recent Folders' in Quick Access [DISABLED]" -ForegroundCo
 # Reinstall Source: https://apps.microsoft.com/detail/windows-web-experience-pack/9MSSGKG348SP?hl=en-us&gl=US
 Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe | Out-Null
 winget uninstall --accept-source-agreements "Windows web experience pack" | Out-Null
+New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Dsh" -Force | Out-Null
+New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Dsh" -Name "AllowNewsAndInterests" -PropertyType DWord -Value 0 -Force | Out-Null
 Write-Host "Explorer: Widgets [REMOVED]" -ForegroundColor Green
 
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'DisableLogonBackgroundImage' -Value "1" -PropertyType "DWord" -Force | Out-Null
@@ -1088,6 +1013,19 @@ Write-Host "Windows: 'Ease cursor Movement between displays' [DISABLED]" -Foregr
 Remove-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\{2cc5ca98-6485-489a-920e-b3e88a6ccce3}" -Force
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{2cc5ca98-6485-489a-920e-b3e88a6ccce3}" -Value 1
 Write-Host "Windows: Background (Spotlight) - 'Learn About This Background' [REMOVED]" -ForegroundColor Green
+
+# Source: https://www.tomshardware.com/how-to/disable-vbs-windows-11
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard" -Name "EnableVirtualizationBasedSecurity" -Value 0
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "RunAsPPL" -Value 0
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard" -Name "RequirePlatformSecurityFeatures" -Value 0
+Write-Host "Windows: Virtualization-Based Security [DISABLED]" -ForegroundColor Green
+
+New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" -Force | Out-Null
+New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" -Name "PowerThrottlingOff" -PropertyType DWord -Value 1 -Force | Out-Null
+Write-Host "Windows: Power Throttling [DISABLED]" -ForegroundColor Green
+
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" -Name "Enabled" -Value 0
+Write-Host "Windows: Core Isolation Memory Integrity [DISABLED]" -ForegroundColor Green
 <###################################### WINDOWS TWEAKS (End) ######################################>
 
 
