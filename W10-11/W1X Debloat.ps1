@@ -865,7 +865,6 @@ Write-Host "Explorer: .JPG/.PNG 'Add Watermark' [ADDED]" -ForegroundColor Green
 
 
 <###################################### START MENU TWEAKS (Start) ######################################>
-Write-Host "Start Menu: Alignment - Left [PROMPT - Pending User Interaction]" -ForegroundColor Yellow
 if ((Get-WMIObject win32_operatingsystem) | Where-Object { $_.Name -like "Microsoft Windows 11*" }) {
     #Source: https://vhorizon.co.uk/windows-11-start-menu-layout-group-policy/
     if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced") -ne $true) {New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Force | Out-Null}
