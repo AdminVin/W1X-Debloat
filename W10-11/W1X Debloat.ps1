@@ -866,29 +866,15 @@ Write-Host "Explorer: .JPG/.PNG 'Add Watermark' [ADDED]" -ForegroundColor Green
 
 <###################################### START MENU TWEAKS (Start) ######################################>
 Write-Host "Start Menu: Alignment - Left [PROMPT - Pending User Interaction]" -ForegroundColor Yellow
-if ((Get-WMIObject win32_operatingsystem) | Where-Object { $_.Name -like "Microsoft Windows 11*" })
-{
-#Source: https://vhorizon.co.uk/windows-11-start-menu-layout-group-policy/
-$ownerForm = New-Object System.Windows.Forms.Form
-$result = [System.Windows.Forms.MessageBox]::Show($ownerForm, "Would you like your start bar and task bar icons aligned to the left?", "W1X Debloat - Start Bar/Task Bar", [System.Windows.Forms.MessageBoxButtons]::YesNo)
-$ownerForm.Dispose()
-if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
+if ((Get-WMIObject win32_operatingsystem) | Where-Object { $_.Name -like "Microsoft Windows 11*" }) {
+    #Source: https://vhorizon.co.uk/windows-11-start-menu-layout-group-policy/
     if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced") -ne $true) {New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Force | Out-Null}
 	New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Value "0" -Type Dword -Force | Out-Null
     Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Value "0" -Force | Out-Null
 	Write-Host "Start Menu: Alignment - Left" -ForegroundColor Green
 	New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'Start_Layout' -Value "1" -PropertyType DWord -Force | Out-Null
     Set-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'Start_Layout' -Value "1" -Force | Out-Null
-Write-Host "Start Menu: Set Layout to reduce 'Recommended Apps'" -ForegroundColor Green
-} else { 
-    if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced") -ne $true) {New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Force | Out-Null}
-    New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Value "1" -Type Dword -Force | Out-Null
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Value "1" -Force | Out-Null
-	Write-Host "Start Menu: Alignment - Center" -ForegroundColor Green
-	New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'Start_Layout' -Value "1" -PropertyType DWord -Force | Out-Null
-    Set-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'Start_Layout' -Value "1" -Force | Out-Null
-Write-Host "Start Menu: Set Layout to reduce 'Recommended Apps'" -ForegroundColor Green
-}
+    Write-Host "Start Menu: Set Layout to reduce 'Recommended Apps'" -ForegroundColor Green
 }
 
 New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -PropertyType "Dword" -Name "ShowTaskViewButton" -Value "0" | Out-Null
@@ -1282,14 +1268,5 @@ Write-Host "*                                                             *" -Fo
 Write-Host "*             W1X Debloat v2.0 has finished!                  *" -ForegroundColor Green
 Write-Host "*                                                             *" -ForegroundColor Green
 Write-Host "***************************************************************" -ForegroundColor Green
-Write-Host "`nREBOOT PROMPT - PENDING USER INTERACTION`n" -ForegroundColor Yellow
-$ownerForm = New-Object System.Windows.Forms.Form
-$result = [System.Windows.Forms.MessageBox]::Show($ownerForm, "Reboot now to apply changes?", "W1X Debloat - Reboot", [System.Windows.Forms.MessageBoxButtons]::YesNo)
-$ownerForm.Dispose()
-if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
-    Write-Host "Rebooting now!" -ForegroundColor Green
-    Restart-Computer -Force
-} else {
-    Write-Host "`n`nYou can close this window." -ForegroundColor Green
-}
+Write-Host "`n PLEASE REBOOT YOUR COMPUTER FOR ALL CHANGES TO TAKE EFFECT.`n" -ForegroundColor Red
 #endregion
