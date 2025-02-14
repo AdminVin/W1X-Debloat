@@ -1015,17 +1015,30 @@ Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer
 Write-Host "Windows: Background (Spotlight) - 'Learn About This Background' [REMOVED]" -ForegroundColor Green
 
 # Source: https://www.tomshardware.com/how-to/disable-vbs-windows-11
+# Disable VBS & Device Guard
 Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard" -Name "EnableVirtualizationBasedSecurity" -Value 0
-Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "RunAsPPL" -Value 0
 Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard" -Name "RequirePlatformSecurityFeatures" -Value 0
+# Disable Credential Guard
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "RunAsPPL" -Value 0
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "LsaCfgFlags" -Value 0
+# Disable Memory Integrity (HVCI)
+If (Test-Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity") {
+Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" -Name "Enabled" -Value 0
+}
 Write-Host "Windows: Virtualization-Based Security [DISABLED]" -ForegroundColor Green
 
 New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" -Force | Out-Null
 New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" -Name "PowerThrottlingOff" -PropertyType DWord -Value 1 -Force | Out-Null
 Write-Host "Windows: Power Throttling [DISABLED]" -ForegroundColor Green
 
-Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" -Name "Enabled" -Value 0
-Write-Host "Windows: Core Isolation Memory Integrity [DISABLED]" -ForegroundColor Green
+$VMsRunning = Get-VM | Where-Object { $_.State -eq 'Running' }
+if ($VMsRunning) {
+    Write-Host "Windows: Hyper-V [Skipped]" -ForegroundColor Yellow
+} else {
+    Disable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All -NoRestart
+    bcdedit /set hypervisorlaunchtype off
+    Write-Host "Windows: Hyper-V [DISABLED]" -ForegroundColor Green
+}
 <###################################### WINDOWS TWEAKS (End) ######################################>
 
 
