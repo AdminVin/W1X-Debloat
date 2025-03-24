@@ -18,6 +18,7 @@ https://github.com/AdminVin/W1X-Debloat/blob/main/W10-11/W1X%20Debloat.ps1
 2. Click Start > Search for **PowerShell ISE** > Right Click > Run As Administrator
 
 3. File > Open > Browse to the file downloaded "W1X Debloat.ps1" > Click the "Green Arrow" or press F5 to run. 
+<br><br>
 
 ## Donate
 Saved you time? Sponsor my next coffee? [PayPal](https://www.paypal.com/donate/?hosted_button_id=EZU78ZANFT24C)
