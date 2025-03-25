@@ -827,6 +827,28 @@ $Shortcut.Save()
 [System.Runtime.Interopservices.Marshal]::ReleaseComObject($WshShell) | Out-Null
 Write-Host "Start Menu: 'Devices & Printers' [ADDED]" -ForegroundColor Green
 
+# Add 'Devices and Printers (Drivers)' to Start Menu
+$ShortcutPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("CommonPrograms"), "Devices & Printers (Drivers).lnk")
+$WshShell = New-Object -ComObject WScript.Shell
+$Shortcut = $WshShell.CreateShortcut($ShortcutPath)
+$Shortcut.TargetPath = "C:\Windows\System32\rundll32.exe"
+$Shortcut.Arguments = "printui.dll,PrintUIEntry /s"
+$Shortcut.IconLocation = "C:\Windows\System32\imageres.dll,38"
+$Shortcut.Save()
+[System.Runtime.Interopservices.Marshal]::ReleaseComObject($WshShell) | Out-Null
+Write-Host "Start Menu: 'Devices & Printers (Drivers)' [ADDED]" -ForegroundColor Green
+
+# Add 'Devices and Printers (Add Network Printer)' to Start Menu
+$ShortcutPath = [System.IO.Path]::Combine([System.Environment]::GetFolderPath("CommonPrograms"), "Devices & Printers (Add Network).lnk")
+$WshShell = New-Object -ComObject WScript.Shell
+$Shortcut = $WshShell.CreateShortcut($ShortcutPath)
+$Shortcut.TargetPath = "C:\Windows\System32\rundll32.exe"
+$Shortcut.Arguments = "printui.dll,PrintUIEntry /il"
+$Shortcut.IconLocation = "C:\Windows\System32\imageres.dll,39"
+$Shortcut.Save()
+[System.Runtime.Interopservices.Marshal]::ReleaseComObject($WshShell) | Out-Null
+Write-Host "Start Menu: 'Devices & Printers (Add Network)' [ADDED]" -ForegroundColor Green
+
 <###################################### START MENU TWEAKS (End) ######################################>
 
 
