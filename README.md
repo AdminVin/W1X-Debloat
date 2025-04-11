@@ -21,4 +21,4 @@ https://github.com/AdminVin/W1X-Debloat/blob/main/W10-11/W1X%20Debloat.ps1
 <br><br>
 
 ## Donate
-Saved you time? Sponsor my next coffee? [PayPal](https://www.paypal.com/donate/?hosted_button_id=EZU78ZANFT24C)
+Helped your system? Sponsor my next coffee? [PayPal](https://www.paypal.com/donate/?hosted_button_id=EZU78ZANFT24C)

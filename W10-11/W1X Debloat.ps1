@@ -1,19 +1,38 @@
 <#############################################################################################################################>
 #region 1.0 - Script Settings
+## Variables
 $ErrorActionPreference = "SilentlyContinue"
+## Functions
+function Set-Registry {
+    param (
+        [string]$Path,
+        [string]$Name,
+        [Parameter(ValueFromPipeline = $true)]
+        [Object]$Value,
+        [ValidateSet('String','ExpandString','Binary','DWord','MultiString','QWord')]
+        [string]$Type = 'DWord'
+    )
+    # Path Check
+
+    if (-not (Test-Path $Path)) {
+        $null = New-Item -Path $Path -Force
+    }
+    # Item Check
+    if (-not (Get-ItemProperty -Path $Path -Name $Name -ErrorAction SilentlyContinue)) {
+        $null = New-ItemProperty -Path $Path -Name $Name -Value $Value -PropertyType $Type -Force
+    } else {
+        $null = Set-ItemProperty -Path $Path -Name $Name -Value $Value -Force
+    }
+}
 ### Log - Start
 $PCName = (Get-CIMInstance CIM_ComputerSystem).Name
 $Date = Get-Date
 $LogFile = "C:\ProgramData\AV\Cleanup\$PCName.txt"
-# Check if log directory exists
 if (Test-Path -Path "C:\ProgramData\AV\Cleanup") {
-    #Write-Host "Log folder exists, and does not need to be created." -ForegroundColor Green
 } else {
-    #Write-Host "Log folder does NOT exist, and will be created." -ForegroundColor Red
     New-Item "C:\ProgramData\AV\Cleanup" -Type Directory | Out-Null
 	New-Item "C:\ProgramData\AV\Cleanup\$PCName.txt" | Out-Null
 }
-# Log Locally
 $Date | Out-File -Append -FilePath $LogFile
 Write-Host "1.0 Log: Script started at $Date" -ForegroundColor Green
 $Timer = [System.Diagnostics.Stopwatch]::StartNew()
@@ -27,7 +46,7 @@ Write-Host " - Disk Space Free (before): $("{0:N2} GB" -f $FreeSpaceBefore)" -Fo
 #region 2.0  - Diagnostics
 Write-Host "`n`n2.0 Diagnostics" -ForegroundColor Green
 # Verbose Status Messaging
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\System" -Name "VerboseStatus" -Value "1"
+Set-Registry -Type Dword -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\System" -Name "VerboseStatus" -Value "1"
 Write-Host "2.1 Verbose Status Messaging [Enabled]" -ForegroundColor Green
 #endregion
 
@@ -145,15 +164,15 @@ foreach ($App in $Apps) {
 }
 
 # Microsoft Store - Disable SILENT installation of NEW third party apps.
-Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Value "0"
-Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "ContentDeliveryAllowed" -Value "0"
-Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContentEnabled" -Value "0"
+Set-Registry -Type DWord -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Value "0"
+Set-Registry -Type DWord -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "ContentDeliveryAllowed" -Value "0"
+Set-Registry -Type DWord -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContentEnabled" -Value "0"
 # Disable future automatic installs/re-installs of factory/OEM Metro Apps.
-Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEnabled" -Value "0"
-Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEverEnabled" -Value "0"
-Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "OEMPreInstalledAppsEnabled" -Value "0"
+Set-Registry -Type DWord -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEnabled" -Value "0"
+Set-Registry -Type String -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEverEnabled" -Value "0"
+Set-Registry -Type DWord -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "OEMPreInstalledAppsEnabled" -Value "0"
 # Start Menu - Disable Metro app suggestions.
-Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Value "0"
+Set-Registry -Type DWord -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Value "0"
 #endregion
 
 
@@ -162,11 +181,11 @@ Write-Host "3.2 Applications - Desktop" -ForegroundColor Green
 # 3.2.1 Edge
 Write-Host "3.2.1 Microsoft Edge" -ForegroundColor Green
 ## Services
-Get-Service "edgeupdate" | Stop-Service | Out-Null
-Get-Service "edgeupdate" | Set-Service -StartupType Disabled | Out-Null
+Get-Service "edgeupdate" | Stop-Service -ErrorAction SilentlyContinue
+Get-Service "edgeupdate" | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
 Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdate" -Recurse -Confirm:$false -Force
-Get-Service "edgeupdatem" | Stop-Service | Out-Null
-Get-Service "edgeupdatem" | Set-Service -StartupType Disabled | Out-Null
+Get-Service "edgeupdatem" | Stop-Service -ErrorAction SilentlyContinue
+Get-Service "edgeupdatem" | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
 Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdatem" -Recurse -Confirm:$false -Force
 Write-Host "Microsoft Edge - Auto Update Services [DISABLED]" -ForegroundColor Green
 Get-WmiObject -Query "SELECT * FROM Win32_Product WHERE Name LIKE '%Microsoft Search in Bing%'" | ForEach-Object { $_.Uninstall() > $null 2>&1 }
@@ -411,8 +430,8 @@ $services = @(
 
 foreach ($service in $services) {
     $serviceName = (Get-Service $service).DisplayName
-    Get-Service $service | Stop-Service | Out-Null
-    Get-Service $service | Set-Service -StartupType Disabled | Out-Null
+    Get-Service $service | Stop-Service -ErrorAction SilentlyContinue
+    Get-Service $service | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
     Write-Host " - Service: $serviceName [DISABLED]" -ForegroundColor Green
 }
 # Services - Superfetch/Prefetch Disable (if running SSD)
@@ -433,8 +452,8 @@ $services = @(
 
 foreach ($service in $services) {
     $serviceName = (Get-Service $service).DisplayName
-    Get-Service $service | Stop-Service | Out-Null
-    Get-Service $service | Set-Service -StartupType Manual | Out-Null
+    Get-Service $service | Stop-Service -ErrorAction SilentlyContinue
+    Get-Service $service | Set-Service -StartupType Manual -ErrorAction SilentlyContinue
     Write-Host " - Service: $serviceName [Set to Manual]" -ForegroundColor Green
 }
 
