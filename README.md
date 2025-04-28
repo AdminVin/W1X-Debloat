@@ -26,4 +26,4 @@ ____________________________________
 <br><br>
 
 ## Donate
-Helped your system? Sponsor my next coffee? [PayPal](https://www.paypal.com/donate/?hosted_button_id=EZU78ZANFT24C)
+Helped your system? Great! --- Sponsor my next coffee? [PayPal](https://www.paypal.com/donate/?hosted_button_id=EZU78ZANFT24C)
