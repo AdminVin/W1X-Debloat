@@ -22,7 +22,7 @@ ____________________________________
 
 2. Click Start > Search for **PowerShell ISE** > Right Click > Run As Administrator
 
-3. File > Open > Browse to the file downloaded "W1X Debloat.ps1" > Click the "Green Arrow" or press F5 to run. 
+3. File > Open > Browse to the file downloaded "W1X Debloat (W****).ps1" > Click the "Green Arrow" or press F5 to run. 
 <br><br>
 
 ## Donate
