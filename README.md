@@ -12,10 +12,10 @@ Originally created for personal use to quickly remove bloatware and disable intr
 ## How do I get W1X Debloat?
 You can download the script here:
 
-Windows 10-11: [Download] (https://github.com/AdminVin/W1X-Debloat/raw/main/W1X%20Debloat%20(W10-11).ps1)
+Windows 10-11: https://github.com/AdminVin/W1X-Debloat/raw/main/W1X%20Debloat%20(W10-11).ps1
+Windows 12 (Next Valley): TBD
 
-
-1. Select your OS link > Select the three dots at the top right > Download
+1. Find your OS link above > Right click > Select "Save link as" > Save to your PC
 
 2. Click Start > Search for **PowerShell ISE** > Right Click > Run As Administrator
 
