@@ -12,8 +12,11 @@ Originally created for personal use to quickly remove bloatware and disable intr
 ## How do I get W1X Debloat?
 You can download the script here:
 
-Windows 10-11: https://github.com/AdminVin/W1X-Debloat/raw/main/W1X%20Debloat%20(W10-11).ps1
-Windows 12 (Next Valley): TBD
+**Windows 10-11**: https://github.com/AdminVin/W1X-Debloat/raw/main/W1X%20Debloat%20(W10-11).ps1
+
+**Windows 12 (Next Valley)**: TBD
+
+____________________________________
 
 1. Find your OS link above > Right click > Select "Save link as" > Save to your PC
 
