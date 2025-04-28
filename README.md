@@ -1,4 +1,5 @@
 # W1X Debloat
+![Banner](https://github.com/AdminVin/W1X-Debloat/raw/main/Banner.jpg)
 <br>
 
 ## What is W1X Debloat?
