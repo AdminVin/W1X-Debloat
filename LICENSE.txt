@@ -7,7 +7,6 @@ Note:
 
 Permitted:
 	- Use this project for personal or internal business purposes.
-	- Modify or adapt it for your own use.
 	- Share it freely without charge.
 
 Not Permitted:
