@@ -1220,13 +1220,10 @@ Write-Host "`n*NOTE* This may take some time and is expected. Especially, if thi
 # SoftwareDistribution
 Stop-Service -Name wuauserv
 if (Test-Path "C:\Windows\SoftwareDistribution.old") {
-    Remove-Item -Path "C:\Windows\SoftwareDistribution.old" -Recurse -Force -ErrorAction SilentlyContinue
-    if (Test-Path "C:\Windows\SoftwareDistribution.old") {
-        Write-Host "  - Forcing removal of SoftwareDistribution.old via system process..." -ForegroundColor Yellow
-        cmd.exe /c rd /s /q "C:\Windows\SoftwareDistribution.old"
-    }
-}
+    cmd.exe /c rd /s /q "C:\Windows\SoftwareDistribution.old"
+}   # Remove any .old variations of 'SoftwareDistribution'
 Rename-Item -Path "C:\Windows\SoftwareDistribution" -NewName "SoftwareDistribution.old"
+cmd.exe /c rd /s /q "C:\Windows\SoftwareDistribution.old"
 Start-Service -Name wuauserv
 # WinSxS
 # Service Pack Backups / Superseded Updates / Replaced Componets
