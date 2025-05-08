@@ -212,29 +212,27 @@ Write-Host "Microsoft Edge - Tracking [DISABLED]" -ForegroundColor Green
 
 # 3.2.2 OneDrive
 Write-Host "3.2.2 One Drive" -ForegroundColor Green
-# Detect if One Drive is being used currently (1 = Yes/Signed In | 0 = Never Signed In)
-$ClientEverSignedInKey = Get-ItemProperty -Path 'HKCU:\Software\Microsoft\OneDrive' -Name 'ClientEverSignedIn' -ErrorAction SilentlyContinue
-if ($ClientEverSignedInKey -and $ClientEverSignedInKey.ClientEverSignedIn -eq 1) {
-    # Result: 1 (One Drive is being Used)
+# Detect if One Drive is signed in and syncing. ($True = Yes & Do Not Remove)
+if (Test-Path $env:OneDrive) {
     if (-not (Test-Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive')) {
         New-Item -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Force | Out-Null
     }
     # DisableFileSync
-    if ((Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -ErrorAction SilentlyContinue) -eq $null) {
+    if ($null -eq (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -ErrorAction SilentlyContinue)) {
         New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Value 0 -PropertyType DWord -Force | Out-Null
     } else {
         Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Value 0 | Out-Null
     }
     
     # DisableFileSyncNGSC
-    if ((Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -ErrorAction SilentlyContinue) -eq $null) {
+    if ($null -eq (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -ErrorAction SilentlyContinue)) {
         New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Value 0 -PropertyType DWord -Force | Out-Null
     } else {
         Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Value 0 | Out-Null
     }    
 	Write-Host "3.2.2 Microsoft One Drive Removal [Skipped]" -ForegroundColor Yellow
 } else {
-    # Result: 0 (One Drive is NOT being used)
+    # Detect if One Drive is signed in and syncing. ($False = No & Remove)
     	## Close OneDrive (if running in background)
 		taskkill /f /im OneDrive.exe
 		taskkill /f /im FileCoAuth.exe
@@ -286,13 +284,13 @@ if ($ClientEverSignedInKey -and $ClientEverSignedInKey.ClientEverSignedIn -eq 1)
             New-Item -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Force | Out-Null
         }
         # DisableFileSync
-        if ((Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -ErrorAction SilentlyContinue) -eq $null) {
+        if ($null -eq (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -ErrorAction SilentlyContinue)) {
             New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Value 1 -PropertyType DWord -Force | Out-Null
         } else {
             Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Value 1 | Out-Null
         }
         # DisableFileSyncNGSC
-        if ((Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -ErrorAction SilentlyContinue) -eq $null) {
+        if ($null -eq (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -ErrorAction SilentlyContinue)) {
             New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Value 1 -PropertyType DWord -Force | Out-Null
         } else {
             Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Value 1 | Out-Null
