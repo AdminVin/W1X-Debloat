@@ -316,7 +316,7 @@ Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\E
 Write-Host "Internet Explorer - Addon - 'Lync Click to Call' [REMOVED]" -ForegroundColor Green
 # Addon IE to Edge Browser Helper Object
 $existingTask = Get-ScheduledTask | Where-Object { $_.TaskName -like "Internet Explorer - IEtoEDGE Addon Removal" }
-if ($existingTask -eq $null) {
+if ($null -eq $existingTask) {
     Get-ChildItem -Path "C:\Program Files (x86)\Microsoft\Edge\Application" -Recurse -Filter "BHO" | Remove-Item -Force -Recurse
     $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "Get-ChildItem -Path 'C:\Program Files (x86)\Microsoft\Edge\Application' -Recurse -Filter 'BHO' | Remove-Item -Force -Recurse"
     $trigger = New-ScheduledTaskTrigger -AtLogOn
@@ -434,7 +434,7 @@ foreach ($service in $services) {
 }
 # Services - Superfetch/Prefetch Disable (if running SSD)
 $disk = Get-PhysicalDisk | Where-Object { $_.DeviceID -eq (Get-Disk -Number (Get-Partition -DriveLetter C).DiskNumber).Number }
-if ($disk.MediaType -eq 'SSD' -or $disk.MediaType -eq $null) {
+if ($disk.MediaType -eq 'SSD' -or $null -eq $disk.MediaType) {
     Stop-Service -Name SysMain -Force
     Set-Service -Name SysMain -StartupType Disabled
     Write-Host " - Service: Superfetch/Prefetch [DISABLED]" -ForegroundColor Green
