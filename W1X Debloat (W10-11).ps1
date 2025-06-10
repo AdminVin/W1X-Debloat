@@ -341,7 +341,6 @@ Write-Host "Teams (Work or School) - Auto Start [DISABLED]" -ForegroundColor Gre
 ## 3.2.8 Tips/Ticks/Suggestions Pop Ups
 Write-Host "3.2.8 Tips/Ticks/Suggestions Pop Ups" -ForegroundColor Green
 # Source: https://www.elevenforum.com/t/disable-ads-in-windows-11.8004/
-# Settings App Suggestions
 Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" |
     Get-Member -MemberType NoteProperty |
     Where-Object { $_.Name -like "SubscribedContent*" } |
