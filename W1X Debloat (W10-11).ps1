@@ -162,17 +162,6 @@ foreach ($App in $Apps) {
     Write-Host " - Removed: "$App -ForegroundColor Green
     Get-AppxPackage -AllUsers $App | Remove-AppxPackage
 }
-
-# Microsoft Store - Disable SILENT installation of NEW third party apps.
-Set-Registry -Type DWord -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Value "0"
-Set-Registry -Type DWord -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "ContentDeliveryAllowed" -Value "0"
-Set-Registry -Type DWord -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContentEnabled" -Value "0"
-# Disable future automatic installs/re-installs of factory/OEM Metro Apps.
-Set-Registry -Type DWord -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEnabled" -Value "0"
-Set-Registry -Type String -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEverEnabled" -Value "0"
-Set-Registry -Type DWord -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "OEMPreInstalledAppsEnabled" -Value "0"
-# Start Menu - Disable Metro app suggestions.
-Set-Registry -Type DWord -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Value "0"
 #endregion
 
 
@@ -353,20 +342,27 @@ Write-Host "Teams (Work or School) - Auto Start [DISABLED]" -ForegroundColor Gre
 Write-Host "3.2.8 Tips/Ticks/Suggestions Pop Ups" -ForegroundColor Green
 # Source: https://www.elevenforum.com/t/disable-ads-in-windows-11.8004/
 # Settings App Suggestions
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338393Enabled" -Value 0 | Out-Null
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353694Enabled" -Value 0 | Out-Null
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-353696Enabled" -Value 0 | Out-Null
-Write-Host "Settings App Suggestions [DISABLED]" -ForegroundColor Green
-# Windows Tips/Suggestions
-Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-338389Enabled" -Value 0 | Out-Null
-Write-Host "Windows Tips [DISABLED]" -ForegroundColor Green
+Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" |
+    Get-Member -MemberType NoteProperty |
+    Where-Object { $_.Name -like "SubscribedContent*" } |
+    ForEach-Object {
+        Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name $_.Name -Value 0
+    }
+Write-Host "Suggestions/Tips/'Welcome' Experience [DISABLED]" -ForegroundColor Green
+# Microsoft Store - Disable SILENT installation of NEW third party apps.
+Set-Registry -Type DWord -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Value "0"
+Set-Registry -Type DWord -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "ContentDeliveryAllowed" -Value "0"
+Set-Registry -Type DWord -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContentEnabled" -Value "0"
+# Disable future automatic installs/re-installs of factory/OEM Metro Apps.
+Set-Registry -Type DWord -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEnabled" -Value "0"
+Set-Registry -Type String -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEverEnabled" -Value "0"
+Set-Registry -Type DWord -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "OEMPreInstalledAppsEnabled" -Value "0"
+# Start Menu - Disable Metro app suggestions.
+Set-Registry -Type DWord -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Value "0"
 # Windows 'Get most of out this device' Suggestions
 New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement" -Force | Out-Null
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement" -Name "ScoobeSystemSettingEnabled" -Value 0 | Out-Null
 Write-Host "Windows 'Getting most out of this device' [DISABLED]" -ForegroundColor Green
-# Windows Welcome Experience
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContent-310093Enabled" -Value 0 | Out-Null
-Write-Host "Windows 'Welcome' Experience [DISABLED]" -ForegroundColor Green
 # Personalized Ads
 New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AdvertisingInfo" -Force | Out-Null
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AdvertisingInfo" -Name "DisabledByGroupPolicy" -Value 1 | Out-Null
