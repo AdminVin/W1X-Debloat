@@ -1019,7 +1019,7 @@ if ($VMsRunning) {
     Write-Host "Windows: Hyper-V [Skipped]" -ForegroundColor Yellow
 } else {
     Set-Registry -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" -Name "Enabled" -Value 0 -Type DWord
-    Disable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All -NoRestart
+    Disable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All -NoRestart | Out-Null
     bcdedit /set hypervisorlaunchtype off
     Write-Host "Windows: Hyper-V [DISABLED]" -ForegroundColor Green
 }
