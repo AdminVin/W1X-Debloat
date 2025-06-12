@@ -1028,7 +1028,6 @@ if ($VMsRunning) {
 
 
 <###################################### TEST TWEAKS (Start) ######################################>
-
 #Set-ItemProperty -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Value "1" -Force | Out-Null
 #Write-Host "Explorer: Disabled 'Recent Files' in Explorer [Skipped]" -ForegroundColor Yellow
 
@@ -1041,7 +1040,6 @@ Set-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer
 New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Desktop' -Name 'UserPreferencesMask' -Value ([byte[]](0x10,0x32,0x07,0x80,0x10,0x00,0x00,0x00)) -PropertyType Binary -Force
 Write-Host "Explorer: Set Optimal Visual Settings" -ForegroundColor Green
 #>
-
 <###################################### TEST TWEAKS (Ened) ######################################>
 #endregion
 
