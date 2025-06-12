@@ -178,6 +178,18 @@ foreach ($App in $Apps) {
     Write-Host " - Removed: "$App -ForegroundColor Green
     Get-AppxPackage -AllUsers $App | Remove-AppxPackage
 }
+
+# REMOVAL - Microsoft Desktop App Installer: silently manages installation and updating of Windows apps, especially those distributed as MSIX or APPX packages.
+Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe | Out-Null
+
+# Microsoft Store - Disable SILENT installation of NEW third party apps.
+Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Type DWord -Value "0"
+Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "ContentDeliveryAllowed" -Type DWord -Value "0"
+Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContentEnabled" -Type DWord -Value "0"
+# Disable future automatic installs/re-installs of factory/OEM Metro Apps.
+Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEnabled" -Type DWord -Value "0"
+Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEverEnabled" -Type String -Value "0"
+Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "OEMPreInstalledAppsEnabled" -Type DWord -Value "0"
 #endregion
 
 
@@ -185,74 +197,60 @@ foreach ($App in $Apps) {
 Write-Host "3.2 Applications - Desktop" -ForegroundColor Green
 # 3.2.1 Edge
 Write-Host "3.2.1 Microsoft Edge" -ForegroundColor Green
-## Services
+#> Services
 Get-Service "edgeupdate" | Stop-Service -ErrorAction SilentlyContinue
-Get-Service "edgeupdate" | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
-Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdate" -Recurse -Confirm:$false -Force
 Get-Service "edgeupdatem" | Stop-Service -ErrorAction SilentlyContinue
+Get-Service "edgeupdate" | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
 Get-Service "edgeupdatem" | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
-Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdatem" -Recurse -Confirm:$false -Force
+Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Services' -Name 'edgeupdate' -Remove Path
+Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Services' -Name 'edgeupdatem' -Remove Path
 Write-Host "Microsoft Edge - Auto Update Services [DISABLED]" -ForegroundColor Green
-Get-WmiObject -Query "SELECT * FROM Win32_Product WHERE Name LIKE '%Microsoft Search in Bing%'" | ForEach-Object { $_.Uninstall() > $null 2>&1 }
-Write-Host "Microsoft Edge - Bloat Search Application [REMOVED]" -ForegroundColor Green
-## Scheduled Tasks
+#> Scheduled Tasks
 Get-Scheduledtask "*edge*" | Disable-ScheduledTask | Out-Null
 Write-Host "Microsoft Edge - Auto Start - Scheduled Task [DISABLED]" -ForegroundColor Green
-## Auto Start
-Set-Location HKLM:
-if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft") -ne $true) {New-Item "HKLM:\SOFTWARE\Policies\Microsoft" -Force | Out-Null}
-if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge") -ne $true) {New-Item "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge" -Force | Out-Null}
-if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main") -ne $true) {New-Item "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main" -Force | Out-Null}
-New-ItemProperty -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main" -Name "AllowPrelaunch" -Value "0" -PropertyType DWord -Force | Out-Null
-Set-Location HKCU:
-Set-Location "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run\"
-Remove-ItemProperty -Path . -Name "*MicrosoftEdge*" -Force | Out-Null
-Set-Location "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
-Remove-ItemProperty -Path . -Name "*MicrosoftEdge*" -Force | Out-Null
-Set-Location C:/
-Write-Host "Microsoft Edge - Auto Start - Startup Entry [DISABLED]" -ForegroundColor Green
-# Tracking
-Set-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main' -Name 'DoNotTrack' -Value '1'
+#> Auto Start
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main' -Name 'AllowPrelaunch' -Value 0 -Type DWord
+$paths = @(
+  "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run",
+  "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
+)
+foreach ($path in $paths) {
+    Get-ItemProperty -Path $path |
+        Get-Member -MemberType NoteProperty |
+        Where-Object { $_.Name -like '*MicrosoftEdge*' } |
+        ForEach-Object {
+            Remove-ItemProperty -Path $path -Name $_.Name -Force
+        }
+}
+Write-Host "Microsoft Edge - Auto Start - Startup Entries [DISABLED]" -ForegroundColor Green
+#> Tracking
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main' -Name 'DoNotTrack' -Value 1 -Type DWord
 Write-Host "Microsoft Edge - Tracking [DISABLED]" -ForegroundColor Green
+#> Addons
+Get-WmiObject -Query "SELECT * FROM Win32_Product WHERE Name LIKE '%Microsoft Search in Bing%'" | ForEach-Object { $_.Uninstall() > $null 2>&1 }
+Write-Host "Microsoft Edge - Bloat Search Addon [REMOVED]" -ForegroundColor Green
 
 # 3.2.2 OneDrive
 Write-Host "3.2.2 One Drive" -ForegroundColor Green
-# Detect if One Drive is signed in and syncing. ($True = Yes & Do Not Remove)
 if (Test-Path $env:OneDrive) {
-    if (-not (Test-Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive')) {
-        New-Item -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Force | Out-Null
-    }
-    # DisableFileSync
-    if ($null -eq (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -ErrorAction SilentlyContinue)) {
-        New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Value 0 -PropertyType DWord -Force | Out-Null
-    } else {
-        Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Value 0 | Out-Null
-    }
-    
-    # DisableFileSyncNGSC
-    if ($null -eq (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -ErrorAction SilentlyContinue)) {
-        New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Value 0 -PropertyType DWord -Force | Out-Null
-    } else {
-        Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Value 0 | Out-Null
-    }    
+    # DisableFileSync (Enable)
+    Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Type DWord -Value 0
+    # DisableFileSyncNGSC (Enable)
+    Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Type DWord -Value 0  
 	Write-Host "3.2.2 Microsoft One Drive Removal [Skipped]" -ForegroundColor Yellow
 } else {
-    # Detect if One Drive is signed in and syncing. ($False = No & Remove)
-    	## Close OneDrive (if running in background)
+    	#> Close OneDrive (if running in background)
 		taskkill /f /im OneDrive.exe
 		taskkill /f /im FileCoAuth.exe
-	
-		## Official Removal
+		#> Official Removal
 		# x86
 		Start-Process -FilePath "$Env:WinDir\System32\OneDriveSetup.exe" -WorkingDirectory "$Env:WinDir\System32\" -ArgumentList "/uninstall" | Out-Null
 		# x64
 		Start-Process -FilePath "$Env:WinDir\SysWOW64\OneDriveSetup.exe" -WorkingDirectory "$Env:WinDir\SysWOW64\" -ArgumentList "/uninstall" | Out-Null
-	
-		## Files Cleanup
+		#> Files Cleanup
 		# File Explorer - Navigation Bar
-		if((Test-Path -LiteralPath "HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}") -ne $true) {New-Item "HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}" -Force | Out-Null}
-		New-ItemProperty -LiteralPath 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name '(default)' -Value 'OneDrive' -PropertyType String -Force | Out-Null
-		New-ItemProperty -LiteralPath 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name 'System.IsPinnedToNameSpaceTree' -Value "0" -PropertyType DWord -Force | Out-Null
+        Set-Registry -Path 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name '(default)' -Type String -Value 'OneDrive'
+        Set-Registry -Path 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name 'System.IsPinnedToNameSpaceTree' -Type DWord -Value 0
 		# AppData / Local
 		Remove-Item -Path "$env:localappdata\OneDrive" -Recurse -Confirm:$false -Force
 		# ProgramData
@@ -263,21 +261,18 @@ if (Test-Path $env:OneDrive) {
 		# Program Files
 		Remove-Item -LiteralPath "C:\Program Files (x86)\Microsoft OneDrive" -Recurse -Confirm:$false -Force
 		Remove-Item -LiteralPath "C:\Program Files\Microsoft OneDrive" -Recurse -Confirm:$false -Force
-	
-		## Scheduled Tasks
+		#> Scheduled Tasks
 		Get-ScheduledTask "*OneDrive*" | Unregister-ScheduledTask -Confirm:$false
-	
-		## Services
+		#> Services
 		$ODUPdaterService = Get-WmiObject -Class Win32_Service -Filter "Name='OneDrive Updater Service'"
 		$ODUPdaterService.delete() | Out-Null
-		
-		## Registry
-		# Remove Previous Accounts/Sync Options
-		Remove-Item -LiteralPath "HKCU:\Software\Microsoft\OneDrive" -Recurse -Confirm:$false -Force
-		# Remove previously set One Drive settings
-		Remove-Item -LiteralPath "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Recurse -Confirm:$false -Force
-		# Remove Right Click Menu Context Options
-		Remove-Item -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\FileSyncHelper" -Recurse -Confirm:$false -Force
+		#> Registry
+        # Remove Previous Accounts/Sync Options
+        Set-Registry -Remove Path -Path "HKCU:\Software\Microsoft\OneDrive"
+        # Remove previously set One Drive settings
+        Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive"
+        # Remove Right Click Menu Context Options
+        Set-Registry -Remove Path -Path "HKLM:\SYSTEM\CurrentControlSet\Services\FileSyncHelper"
 		# Remove from 'Default' user account
 		reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
 		reg delete "HKEY_USERS\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v "OneDriveSetup" /f
@@ -285,41 +280,30 @@ if (Test-Path $env:OneDrive) {
 		#########################################
         ### DISABLE ONE DRIVE FROM BEING USED ###
         #########################################
-        if (-not (Test-Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive')) {
-            New-Item -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Force | Out-Null
-        }
         # DisableFileSync
-        if ($null -eq (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -ErrorAction SilentlyContinue)) {
-            New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Value 1 -PropertyType DWord -Force | Out-Null
-        } else {
-            Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Value 1 | Out-Null
-        }
+        Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Type DWord -Value 0
         # DisableFileSyncNGSC
-        if ($null -eq (Get-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -ErrorAction SilentlyContinue)) {
-            New-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Value 1 -PropertyType DWord -Force | Out-Null
-        } else {
-            Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Value 1 | Out-Null
-        }
-		Set-ItemProperty -Path "HKLM\SOFTWARE\Policies\Microsoft\Windows\OneDrive" -Name "DisableFileSync" -Value "1" | Out-Null
-		New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Value "1" -PropertyType DWord -Force -ErrorAction SilentlyContinue | Out-Null
+        Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Type DWord -Value 0  
 		Write-Host "3.2.2 Microsoft One Drive [Removed]" -ForegroundColor Yellow
 }
 
 ## 3.2.3 Internet Explorer
 Write-Host "3.2.3 Internet Explorer" -ForegroundColor Green
-# Addon 'Send to One Note'
-Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{2670000A-7350-4f3c-8081-5663EE0C6C49}" -Force | Out-Null
-Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer\Extensions\{2670000A-7350-4f3c-8081-5663EE0C6C49}" -Force | Out-Null
-Write-Host "Internet Explorer - Addon - 'Send to One Note' [REMOVED]" -ForegroundColor Green
-# Addon 'OneNote Linked Notes'
-Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{789FE86F-6FC4-46A1-9849-EDE0DB0C95CA}" -Force | Out-Null
-Remove-Item -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer\Extensions\{789FE86F-6FC4-46A1-9849-EDE0DB0C95CA}" -Force | Out-Null
-Write-Host "Internet Explorer - Addon - 'OneNote Linked Notes' [REMOVED]" -ForegroundColor Green
-# Addon 'Lync Click to Call'
-Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{31D09BA0-12F5-4CCE-BE8A-2923E76605DA}" -Force | Out-Null
-Remove-Item -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects\{31D09BA0-12F5-4CCE-BE8A-2923E76605DA}" -Force | Out-Null
-Write-Host "Internet Explorer - Addon - 'Lync Click to Call' [REMOVED]" -ForegroundColor Green
-# Addon IE to Edge Browser Helper Object
+#> Add-Ons
+# Send to One Note
+Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{2670000A-7350-4f3c-8081-5663EE0C6C49}"
+Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer\Extensions\{2670000A-7350-4f3c-8081-5663EE0C6C49}"
+Write-Host "Internet Explorer - Add-On: 'Send to One Note' [REMOVED]" -ForegroundColor Green
+# OneNote Linked Notes
+Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{789FE86F-6FC4-46A1-9849-EDE0DB0C95CA}"
+Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer\Extensions\{789FE86F-6FC4-46A1-9849-EDE0DB0C95CA}"
+Write-Host "Internet Explorer - Add-On: 'OneNote Linked Notes' [REMOVED]" -ForegroundColor Green
+# Lync Click to Call
+Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions" -Name "{31D09BA0-12F5-4CCE-BE8A-2923E76605DA}"
+Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects" -Name "{31D09BA0-12F5-4CCE-BE8A-2923E76605DA}"
+Write-Host "Internet Explorer - Add-On: 'Lync Click to Call' [REMOVED]" -ForegroundColor Green
+# IE to Edge Browser Helper Object
+Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects\{1FD49718-1D00-4B19-AF5F-070AF6D5D54C}"
 $existingTask = Get-ScheduledTask | Where-Object { $_.TaskName -like "Internet Explorer - IEtoEDGE Addon Removal" }
 if ($null -eq $existingTask) {
     Get-ChildItem -Path "C:\Program Files (x86)\Microsoft\Edge\Application" -Recurse -Filter "BHO" | Remove-Item -Force -Recurse
@@ -328,13 +312,12 @@ if ($null -eq $existingTask) {
     $STPrin = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount
     Register-ScheduledTask -Action $action -Trigger $trigger -TaskName "Internet Explorer - IEtoEDGE Addon Removal" -Description "Removes the Internet Explorer Addon IEtoEDGE.  This will permit the use of Internet Explorer." -Principal $STPrin | Out-Null
 }
-Write-Host "Microsoft Edge - Addon: IE to Edge [DISABLED]" -ForegroundColor Green
-Write-Host "Internet Explorer - Addon - 'IE to Edge' [REMOVED]" -ForegroundColor Green
+Write-Host "Internet Explorer - Add-On: 'IE to Edge' [REMOVED]" -ForegroundColor Green
 
 ## 3.2.4 One Note
 Write-Host "3.2.4 One Note" -ForegroundColor Green
-Remove-Item -LiteralPath "C:\Users\$env:username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Send to OneNote.lnk" -Force | Out-Null
-Write-Host "OneNote - 'Send to OneNote' [REMOVED]" -ForegroundColor Green
+Remove-Item -LiteralPath "C:\Users\$env:username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Send to OneNote.lnk" -ErrorAction "SilentlyContinue" -Force | Out-Null
+Write-Host "OneNote - Startup: 'Send to OneNote' [REMOVED]" -ForegroundColor Green
 
 ## 3.2.5 Mozilla Firefox
 Write-Host "3.2.5 Mozilla Firefox" -ForegroundColor Green
@@ -344,18 +327,17 @@ Write-Host "Firefox - 'Periodic requests to set as default browser' [DISABLED]" 
 
 ## 3.2.6 Teams (Home / Small Business)
 Write-Host "3.2.6 Teams (Home / Small Business)" -ForegroundColor Green
-New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarMn' -Value '0' -PropertyType DWord -Force | Out-Null
-Set-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarMn' -Value '0' -Force | Out-Null
+Set-Registry -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarMn' -Value 0 -Type DWord
 Write-Host "Teams (Home / Small Business) - Taskbar Shortcut [REMOVED]" -ForegroundColor Green
 
 ## 3.2.7 Teams (Work or School)
 Write-Host "3.2.7 Teams (Work or School) - Disabled Auto Start" -ForegroundColor Green
-Remove-ItemProperty -LiteralPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "com.squirrel.Teams.Teams" -Force
-Remove-ItemProperty -LiteralPath "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run" -Name "TeamsMachineInstaller" -Force
+Set-Registry -Remove -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "com.squirrel.Teams.Teams"
+Set-Registry -Remove -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run" -Name "TeamsMachineInstaller"
 Write-Host "Teams (Work or School) - Auto Start [DISABLED]" -ForegroundColor Green
 
-## 3.2.8 Tips/Ticks/Suggestions Pop Ups
-Write-Host "3.2.8 Tips/Ticks/Suggestions Pop Ups" -ForegroundColor Green
+## 3.2.8 Windows Suggestions/Tips/Welcome Experience
+Write-Host "3.2.8 Windows Suggestions/Tips/Welcome Experience" -ForegroundColor Green
 # Source: https://www.elevenforum.com/t/disable-ads-in-windows-11.8004/
 Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" |
     Get-Member -MemberType NoteProperty |
@@ -363,49 +345,37 @@ Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentD
     ForEach-Object {
         Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name $_.Name -Value 0
     }
-Write-Host "Suggestions/Tips/'Welcome' Experience [DISABLED]" -ForegroundColor Green
-# Microsoft Store - Disable SILENT installation of NEW third party apps.
-Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Type DWord -Value "0"
-Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "ContentDeliveryAllowed" -Type DWord -Value "0"
-Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContentEnabled" -Type DWord -Value "0"
-# Disable future automatic installs/re-installs of factory/OEM Metro Apps.
-Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEnabled" -Type DWord -Value "0"
-Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEverEnabled" -Type String -Value "0"
-Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "OEMPreInstalledAppsEnabled" -Type DWord -Value "0"
-# Start Menu - Disable Metro app suggestions.
-Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value "0"
-# Windows 'Get most of out this device' Suggestions
-New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement" -Force | Out-Null
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement" -Name "ScoobeSystemSettingEnabled" -Value 0 | Out-Null
-Write-Host "Windows 'Getting most out of this device' [DISABLED]" -ForegroundColor Green
-# Personalized Ads
-New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AdvertisingInfo" -Force | Out-Null
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AdvertisingInfo" -Name "DisabledByGroupPolicy" -Value 1 | Out-Null
-Write-Host "Windows Personalized Ads [DISABLED]" -ForegroundColor Green
-# Tailored Experience
-New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\CloudContent" -Force | Out-Null
-Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\CloudContent" -Name "DisableTailoredExperiencesWithDiagnosticData" -Value 1 | Out-Null
-Write-Host "Windows Tailored Experience [DISABLED]" -ForegroundColor Green
+Write-Host "Windows Suggestions/Tips/Welcome Experience [DISABLED]" -ForegroundColor Green
 
 ## 3.2.9 Sysinternals Installation
 Write-Host "3.2.9 Sysinternals" -ForegroundColor Green
-New-Item "C:/users/$env:username/Temp/" -ItemType Directory
-Invoke-WebRequest -Uri "https://download.sysinternals.com/files/PSTools.zip" -OutFile "C:/users/$env:username/PSTools.zip"
-Expand-Archive -Path "C:/users/$env:username/PSTools.zip" -DestinationPath "C:\Windows\System32" -Force
-Remove-Item "C:/users/$env:username/PSTools.zip" -Force
+Invoke-WebRequest -Uri "https://live.sysinternals.com/Autoruns.exe" -OutFile "C:\Windows\System32\Autoruns.exe"
+Invoke-WebRequest -Uri "https://live.sysinternals.com/Autoruns64.exe" -OutFile "C:\Windows\System32\Autoruns64.exe"
+Invoke-WebRequest -Uri "https://download.sysinternals.com/files/PSTools.zip" -OutFile "C:\Windows\Temp\PSTools.zip"
+Expand-Archive -Path "C:\Windows\Temp\PSTools.zip" -DestinationPath "C:\Windows\System32" -Force
+Remove-Item "C:\Windows\Temp\PSTools.zip" -Force
 Write-Host "Sysinternals Suite [INSTALLED]" -ForegroundColor Green
 Write-Host "Official Website: https://learn.microsoft.com/en-us/sysinternals/" -ForegroundColor Green
 
-## 3.3.0 Cortana
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCloudSearch" -Value "0" -Force | Out-Null
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Value "0" -Force | Out-Null
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortanaAboveLock" -Value "0" -Force | Out-Null
+## 3.3.10 Cortana
+# Disable
+Set-Registry -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Value 0 -Type DWord
+# Disable Lock Screen
+Set-Registry -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortanaAboveLock" -Value 0 -Type DWord
+# Disable Cloud Search
+Set-Registry -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCloudSearch" -Value 0 -Type DWord
+# Disable Bing Search Integration
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -Value 0 -Type DWord
+# Disable Cortana Consent UI
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "CortanaConsent" -Value 0 -Type DWord
+# Disable Web Search Suggestions (taskbar)
+Set-Registry -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "DisableSearchBoxSuggestions" -Value 1 -Type DWord
 Get-AppxPackage -AllUsers Microsoft.549981C3F5F10 | Remove-AppxPackage | Out-Null
-Write-Host "3.3.0 Explorer: Cortana [DISABLED]" -ForegroundColor Green
+Write-Host "3.3.10 Explorer: Cortana [DISABLED]" -ForegroundColor Green
 
-## 3.4.0 Dynamic Lighting
+## 3.4.11 Dynamic Lighting
 Set-ItemProperty -Path "HKCU:\Software\Microsoft\Lighting" -Name "AmbientLightingEnabled" -Value "0"
-Write-Host "3.4.0 Microsoft Dynamic Lighting (RGB Fix) [Disabled]" -ForegroundColor Green
+Write-Host "3.4.11 Microsoft Dynamic Lighting (RGB Fix) [Disabled]" -ForegroundColor Green
 #endregion
 
 #endregion
@@ -480,16 +450,18 @@ $taskData = @(
     @{ TaskName = "GatherNetworkInfo"; DisplayName = "Gather Network Info Task" },
     @{ TaskName = "QueueReporting"; DisplayName = "Queue Reporting Task" },
     @{ TaskName = "UpdateLibrary"; DisplayName = "Update Library Task" },
-    @{ TaskName = "Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser"; DisplayName = "Microsoft Compatibility Appraiser Task" },
-    @{ TaskName = "Microsoft\Windows\Application Experience\ProgramDataUpdater"; DisplayName = "Program Data Updater Task" },
+    @{ TaskName = "Microsoft Compatibility Appraiser"; DisplayName = "Microsoft Compatibility Appraiser Task" },
+    @{ TaskName = "ProgramDataUpdater"; DisplayName = "Program Data Updater Task" },
     @{ TaskName = "Microsoft\Windows\Autochk\Proxy"; DisplayName = "Proxy Task" },
-    @{ TaskName = "Microsoft\Windows\Customer Experience Improvement Program\Consolidator"; DisplayName = "Consolidator Task" },
-    @{ TaskName = "Microsoft\Windows\Customer Experience Improvement Program\UsbCeip"; DisplayName = "USB CEIP Task" },
-    @{ TaskName = "Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector"; DisplayName = "Disk Diagnostic Data Collector Task" },
-    @{ TaskName = "Microsoft\Windows\Maintenance\WinSAT"; DisplayName = "Windows System Assessment Tool" },
-    @{ TaskName = "Microsoft\Windows\Power Efficiency Diagnostics\AnalyzeSystem"; DisplayName = "Power Efficiency Diagnostics" },
-    @{ TaskName = "Microsoft\Windows\Windows Error Reporting\QueueReporting"; DisplayName = "Windows Error Reporting Queue" },
-    @{ TaskName = "Microsoft\Windows\Application Experience\AitAgent"; DisplayName = "Application Experience AIT Agent" }
+    @{ TaskName = "Consolidator"; DisplayName = "Consolidator Task" },
+    @{ TaskName = "UsbCeip"; DisplayName = "USB CEIP Task" },
+    @{ TaskName = "Microsoft-Windows-DiskDiagnosticDataCollector"; DisplayName = "Disk Diagnostic Data Collector Task" },
+    @{ TaskName = "WinSAT"; DisplayName = "Windows System Assessment Tool" },
+    @{ TaskName = "MapsToastTask"; DisplayName = "MapsToastTask" },
+    @{ TaskName = "MapsUpdateTask"; DisplayName = "MapsUpdateTask" },
+    @{ TaskName = "AnalyzeSystem"; DisplayName = "Power Efficiency Diagnostics" },
+    @{ TaskName = "QueueReporting"; DisplayName = "Windows Error Reporting Queue" },
+    @{ TaskName = "AitAgent"; DisplayName = "Application Experience AIT Agent" }
 )
 
 foreach ($taskInfo in $taskData) {
@@ -497,8 +469,9 @@ foreach ($taskInfo in $taskData) {
     $displayName = $taskInfo.DisplayName
 
     try {
-        Disable-ScheduledTask -TaskName $taskName -ErrorAction Stop | Out-Null
-        Write-Host " - Task: '$displayName' [DISABLED]" -ForegroundColor Green
+        #Disable-ScheduledTask -TaskName $taskName -ErrorAction Stop | Out-Null
+        Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction Stop | Out-Null
+        Write-Host " - Task: '$displayName' [REMOVED]" -ForegroundColor Green
     } catch {
         #
     }
@@ -510,18 +483,18 @@ foreach ($taskInfo in $taskData) {
 Write-Host "`n`n5.0 Quality of Life" -ForegroundColor Green
 
 <###################################### EXPLORER TWEAKS (Start) ######################################>
-# Restore Windows 10 Right Click Context Menu
+# Restore 'Windows 10' Right Click Context Menu
 if((Test-Path -LiteralPath "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32") -ne $true) {New-Item "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" -Force | Out-Null}
 Set-Registry -Path "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" -Name "(default)" -Type String -Value ""
 Write-Host "Explorer: Windows 10 - Right Click Context Menu [RESTORED]" -ForegroundColor Green
 
-# Add "Open with Powershell 5.1 (Admin)" to Right Click Context Menu
+# Right Click Context Menu - Add "Open with Powershell 5.1 (Admin)"
 # Remove old variant registry path (prevent duplicate entry)
 Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\Classes\Directory\Background\shell\PowerShellAsAdmin"
 Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\Classes\Directory\shell\PowerShellAsAdmin"
 Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\Classes\Drive\shell\PowerShellAsAdmin"
 Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\Classes\LibraryFolder\Background\shell\PowerShellAsAdmin"
-# Install
+# Add
 Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Directory\Background\shell\PowerShell5AsAdmin' -Name '(default)' -Value 'Open with PowerShell 5 (Admin)' -Type String
 Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Directory\Background\shell\PowerShell5AsAdmin' -Name 'Extended' -Remove Value
 Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Directory\Background\shell\PowerShell5AsAdmin' -Name 'HasLUAShield' -Value '' -Type String
@@ -540,7 +513,7 @@ Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Drive\shell\PowerShell5AsAdmin\comman
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System' -Name 'EnableLinkedConnections' -Value 1 -Type DWord
 Write-Host "Explorer: 'Open with PowerShell 5.1 (Admin)' - Right Click Context Menu [ADDED]" -ForegroundColor Green
 
-# Add "Open with Powershell 7 (Admin)" to Right Click Context Menu
+# Right Click Context Menu - Add "Open with Powershell 7 (Admin)"
 # Install
 if (-not (Test-Path "C:\Program Files\PowerShell\7\pwsh.exe")) {
     New-Item -Path "C:\PSTemp" -ItemType Directory | Out-Null
@@ -550,7 +523,7 @@ if (-not (Test-Path "C:\Program Files\PowerShell\7\pwsh.exe")) {
     Start-Process -FilePath msiexec -ArgumentList "/i $PS7InstallerPath /qn" -Wait
     Remove-Item -Path "C:\PSTemp" -Recurse -Force | Out-Null
 }
-# Add to Right Click Context Menu
+# Add
 Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\Classes\LibraryFolder\Background\shell\PowerShell7AsAdmin"
 Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Directory\Background\shell\PowerShell7AsAdmin' -Name '(default)' -Value 'Open with PowerShell 7 (Admin)'
 Set-Registry -Remove Value -Path 'HKLM:\SOFTWARE\Classes\Directory\Background\shell\PowerShell7AsAdmin' -Name 'Extended'
@@ -569,12 +542,12 @@ Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Drive\shell\PowerShell7AsAdmin' -Name
 Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Drive\shell\PowerShell7AsAdmin\command' -Name '(default)' -Value 'powershell -WindowStyle Hidden -NoProfile -Command "Start-Process -Verb RunAs pwsh.exe -ArgumentList \"-NoExit -Command Push-Location \\\"\"%V/\\\"\"\""'
 Write-Host "Explorer: 'Open with PowerShell 7 (Admin)' - Right Click Context Menu [ADDED]" -ForegroundColor Green
 
-# Add "Run as Different User" to Right Click Context Menu
+# Right Click Context Menu - Add "Run as Different User"
 Set-Registry -Path 'HKLM:\SOFTWARE\Classes\exefile\shell\runasuser' -Name 'Extended' -Value $null -Type String
 Set-Registry -Path 'HKLM:\SOFTWARE\Classes\exefile\shell\runasuser' -Name 'Icon' -Value 'imageres.dll,-5203' -Type String
 Write-Host "Explorer: 'Run as different user' - Right Click Context Menu [ADDED]" -ForegroundColor Green
 
-# Add "Copy as Path" to Right Click Context Menu
+# Right Click Context Menu - Add "Copy as Path"
 Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell\windows.copyaspath' -Name '(default)' -Value 'Copy &as path' -Type String
 Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell\windows.copyaspath' -Name 'InvokeCommandOnSelection' -Value 1 -Type DWord
 Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell\windows.copyaspath' -Name 'VerbHandler' -Value '{f3d06e7c-1e45-4a26-847e-f9fcdee59be0}' -Type String
@@ -582,95 +555,12 @@ Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell\windows.co
 Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Allfilesystemobjects\shell\windows.copyaspath' -Name 'Icon' -Value 'imageres.dll,-5302' -Type String
 Write-Host "Explorer: 'Copy as Path' - Right Click Context Menu [ADDED]" -ForegroundColor Green
 
+# Right Click Context Menu - Remove "Add to Favorites" (2025-06-12 - Needs to stay as New-ItemProperty)
 if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Classes\*\shell\pintohomefile") -ne $true) {New-Item "HKLM:\SOFTWARE\Classes\*\shell\pintohomefile" -Force | Out-Null}
 New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Classes\*\shell\pintohomefile' -Name 'ProgrammaticAccessOnly' -Value "" -PropertyType String -Force | Out-Null
 Write-Host "Explorer: 'Add to Favorites' - Right Click Context Menu [REMOVED]" -ForegroundColor Green
 
-Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "EnableSnapBar" -Type DWord -Value 0
-Write-Host "Explorer: Snap Layout [DISABLED]" -ForegroundColor Green
-
-Set-Registry -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'LaunchTo' -Value 1 -Type DWord
-Write-Host "Explorer: Set Explorer to open with 'This PC' instead of 'Most Recent'" -ForegroundColor Green
-
-# Source: https://www.elevenforum.com/t/enable-or-disable-store-activity-history-on-device-in-windows-11.7812/ #Note: Potentially needed for InTune
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'PublishUserActivities' -Value "0" -PropertyType DWord -Force | Out-Null
-Write-Host "Explorer: Activity Log [DISABLED]" -ForegroundColor Green
-
-# Source: https://www.makeuseof.com/windows-disable-feedback-notifications/
-Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules" -Name "NumberOfSIUFInPeriod" -Value "0" -Force | Out-Null
-Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules" -Name "PeriodInNanoSeconds" -Value "0" -Force | Out-Null
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "DoNotShowFeedbackNotifications" -Value "1" -Force | Out-Null
-Write-Host "Explorer: Feedback Notifications [DISABLED]" -ForegroundColor Green
-
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Value "0" | Out-Null
-Write-Host "Explorer: Display of Known File Extensions [ENABLED]" -ForegroundColor Green
-
-if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer") -ne $true) {New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Force }
-New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer' -Name 'ShowFrequent' -Value "0" -PropertyType DWord -Force | Out-Null
-Write-Host "Explorer: 'Recent Folders' in Quick Access [DISABLED]" -ForegroundColor Green
-
-# Remove Widgets/Install App Installer (app)/winget
-# Reinstall Source: https://apps.microsoft.com/detail/windows-web-experience-pack/9MSSGKG348SP?hl=en-us&gl=US
-Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe | Out-Null
-winget uninstall --accept-source-agreements "Windows web experience pack" | Out-Null
-New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Dsh" -Force | Out-Null
-New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Dsh" -Name "AllowNewsAndInterests" -PropertyType DWord -Value 0 -Force | Out-Null
-Write-Host "Explorer: Widgets [REMOVED]" -ForegroundColor Green
-
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'DisableLogonBackgroundImage' -Value "1" -PropertyType "DWord" -Force | Out-Null
-Write-Host "Explorer: Background on Login Screen [DISABLED]" -ForegroundColor Green
-
-# Source: https://www.kapilarya.com/disable-tips-and-suggestions-notifications-in-windows-11
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Name "DisableSoftLanding" -Value "1" -Force | Out-Null
-Write-Host "Explorer: Tips [DISABLED]" -ForegroundColor Green
-
-if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer") -ne $true) {New-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Force | Out-Null}
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer' -Name 'ShowDriveLettersFirst' -Value 4 -PropertyType DWord -Force | Out-Null
-Write-Host "Explorer: Drive letters PRE drive label [Example: '(C:) Windows vs. Windows (C:)]'" -ForegroundColor Green
-
-# Source: https://documentation.n-able.com/N-central/userguide/Content/Automation/Policies/Diagnostics/pol_UACEnabled_Check.htm
-Set-ItemProperty -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -Value "0"
-Write-Host "Explorer: User Access Control - Prompt for Admins [DISABLED]" -ForegroundColor Green
-
-Set-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System' -Name "PromptOnSecureDesktop" -Value "0"
-Write-Host "Explorer: User Access Control - Desktop Dimming [DISABLED]" -ForegroundColor Green
-
-Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "AnimateMinimize" -Value "0"
-if((Test-Path -LiteralPath "HKCU:\Control Panel\Desktop\WindowMetrics") -ne $true) {New-Item "HKCU:\Control Panel\Desktop\WindowMetrics" -Force}
-New-ItemProperty -LiteralPath "HKCU:\Control Panel\Desktop\WindowMetrics" -Name "MinAnimate" -Value "0" -PropertyType String -Force | Out-Null
-Write-Host "Explorer: Animations - Window Minimizing [DISABLED]" -ForegroundColor Green
-
-Set-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name "AnimateWindows" -Value "0"
-Write-Host "Explorer: Animations - Window Opening/Closing [DISABLED]" -ForegroundColor Green
-
-# Settings > Accessibility > Visual Effects > Transparency Effects
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "EnableTransparency" -Value "0" | Out-Null
-Write-Host "Explorer: Windows Transparency [DISABLED]" ForegroundColor Green
-
-# Source: https://www.neowin.net/news/microsoft-windows-11-also-haunted-by-this-sata-bios-bug-just-like-windows-7-8-81-and-10/
-New-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Services\storahci\Parameters\Device' -Name 'TreatAsInternalPort' -Value @("0") -PropertyType MultiString -Force | Out-Null
-Write-Host "Explorer: 'Safely Remove and Eject Media' for Intenal Drives [DISABLED]" -ForegroundColor Green
-
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\AppHost" -Name "EnableWebContentEvaluation" -Value "0" -Force | Out-Null
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Name "EnableSmartScreen" -Value "0" -Type DWORD -Force | Out-Null
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled" -Value "Off" -Force | Out-Null
-Write-Host "Explorer: App Smart Screening [DISABLED]" -ForegroundColor Green
-
-# Source: https://www.elevenforum.com/t/add-or-remove-gallery-in-file-explorer-navigation-pane-in-windows-11.14178/
-New-Item -Path "HKCU:\Software\Classes\CLSID\{e88865ea-0e1c-4e20-9aa6-edcd0212c87c}" -Force
-New-ItemProperty -Path "HKCU:\Software\Classes\CLSID\{e88865ea-0e1c-4e20-9aa6-edcd0212c87c}" -Name "System.IsPinnedToNameSpaceTree" -Value 0 -PropertyType DWORD -Force | Out-Null
-Write-Host "Explorer: 'Gallery' Shorcut [REMOVED]" -ForegroundColor Green
-
-New-Item -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Force | Out-Null
-Set-ItemProperty -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Name "TurnOffWindowsCopilot" -Value "0" -Force | Out-Null
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowCopilotButton" -Value "0" | Out-Null
-Write-Host "Explorer: Microsoft Co-Pilot SHORTCUT [REMOVED]" -ForegroundColor Green
-
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Value "0"
-Set-ItemProperty -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Value "0"
-Write-Host "Explorer: Game Bar [DISABLED]" -ForegroundColor Green
-
-# Right Click Context Menu "Convert to JPG"
+# Right Click Context Menu - Add "Convert to JPG"
 $key = "HKLM:\SOFTWARE\Classes\SystemFileAssociations\.jfif\shell\ConvertToJPG"
 if (!(Test-Path $key)) {
     $value = "Convert to JPG"
@@ -681,9 +571,9 @@ if (!(Test-Path $key)) {
     $commandKey = Join-Path $key "command"
     New-Item -Path $commandKey -Force | Out-Null
     Set-ItemProperty -Path $commandKey -Name "(Default)" -Value $command
-    Write-Host "Explorer: File .JFIF to .JPG Conversion [ADDED]" -ForegroundColor Green
+    Write-Host "Explorer: File Convert .JFIF to .JPG - Right Click Context Menu [ADDED]" -ForegroundColor Green
 } ELSE {
-    Write-Host "Explorer: File .JFIF to .JPG Conversion [ADDED (Previously)]" -ForegroundColor Green
+    Write-Host "Explorer: File Convert .JFIF to .JPG - Right Click Context Menu [ADDED (Previously)]" -ForegroundColor Green
 }
 
 # Right Click Context Menu "Add Watermark"
@@ -797,7 +687,83 @@ foreach ($key in $regKeys) {
     Set-ItemProperty -Path $commandKeyPath -Name "(Default)" -Value "powershell.exe -ExecutionPolicy Bypass -File `"$scriptPath`" `"%1`""
     Set-ItemProperty -Path $key -Name "Icon" -Value "shell32.dll,43"
 }
-Write-Host "Explorer: .JPG/.PNG 'Add Watermark' [ADDED]" -ForegroundColor Green
+Write-Host "Explorer: .JPG/.PNG 'Add Watermark' - Right Click Context Menu [ADDED]" -ForegroundColor Green
+
+Set-Registry -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'LaunchTo' -Value 1 -Type DWord
+Write-Host "Explorer: Set Explorer to open with 'This PC' instead of 'Most Recent'" -ForegroundColor Green
+
+Set-Registry -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowDriveLettersFirst" -Type DWord -Value 4
+Write-Host "Explorer: Drive letters PRE drive label [Example: '(C:) Windows vs. Windows (C:)]'" -ForegroundColor Green
+
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Value 0 -Type DWord
+Write-Host "Explorer: Display of Known File Extensions [ENABLED]" -ForegroundColor Green
+
+# Gallery - Source: https://www.elevenforum.com/t/add-or-remove-gallery-in-file-explorer-navigation-pane-in-windows-11.14178/
+Set-Registry -Path "HKCU:\Software\Classes\CLSID\{e88865ea-0e1c-4e20-9aa6-edcd0212c87c}" -Name "System.IsPinnedToNameSpaceTree" -Value 0 -Type DWord
+Write-Host "Explorer: 'Gallery' Shorcut [REMOVED]" -ForegroundColor Green
+
+# Windows 'Get most of out this device' Suggestions
+New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement" -Force | Out-Null
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement" -Name "ScoobeSystemSettingEnabled" -Value 0 -Type DWord
+Write-Host "Explorer: 'Getting most out of this device' [DISABLED]" -ForegroundColor Green
+
+# Source: https://www.elevenforum.com/t/enable-or-disable-store-activity-history-on-device-in-windows-11.7812/ #Note: Potentially needed for InTune
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'PublishUserActivities' -Value 0 -Type DWord
+Write-Host "Explorer: Activity Log [DISABLED]" -ForegroundColor Green
+
+# Tailored Experience
+Set-Registry -Path "HKCU:\Software\Policies\Microsoft\Windows\CloudContent" -Name "DisableTailoredExperiencesWithDiagnosticData" -Value 1 -Type DWord
+Write-Host "Explorer: Tailored Experience [DISABLED]" -ForegroundColor Green
+
+# Personalized Ads
+New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AdvertisingInfo" -Force | Out-Null
+Set-Registry -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AdvertisingInfo" -Name "DisabledByGroupPolicy" -Value 1 -Type DWord
+Write-Host "Explorer: Personalized Ads [DISABLED]" -ForegroundColor Green
+
+# Feedback - Source: https://www.makeuseof.com/windows-disable-feedback-notifications/
+Set-Registry -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "DoNotShowFeedbackNotifications" -Value 1 -Type DWord
+Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules" -Name "NumberOfSIUFInPeriod" -Value 0 -Type DWord
+Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules" -Name "PeriodInNanoSeconds" -Value 0 -Type DWord
+Write-Host "Explorer: Feedback Notifications [DISABLED]" -ForegroundColor Green
+
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "EnableSnapBar" -Type DWord -Value 0
+Write-Host "Explorer: Snap Layout [DISABLED]" -ForegroundColor Green
+
+Set-Registry -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer' -Name 'ShowFrequent' -Value 0 -Type DWord
+Write-Host "Explorer: 'Recent Folders' in Quick Access [DISABLED]" -ForegroundColor Green
+
+# Remove Widgets (Reinstall Source: https://apps.microsoft.com/detail/windows-web-experience-pack/9MSSGKG348SP?hl=en-us&gl=US)
+winget uninstall --accept-source-agreements "Windows web experience pack" | Out-Null
+Set-Registry -Path "HKLM:\SOFTWARE\Policies\Microsoft\Dsh" -Name "AllowNewsAndInterests" -Type DWord -Value 0
+Write-Host "Explorer: Widgets [REMOVED]" -ForegroundColor Green
+
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'DisableLogonBackgroundImage' -Type DWord -Value 1
+Write-Host "Explorer: Background on Login Screen [DISABLED]" -ForegroundColor Green
+
+# Source: https://www.kapilarya.com/disable-tips-and-suggestions-notifications-in-windows-11
+Set-Registry -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent" -Name "DisableSoftLanding" -Type DWord -Value 1
+Write-Host "Explorer: Tips [DISABLED]" -ForegroundColor Green
+
+# Source: https://documentation.n-able.com/N-central/userguide/Content/Automation/Policies/Diagnostics/pol_UACEnabled_Check.htm
+Set-Registry -Path "HKLM:\Software\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -Value 0 -Type DWord
+Write-Host "Explorer: User Access Control - Prompt for Admins [DISABLED]" -ForegroundColor Green
+
+Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System' -Name "PromptOnSecureDesktop" -Value 0 -Type DWord
+Write-Host "Explorer: User Access Control - Desktop Dimming [DISABLED]" -ForegroundColor Green
+
+Set-Registry -Path "HKCU:\Control Panel\Desktop" -Name "AnimateMinimize" -Value "0" -Type String
+Set-Registry -Path "HKCU:\Control Panel\Desktop\WindowMetrics" -Name "MinAnimate" -Value "0" -Type String
+Set-Registry -Path "HKCU:\Control Panel\Desktop" -Name "AnimateWindows" -Value "0" -Type String
+Write-Host "Explorer: Animations (Minimize/Maximize) [DISABLED]" -ForegroundColor Green
+
+# Settings > Accessibility > Visual Effects > Transparency Effects
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize" -Name "EnableTransparency" -Value "0" -Type DWord
+Write-Host "Explorer: Transparency [DISABLED]" -ForegroundColor Green
+
+# Co-Pilot
+Set-Registry -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Name "TurnOffWindowsCopilot" -Value 0 -Type DWord
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowCopilotButton" -Value 0 -Type DWord
+Write-Host "Explorer: Microsoft Co-Pilot SHORTCUT [REMOVED]" -ForegroundColor Green
 <###################################### EXPLORER TWEAKS (End) ######################################>
 
 
@@ -805,29 +771,29 @@ Write-Host "Explorer: .JPG/.PNG 'Add Watermark' [ADDED]" -ForegroundColor Green
 <###################################### START MENU TWEAKS (Start) ######################################>
 if ((Get-WMIObject win32_operatingsystem) | Where-Object { $_.Name -like "Microsoft Windows 11*" }) {
     #Source: https://vhorizon.co.uk/windows-11-start-menu-layout-group-policy/
-    if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced") -ne $true) {New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Force | Out-Null}
-	New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Value "0" -Type Dword -Force | Out-Null
-    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Value "0" -Force | Out-Null
+    Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Value 0 -Type DWord
 	Write-Host "Start Menu: Alignment - Left" -ForegroundColor Green
-	New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'Start_Layout' -Value "1" -PropertyType DWord -Force | Out-Null
-    Set-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'Start_Layout' -Value "1" -Force | Out-Null
-    Write-Host "Start Menu: Set Layout to reduce 'Recommended Apps'" -ForegroundColor Green
+    Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_Layout" -Value 1 -Type DWord
+    Write-Host "Start Menu: Reduced 'Recommended Apps' [UPDATE]" -ForegroundColor Green
 }
 
-New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -PropertyType "Dword" -Name "ShowTaskViewButton" -Value "0" | Out-Null
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -Value 0 -Type DWord
 Write-host "Start Menu: 'Task View' Button [HIDDEN]" -ForegroundColor Green
 
-New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "SearchBoxTaskbarMode" -Value "0" -Type "DWord" -Force | Out-Null
-Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "SearchBoxTaskbarMode" -Value "0" -Force | Out-Null
+Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "SearchBoxTaskbarMode" -Value 0 -Type DWord
 Write-host "Start Menu: 'Search' Button [HIDDEN]" -ForegroundColor Green
 
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarDa" -Value "0" -Force | Out-Null
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarDa" -Value 0 -Type DWord
 Write-Host "Start Menu: Weather Widget [HIDDEN]" -ForegroundColor Green
 
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAnimations" -Value "0" -Force | Out-Null
+# Start Menu - Disable Metro app suggestions.
+Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value "0"
+Write-Host "Start Menu: Metro App Suggestions [DISABLED]" -ForegroundColor Green
+
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAnimations" -Value 0 -Type DWord
 Write-Host "Start Menu: Animations - Icons [DISABLED]" -ForegroundColor Green
 
-Set-ItemProperty -path "HKCU:\Control Panel\Desktop" -Name "MenuShowDelay" -value "1"
+Set-Registry -Path "HKCU:\Control Panel\Desktop" -Name "MenuShowDelay" -Value 1 -Type String
 Write-Host "Start Menu: Animations - Appear/Load Time [REDUCED]" -ForegroundColor Green
 
 # Add 'Devices and Printers' to Start Menu
@@ -866,67 +832,50 @@ Write-Host "Start Menu: 'Devices & Printers (Add Network)' [ADDED]" -ForegroundC
 
 
 <###################################### NETWORK TWEAKS (Start) ######################################>
-
-$ActiveNetworkAdapter = Get-NetAdapter | Where-Object {$_.Status -eq 'Up'} | Select-Object Name
-$ActiveNetworkAdapterConverted = $ActiveNetworkAdapter.Name
-Disable-NetAdapterPowerManagement -Name "$ActiveNetworkAdapterConverted" -DeviceSleepOnDisconnect -NoRestart | Out-Null
+Get-NetAdapter -Physical | Where-Object Status -eq 'Up' | ForEach-Object {
+    Disable-NetAdapterPowerManagement -Name $_.Name -DeviceSleepOnDisconnect -NoRestart | Out-Null
+}
 Write-Host "Network: Ethernet/Wireless Power Saving Settings [DISABLED]" -ForegroundColor Green
 
 # Source: https://www.majorgeeks.com/content/page/irpstacksize.html (Default 15-20 connections, increased to 50)
-if((Test-Path -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters") -ne $true) {New-Item "HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters"  -Force | Out-Null}
-New-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters' -Name 'IRPStackSize' -Value 48 -PropertyType DWord -Force | Out-Null
+Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\LanmanServer\Parameters' -Name 'IRPStackSize' -Value 48 -Type DWord
 Write-Host "Network: Increased Performance for 'I/O Request Packet Stack Size" -ForegroundColor Green
 
-# Source: https://ttcshelbyville.wordpress.com/2017/10/14/network-throttling-index/
-if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile") -ne $true) {New-Item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile" -Force | Out-Null}
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile' -Name 'NetworkThrottlingIndex' -Value -1 -PropertyType DWord -Force | Out-Null
-if (-not (Test-Path "HKLM:\SOFTWARE\Policies\Microsoft\Psched")) {New-Item -Path "HKLM:\SOFTWARE\Policies\Microsoft\Psched" -Force | Out-Null}
-New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Psched" -Name "NonBestEffortLimit" -Type Dword -Value "0" | Out-Null
+Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile' -Name 'NetworkThrottlingIndex' -Value -1 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Psched' -Name 'NonBestEffortLimit' -Value 0 -Type DWord
 Write-Host "Network: Throttling Index [DISABLED]" -ForegroundColor Green
-
 <###################################### NETWORK TWEAKS (End) ######################################>
 
 
 
 <###################################### WINDOWS TWEAKS (Start) ######################################>
-
 # Disable 'High Precision Event Timer' to prevent input lag/delays
 bcdedit /deletevalue useplatformclock
 bcdedit /set useplatformtick yes
 bcdedit /set disabledynamictick yes
 Write-Host "Windows: Disabled 'High Precision Event Timer' - Formerly Multimedia Timer" -ForegroundColor Green
 
-if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games") -ne $true) {New-Item "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games" -Force | Out-Null}
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games' -Name 'GPU Priority' -Value 8 -PropertyType DWord -Force | Out-Null
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games' -Name 'Priority' -Value 6 -PropertyType DWord -Force | Out-Null
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games' -Name 'Scheduling Category' -Value 'High' -PropertyType String -Force | Out-Null
+Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games' -Name 'GPU Priority' -Value 7 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games' -Name 'Priority' -Value 5 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games' -Name 'Scheduling Category' -Value 'High' -Type String
 Write-Host "Windows: Updating 'MMCSS' to prioritize games with higher system resources" -ForegroundColor Green
 
-if((Test-Path -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power") -ne $true) {New-Item "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power" -Force | Out-Null}
-New-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power' -Name 'HiberbootEnabled' -Value "0" -PropertyType DWord -Force | Out-Null
+Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power' -Name 'HiberbootEnabled' -Value 0 -Type DWord
 Write-Host "Windows: Disabled Fast Startup - Restored 'Fresh' Reboot" -ForegroundColor Green
 
-if((Test-Path -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management") -ne $true) {New-Item "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management" -Force | Out-Null}
-New-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' -Name 'ClearPageFileAtShutdown' -Value "1" -PropertyType DWord -Force | Out-Null
-Write-Host "Windows: Set paging file to clear at Shutdown" -ForegroundColor Green
+Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' -Name 'ClearPageFileAtShutdown' -Value 1 -Type DWord
+Write-Host "Windows: Paging File - Cleared at Shutdown" -ForegroundColor Green
 
-# Source: https://www.thewindowsclub.com/disable-windows-10-startup-delay-startupdelayinmsec (Default=10)
-if ((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Serialize") -ne $true) {
-    New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Serialize" -Force | Out-Null
-}
-if ((Get-ItemProperty -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Serialize" -Name "StartupDelayInMSec" -ErrorAction SilentlyContinue) -eq '') {
-    New-ItemProperty -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Serialize" -Name "StartupDelayInMSec" -Value "5" -PropertyType DWord -Force | Out-Null
-} else {
-    Set-ItemProperty -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Serialize" -Name "StartupDelayInMSec" -Value "5" -Force | Out-Null
-}
+# Source: https://www.thewindowsclub.com/disable-windows-10-startup-delay-startupdelayinmsec (Default=10ms)
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Serialize" -Name "StartupDelayInMSec" -Value 5 -Type DWord
 Write-Host "Windows: Reduced Startup Delay" -ForegroundColor Green
 
 # MarkC's Mouse Acceleration Fix (DPI 100% Scale - Default)
 # Source: http://donewmouseaccel.blogspot.com/
 <# Disable 'Enhance pointer precision' #>
-Set-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'MouseSpeed' -Value '0' | Out-Null
-Set-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'MouseThreshold1' -Value '0' | Out-Null
-Set-ItemProperty -LiteralPath 'HKCU:\Control Panel\Mouse' -Name 'MouseThreshold2' -Value '0' | Out-Null
+Set-Registry -Path 'HKCU:\Control Panel\Mouse' -Name 'MouseSpeed' -Value 0 -Type String
+Set-Registry -Path 'HKCU:\Control Panel\Mouse' -Name 'MouseThreshold1' -Value 0 -Type String
+Set-Registry -Path 'HKCU:\Control Panel\Mouse' -Name 'MouseThreshold2' -Value 0 -Type String
 Write-Host "Windows: Mouse Acceleration - Disabled Enhance Pointer Precision" -ForegroundColor Green
 
 $MouseSensitivity = (Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity").MouseSensitivity
@@ -981,95 +930,95 @@ IF((Get-ItemProperty -Path "HKCU:\Control Panel\Mouse" -Name "MouseSensitivity")
 	Write-Host "Windows: Mouse 'Mouse Curve' adjusting to detected sensitivity $MouseSensitivity." -ForegroundColor Green;
 }
 
-# Sticky Keys
-if((Test-Path -LiteralPath "HKCU:\Control Panel\Accessibility\StickyKeys") -ne $true) {New-Item "HKCU:\Control Panel\Accessibility\StickyKeys" -Force | Out-Null}
-New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Accessibility\StickyKeys' -Name 'Flags' -Value '506' -PropertyType String -Force | Out-Null
+Set-Registry -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications' -Name 'ToastEnabled' -Value 0 -Type DWord
+Write-Host "Windows: Toast Notifications [DISABLED]" -ForegroundColor Green
 
-# Filter Keys
-if((Test-Path -LiteralPath "HKCU:\Control Panel\Accessibility\ToggleKeys") -ne $true) {New-Item "HKCU:\Control Panel\Accessibility\ToggleKeys" -Force | Out-Null}
-New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Accessibility\ToggleKeys' -Name 'Flags' -Value '58' -PropertyType String -Force | Out-Null
-Write-Host "Windows: Filter & Sticky Keys [DISABLED]" -ForegroundColor Green
+Set-Registry -Path 'HKCU:\Control Panel\Accessibility\StickyKeys' -Name 'Flags' -Value '506' -Type String
+Write-Host "Windows: Sticky Keys [DISABLED]" -ForegroundColor Green
 
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat" -Name "DisableUAR" -Value "1" -Force | Out-Null
+Set-Registry -Path 'HKCU:\Control Panel\Accessibility\ToggleKeys' -Name 'Flags' -Value '58' -Type String
+Write-Host "Windows: Filter Keys [DISABLED]" -ForegroundColor Green
+
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat' -Name 'DisableUAR' -Value 1 -Type DWord
 Write-Host "Windows: Troubleshooting 'Steps Recorder' [DISABLED]" -ForegroundColor Green
 
-Set-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Terminal Server" -name "fDenyTSConnections" -value "0" -Force | Out-Null
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Value 0 -Type DWord
+Set-Registry -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Value 0 -Type DWord
+Write-Host "Windows: Game Bar [DISABLED]" -ForegroundColor Green
+
+# Smart Screening
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\AppHost" -Name "EnableWebContentEvaluation" -Value "0" -Type DWord
+Set-Registry -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Name "EnableSmartScreen" -Value "0" -Type DWord
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled" -Value "Off" -Type String
+Write-Host "Windows: App Smart Screening [DISABLED]" -ForegroundColor Green
+
+# Remote Desktop
+Set-Registry -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name 'fDenyTSConnections' -Value 0 -Type DWord
 Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
 Write-Host "Windows: Remote Desktop [ENABLED]" -ForegroundColor Green
 
-Remove-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications" -Name "ToastEnabled" -Force | Out-Null
-New-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\PushNotifications" -PropertyType "Dword" -Name "ToastEnabled" -Value "0" | Out-Null
-Write-host "Windows: Toast Notifications [DISABLED]" -ForegroundColor Green
+# Lockscreen rotating pictures
+Set-Registry -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager' -Name 'RotatingLockScreenEnabled' -Value 0 -Type DWord
+Set-Registry -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager' -Name 'RotatingLockScreenOverlayEnabled' -Value 0 -Type DWord
+Write-Host "Windows: Lockscreen rotating pictures [DISABLED]" -ForegroundColor Green
 
-# Lockscreen suggestions/rotating pictures
-if((Test-Path -LiteralPath "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager") -ne $true) {New-Item "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Force | Out-Null}
-New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SoftLandingEnabled" -Value "0" -PropertyType DWord -Force | Out-Null
-New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "RotatingLockScreenEnabled" -Value "0" -PropertyType DWord -Force | Out-Null
-New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "RotatingLockScreenOverlayEnabled" -Value "0" -PropertyType DWord -Force | Out-Null
-Write-Host "Windows: Lockscreen suggestions and rotating pictures [DISABLED]" -ForegroundColor Green
-
-if((Test-Path -LiteralPath "HKCU:\Control Panel\Desktop") -ne $true) {New-Item "HKCU:\Control Panel\Desktop" -Force | Out-Null}
-if((Test-Path -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Control") -ne $true) {New-Item "HKLM:\SYSTEM\CurrentControlSet\Control" -Force | Out-Null}
-New-ItemProperty -LiteralPath "HKCU:\Control Panel\Desktop" -Name 'ForegroundLockTimeout' -Value "0" -PropertyType DWord -Force | Out-Null
-New-ItemProperty -LiteralPath "HKCU:\Control Panel\Desktop" -Name 'HungAppTimeout' -Value '400' -PropertyType String -Force | Out-Null
-New-ItemProperty -LiteralPath "HKCU:\Control Panel\Desktop" -Name 'WaitToKillAppTimeout' -Value '500' -PropertyType String -Force | Out-Null
-New-ItemProperty -LiteralPath 'HKLM:\SYSTEM\CurrentControlSet\Control' -Name 'WaitToKillServiceTimeout' -Value '500' -PropertyType String -Force | Out-Null
+Set-Registry -Path 'HKCU:\Control Panel\Desktop' -Name 'ForegroundLockTimeout' -Value 0 -Type DWord
+Set-Registry -Path 'HKCU:\Control Panel\Desktop' -Name 'HungAppTimeout' -Value '400' -Type String
+Set-Registry -Path 'HKCU:\Control Panel\Desktop' -Name 'WaitToKillAppTimeout' -Value '500' -Type String
+Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Control' -Name 'WaitToKillServiceTimeout' -Value '500' -Type String
 Write-Host "Windows: Faster Shutdown [ENABLED]" -ForegroundColor Green
 
 # 'Microsoft from getting to know you'
-if((Test-Path -LiteralPath "HKCU:\SOFTWARE\Policies\Microsoft\Windows\System") -ne $true) {New-Item "HKCU:\SOFTWARE\Policies\Microsoft\Windows\System" -Force | Out-Null}
-New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Personalization\Settings" -Name "AcceptedPrivacyPolicy" -Value "0" -PropertyType DWord -Force | Out-Null
-New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization" -Name "RestrictImplicitTextCollection" -Value "0" -PropertyType DWord -Force | Out-Null
-New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization" -Name "RestrictImplicitInkCollection" -Value "0" -PropertyType DWord -Force | Out-Null
-New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization\TrainedDataStore" -Name "HarvestContacts" -Value "0" -PropertyType DWord -Force | Out-Null
-New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Input\TIPC" -Name "Enabled" -Value "0" -Force | Out-Null
-New-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "HistoryViewEnabled" -Value "0" -PropertyType DWord -Force | Out-Null
+Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Personalization\Settings" -Name "AcceptedPrivacyPolicy" -Value 0 -Type DWord
+Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization" -Name "RestrictImplicitTextCollection" -Value 0 -Type DWord
+Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization" -Name "RestrictImplicitInkCollection" -Value 0 -Type DWord
+Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization\TrainedDataStore" -Name "HarvestContacts" -Value 0 -Type DWord
+Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Input\TIPC" -Name "Enabled" -Value 0 -Type DWord
+Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "HistoryViewEnabled" -Value 0 -Type DWord
 Write-Host "Windows: 'Microsoft from getting to know you' [DISABLED]" -ForegroundColor Green
 
 # Split Service Host Threshold for increased reliablity
 # Source: https://www.tenforums.com/tutorials/94628-change-split-threshold-svchost-exe-windows-10-a.html
 $RamInKB = (Get-CimInstance -ClassName Win32_PhysicalMemory | Measure-Object -Property Capacity -Sum).Sum / 1KB
-Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control" -Name "SvcHostSplitThresholdInKB" -Value $RamInKB -Force
-Write-Host "Windows: Reduced Service Host Threshold [UPDATED]" -ForegroundColor Green
+$RamInKB = (Get-CimInstance -ClassName Win32_PhysicalMemory | Measure-Object -Property Capacity -Sum).Sum / 1KB
+if ($RamInKB -ge 16000000) {
+    Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control" -Name "SvcHostSplitThresholdInKB" -Value $RamInKB -Force
+    Write-Host "Windows: Reduced Service Host Threshold [UPDATED]" -ForegroundColor Green
+} else {
+    Write-Host "Windows: Reduced Service Host Threshold (Ram <16GB) [SKIPPED]" -ForegroundColor Yellow
+}
 
-# Windows Update Delivery Optimization - Disable sending/receiving updates from PCs on local network.
+# Windows Update Delivery Optimization
 # Source: https://www.elevenforum.com/t/turn-on-or-off-windows-update-delivery-optimization-in-windows-11.3136
-if((Test-Path -LiteralPath "Registry::\HKEY_USERS\S-1-5-20\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Settings") -ne $true) {New-Item "Registry::\HKEY_USERS\S-1-5-20\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Settings" -Force | Out-Null}
-New-ItemProperty -LiteralPath 'Registry::\HKEY_USERS\S-1-5-20\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Settings' -Name 'DownloadMode' -Value "0" -PropertyType DWord -Force | Out-Null
-Set-ItemProperty -LiteralPath 'Registry::\HKEY_USERS\S-1-5-20\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Settings' -Name 'DownloadMode' -Value "0" -Force | Out-Null
+Set-Registry -Path 'Registry::\HKEY_USERS\S-1-5-20\Software\Microsoft\Windows\CurrentVersion\DeliveryOptimization\Settings' -Name 'DownloadMode' -Value 0 -Type DWord
 Write-Host "Windows: Update Delivery Optimization - Direct Download [UPDATED]" -ForegroundColor Green
 
 # Windows > Display 'Ease cursor Movement between displays'
-New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Cursors' -Name 'CursorDeadzoneJumpingSetting' -Value "0" -PropertyType DWord -Force | Out-Null
-Set-ItemProperty -LiteralPath 'HKCU:\Control Panel\Cursors' -Name 'CursorDeadzoneJumpingSetting' -Value "0" -Force | Out-Null
+Set-Registry -Path 'HKCU:\Control Panel\Cursors' -Name 'CursorDeadzoneJumpingSetting' -Value 0 -Type DWord
 Write-Host "Windows: 'Ease cursor Movement between displays' [DISABLED]" -ForegroundColor Green
 
 # Windows Background (Spotlight) - Remove "Learn About This Background"
-Remove-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\{2cc5ca98-6485-489a-920e-b3e88a6ccce3}" -Force
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{2cc5ca98-6485-489a-920e-b3e88a6ccce3}" -Value 1
+Set-Registry -Remove Path -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\{2cc5ca98-6485-489a-920e-b3e88a6ccce3}"
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel" -Name "{2cc5ca98-6485-489a-920e-b3e88a6ccce3}" -Value 1 -Type DWord
 Write-Host "Windows: Background (Spotlight) - 'Learn About This Background' [REMOVED]" -ForegroundColor Green
 
 # Source: https://www.tomshardware.com/how-to/disable-vbs-windows-11
-# Disable VBS & Device Guard
-Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard" -Name "EnableVirtualizationBasedSecurity" -Value 0
-Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard" -Name "RequirePlatformSecurityFeatures" -Value 0
-# Disable Credential Guard
-Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "RunAsPPL" -Value 0
-Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "LsaCfgFlags" -Value 0
-# Disable Memory Integrity (HVCI)
-If (Test-Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity") {
-Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" -Name "Enabled" -Value 0
-}
+#> Disable VBS & Device Guard
+Set-Registry -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard" -Name "EnableVirtualizationBasedSecurity" -Value 0 -Type DWord
+Set-Registry -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard" -Name "RequirePlatformSecurityFeatures" -Value 0 -Type DWord
+#> Disable Credential Guard
+Set-Registry -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "RunAsPPL" -Value 0 -Type DWord
+Set-Registry -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" -Name "LsaCfgFlags" -Value 0 -Type DWord
 Write-Host "Windows: Virtualization-Based Security [DISABLED]" -ForegroundColor Green
 
-New-Item -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" -Force | Out-Null
-New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" -Name "PowerThrottlingOff" -PropertyType DWord -Value 1 -Force | Out-Null
+Set-Registry -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" -Name "PowerThrottlingOff" -Value 1 -Type DWord
 Write-Host "Windows: Power Throttling [DISABLED]" -ForegroundColor Green
 
 $VMsRunning = Get-VM | Where-Object { $_.State -eq 'Running' }
 if ($VMsRunning) {
     Write-Host "Windows: Hyper-V [Skipped]" -ForegroundColor Yellow
 } else {
+    Set-Registry -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" -Name "Enabled" -Value 0 -Type DWord
     Disable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All -NoRestart
     bcdedit /set hypervisorlaunchtype off
     Write-Host "Windows: Hyper-V [DISABLED]" -ForegroundColor Green
@@ -1121,9 +1070,8 @@ powercfg -setacvalueindex 381b4222-f694-41f0-9685-ff5bb260df2e 4f971e89-eebd-445
 powercfg -setdcvalueindex 381b4222-f694-41f0-9685-ff5bb260df2e 4f971e89-eebd-4455-a8de-9e59040e7347 5ca83367-6e45-459f-a27b-476b1d01c936 0
 Write-Host "Sleep Settings: 'Closing Lid' action to turn off screen" [CHANGED] -ForegroundColor Green
 
-if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings") -ne $true) {New-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings" -force | Out-Null}
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings' -Name 'ShowSleepOption' -Value "0" -PropertyType DWord -Force | Out-Null
-New-ItemProperty -LiteralPath 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings' -Name 'ShowHibernateOption' -Value "0" -PropertyType DWord -Force | Out-Null
+Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings' -Name 'ShowSleepOption' -Value 0 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings' -Name 'ShowHibernateOption' -Value 0 -Type DWord
 Write-Host "Sleep Settings: Sleep/Hibernate from Start Menu [DISABLED]" -ForegroundColor Green
 #endregion
 
@@ -1133,41 +1081,35 @@ Write-Host "Sleep Settings: Sleep/Hibernate from Start Menu [DISABLED]" -Foregro
 Write-Host "`n`n7.0 Privacy" -ForegroundColor Green
 ## Applications
 Write-Host "7.1 Applications" -ForegroundColor Green
-Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location" -Name "Value" -Value "Deny" | Out-Null
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location" -Name "Value" -Value "Deny" | Out-Null
-Set-Location HKLM:
-New-Item -Path ".SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}" | Out-Null
-New-ItemProperty -Path ".SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}" -Name "SensorPermissionState" -Type DWord -Value "1"
-New-Item -Path ".\SYSTEM\CurrentControlSet\Services\lfsvc\Service\Configuration" | Out-Null
-New-ItemProperty -Path ".\SYSTEM\CurrentControlSet\Services\lfsvc\Service\Configuration" -Name "EnableStatus" -Type DWord -Value "1" | Out-Null
+Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location' -Name 'Value' -Value 'Deny' -Type String
+Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}' -Name 'SensorPermissionState' -Value 1 -Type DWord -CreatePath
+Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\lfsvc\Service\Configuration' -Name 'EnableStatus' -Value 1 -Type DWord -CreatePath
 Write-Host "Applications - Location Permissions [DISABLED]" -ForegroundColor Green
-Set-ItemProperty -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appDiagnostics" -Name "Value" -Value "Deny" | Out-Null
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appDiagnostics" -Name "Value" -Value "Deny" | Out-Null
+
+Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appDiagnostics' -Name 'Value' -Value 'Deny' -Type String
 Write-Host "Applications - Diagnostics [DISABLED]" -ForegroundColor Green
 
 Write-Host "7.2 Keyboard" -ForegroundColor Green
-# Disable 'Improve inking and typing recognition'
-if((Test-Path -LiteralPath "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\TextInput\AllowLinguisticDataCollection") -ne $true) {New-Item "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\TextInput\AllowLinguisticDataCollection" | Out-Null};
-New-ItemProperty -LiteralPath "HKLM:\SOFTWARE\Microsoft\PolicyManager\default\TextInput\AllowLinguisticDataCollection" -Name "value" -Value "0" -PropertyType DWord -Force | Out-Null
-if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Input\TIPC") -ne $true) {New-Item "HKCU:\Software\Microsoft\Input\TIPC" -Force | Out-Null};
-New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Input\TIPC' -Name 'Enabled' -Value "0" -PropertyType DWord -Force | Out-Null
+Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\PolicyManager\default\TextInput\AllowLinguisticDataCollection' -Name 'value' -Value 0 -Type DWord -CreatePath
+Set-Registry -Path 'HKCU:\Software\Microsoft\Input\TIPC' -Name 'Enabled' -Value 0 -Type DWord -CreatePath
 Write-Host "Keyboard - Improved Inking and Typing Reconition [DISABLED]" -ForegroundColor Green
 
 Write-Host "7.3 Clipboard" -ForegroundColor Green
-if((Test-Path -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\SmartActionPlatform\SmartClipboard") -ne $true) {New-Item "HKCU:\Software\Microsoft\Windows\CurrentVersion\SmartActionPlatform\SmartClipboard" -Force | Out-Null};
-New-ItemProperty -LiteralPath 'HKCU:\Software\Microsoft\Windows\CurrentVersion\SmartActionPlatform\SmartClipboard' -Name 'Disabled' -Value "1" -PropertyType DWord -Force | Out-Null
+Set-Registry -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\SmartActionPlatform\SmartClipboard' -Name 'Disabled' -Value 1 -Type DWord -CreatePath
 Write-Host "Clipboard - 'Smart Clipboard' [DISABLED]" -ForegroundColor Green
 
 Write-Host "7.4 Telemetry" -ForegroundColor Green #InTune Required
 # Disable Tailored Experiences With Diagnostic Data
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Privacy" -type "Dword" -Name "TailoredExperiencesWithDiagnosticDataEnabled" -Value "0"
+Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Privacy' -Name 'TailoredExperiencesWithDiagnosticDataEnabled' -Value 0 -Type DWord
+# Disable Activites
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'EnableActivityFeed' -Value 0 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'PublishUserActivities' -Value 0 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'UploadUserActivities' -Value 0 -Type DWord
+Write-Host "Windows: Activity Feed [DISABLED]" -ForegroundColor Green
 # Disable Telemetry
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "AllowTelemetry" -Type DWord -Value "0" | Out-Null
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection" -Name "MaxTelemetryAllowed" -Type DWord -Value "0" | Out-Null
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "AllowTelemetry" -Type DWord -Value "0" | Out-Null
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Name "EnableActivityFeed" -Type DWord -Value "0" | Out-Null
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Name "PublishUserActivities" -Type DWord -Value "0" | Out-Null
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Name "UploadUserActivities" -Type DWord -Value "0" | Out-Null
+Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'AllowTelemetry' -Value 0 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'MaxTelemetryAllowed' -Value 0 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection' -Name 'AllowTelemetry' -Value 0 -Type DWord
 Write-Host "Windows: Telementry [DISABLED]" -ForegroundColor Green
 
 # Firewall Block
