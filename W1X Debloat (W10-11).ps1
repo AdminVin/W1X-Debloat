@@ -899,6 +899,24 @@ Write-Host "Network: Increased Performance for 'I/O Request Packet Stack Size" -
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile' -Name 'NetworkThrottlingIndex' -Value -1 -Type DWord
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Psched' -Name 'NonBestEffortLimit' -Value 0 -Type DWord
 Write-Host "Network: Throttling Index [DISABLED]" -ForegroundColor Green
+
+netsh int tcp set global autotuninglevel=disabled
+Write-Host "Network: TCP Auto-Tuning [DISABLED]" -ForegroundColor Green
+
+netsh int tcp set global rss=enabled
+Write-Host "Network: Receive-Side Scaling (RSS) [ENABLED]" -ForegroundColor Green
+
+netsh int tcp set global dca=enabled
+Write-Host "Network: Direct Cache Access (DCA) [ENABLED]" -ForegroundColor Green
+
+netsh int tcp set global ecncapability=disabled
+Write-Host "Network: Explicit Congestion Notification (ECN) [DISABLED]" -ForegroundColor Green
+
+netsh int tcp set global netdma=disabled
+Write-Host "Network: NetDMA [DISABLED]" -ForegroundColor Green
+
+netsh int tcp set supplemental template=internet congestionprovider=ctcp
+Write-Host "Network: TCP Congestion Provider set to Compound TCP (CTCP)" -ForegroundColor Green
 <###################################### NETWORK TWEAKS (End) ######################################>
 
 
@@ -1108,6 +1126,8 @@ Write-Host "Explorer: Set Optimal Visual Settings" -ForegroundColor Green
 <#############################################################################################################################>
 #region 6.0 - Power Settings
 Write-Host "`n`n6.0 Power Settings" -ForegroundColor Green
+Powercfg /s 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
+Write-Host "Sleep Settings: Set to High Performance" -ForegroundColor Green
 Powercfg /Change monitor-timeout-ac 15
 Powercfg /Change monitor-timeout-dc 15
 Write-Host "Sleep Settings: Monitor (Battery: 15 Mins | AC: 15 Mins)" -ForegroundColor Green
@@ -1125,8 +1145,8 @@ powercfg /Change -hibernate-timeout-dc 0
 powercfg -h off
 Write-Host "Sleep Settings: Hibernate [DISABLED]" -ForegroundColor Green
 
-powercfg -setacvalueindex 381b4222-f694-41f0-9685-ff5bb260df2e 4f971e89-eebd-4455-a8de-9e59040e7347 5ca83367-6e45-459f-a27b-476b1d01c936 0
-powercfg -setdcvalueindex 381b4222-f694-41f0-9685-ff5bb260df2e 4f971e89-eebd-4455-a8de-9e59040e7347 5ca83367-6e45-459f-a27b-476b1d01c936 0
+powercfg -setacvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 4f971e89-eebd-4455-a8de-9e59040e7347 5ca83367-6e45-459f-a27b-476b1d01c936 0
+powercfg -setdcvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 4f971e89-eebd-4455-a8de-9e59040e7347 5ca83367-6e45-459f-a27b-476b1d01c936 0
 Write-Host "Sleep Settings: 'Closing Lid' action to turn off screen" [CHANGED] -ForegroundColor Green
 
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings' -Name 'ShowSleepOption' -Value 0 -Type DWord
