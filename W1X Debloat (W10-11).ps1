@@ -401,6 +401,7 @@ $services = @(
     "PcaSvc",							# Program Compatibility Assistant Service
     "RemoteRegistry",					# Remote Registry
     "RetailDemo",						# Retail Demo
+    "TapiSrv",                          # Telephony
     "Themes",							# Themes
     "wisvc",							# Windows Insider Service
     "icssvc",							# Windows Mobile Hotspot Service
@@ -413,32 +414,43 @@ $services = @(
 )
 
 foreach ($service in $services) {
-    $serviceName = (Get-Service $service).DisplayName
-    Get-Service $service | Stop-Service -ErrorAction SilentlyContinue
-    Get-Service $service | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
-    Write-Host " - Service: $serviceName [DISABLED]" -ForegroundColor Green
+    try {
+        $svc = Get-Service -Name $service -ErrorAction Stop
+        $serviceName = $svc.DisplayName
+        Stop-Service -Name $service -ErrorAction SilentlyContinue
+        Set-Service -Name $service -StartupType Disabled -ErrorAction SilentlyContinue
+        Write-Host " - Service: $serviceName [DISABLED]" -ForegroundColor Green
+    } catch {
+        Write-Host " - Service: $service [NOT FOUND]" -ForegroundColor Yellow
+    }
 }
-# Services - Superfetch/Prefetch Disable (if running SSD)
+# Services - Disable - Superfetch/Prefetch Disable (if running SSD)
 $disk = Get-PhysicalDisk | Where-Object { $_.DeviceID -eq (Get-Disk -Number (Get-Partition -DriveLetter C).DiskNumber).Number }
-if ($disk.MediaType -eq 'SSD' -or $null -eq $disk.MediaType) {
+if ($disk.MediaType -eq 'SSD') {
     Stop-Service -Name SysMain -Force
     Set-Service -Name SysMain -StartupType Disabled
     Write-Host " - Service: Superfetch/Prefetch [DISABLED]" -ForegroundColor Green
 } else {
     Write-Host " - Service: Superfetch/Prefetch [UNMODIFIED (HDD Detected)]" -ForegroundColor Green
 }
-
+#> Services - Delete - Windows Media Player Network Share
+if (Get-Service -Name 'WMPNetworkSvc' -ErrorAction SilentlyContinue) {
+    sc.exe delete WMPNetworkSvc
+    Write-Host " - Service: Windows Media Player Network Share [DELETED]" -Foregroundcolor Green
+}
 # Services - Set to Manual
 $services = @(
-    "BTAGService",						# Bluetooth (Setting to Manual in the event BT is used.)
-    "bthserv"							# Bluetooth (Setting to Manual in the event BT is used.)
+    "BTAGService",  # Bluetooth (Setting to Manual in the event BT is used.)
+    "bthserv"       # Bluetooth (Setting to Manual in the event BT is used.)
 )
 
 foreach ($service in $services) {
-    $serviceName = (Get-Service $service).DisplayName
-    Get-Service $service | Stop-Service -ErrorAction SilentlyContinue
-    Get-Service $service | Set-Service -StartupType Manual -ErrorAction SilentlyContinue
-    Write-Host " - Service: $serviceName [Set to Manual]" -ForegroundColor Green
+    $svc = Get-Service -Name $service -ErrorAction SilentlyContinue
+    if ($null -ne $svc) {
+        $svc | Stop-Service -ErrorAction SilentlyContinue
+        $svc | Set-Service -StartupType Manual -ErrorAction SilentlyContinue
+        Write-Host " - Service: $($svc.DisplayName) [Set to Manual]" -ForegroundColor Green
+    }
 }
 
 
@@ -469,17 +481,25 @@ $taskData = @(
     @{ TaskName = "AitAgent"; DisplayName = "Application Experience AIT Agent" }
 )
 
+$removedCount = 0
+
 foreach ($taskInfo in $taskData) {
     $taskName = $taskInfo.TaskName
     $displayName = $taskInfo.DisplayName
 
     try {
-        #Disable-ScheduledTask -TaskName $taskName -ErrorAction Stop | Out-Null
-        Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction Stop | Out-Null
-        Write-Host " - Task: '$displayName' [REMOVED]" -ForegroundColor Green
+        if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
+            Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction Stop | Out-Null
+            Write-Host " - Task: '$displayName' [REMOVED]" -ForegroundColor Green
+            $removedCount++
+        }
     } catch {
-        #
+        # Silently ignore
     }
+}
+
+if ($removedCount -eq 0) {
+    Write-Host " - Task: All removed previously!" -ForegroundColor Yellow
 }
 #endregion
 
