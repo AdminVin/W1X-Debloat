@@ -84,9 +84,11 @@ $Apps = @(
     "Microsoft.BingSports*",
     "Microsoft.BingTranslator*",
     "Microsoft.BingTravel*",
+    "*Cortana*",
     "*Clipchamp*",
     "Microsoft.CommsPhone*",
     "Microsoft.ConnectivityStore*",
+    "Microsoft.Edge.GameAssist",
     "Microsoft.WindowsFeedbackHub*",
     "Microsoft.GetHelp*",
     "Microsoft.Getstarted*",
@@ -102,7 +104,7 @@ $Apps = @(
     "Microsoft.Print3D*",
     "Microsoft.MicrosoftSolitaireCollection",
     "Microsoft.SkypeApp*",
-    "MicrosoftTeams*",
+    "MicrosoftTeams*", # Home Version
     "Microsoft.Todos*",
     "Microsoft.Wallet*",
     "Microsoft.Whiteboard*",
@@ -317,6 +319,7 @@ Write-Host "Internet Explorer - Add-On: 'IE to Edge' [REMOVED]" -ForegroundColor
 ## 3.2.4 One Note
 Write-Host "3.2.4 One Note" -ForegroundColor Green
 Remove-Item -LiteralPath "C:\Users\$env:username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Send to OneNote.lnk" -ErrorAction "SilentlyContinue" -Force | Out-Null
+Set-Registry -Remove Value -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\StartupFolder" -Name "Send to OneNote.lnk"
 Write-Host "OneNote - Startup: 'Send to OneNote' [REMOVED]" -ForegroundColor Green
 
 ## 3.2.5 Mozilla Firefox
@@ -332,8 +335,10 @@ Write-Host "Teams (Home / Small Business) - Taskbar Shortcut [REMOVED]" -Foregro
 
 ## 3.2.7 Teams (Work or School)
 Write-Host "3.2.7 Teams (Work or School) - Disabled Auto Start" -ForegroundColor Green
-Set-Registry -Remove -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "com.squirrel.Teams.Teams"
-Set-Registry -Remove -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run" -Name "TeamsMachineInstaller"
+Set-Registry -Remove Value -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "com.squirrel.Teams.Teams"
+Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run" -Name "TeamsMachineInstaller"
+Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run32" -Name "TeamsMachineUninstallerLocalAppData"
+Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run32" -Name "TeamsMachineUninstallerProgramData"
 Write-Host "Teams (Work or School) - Auto Start [DISABLED]" -ForegroundColor Green
 
 ## 3.2.8 Windows Suggestions/Tips/Welcome Experience
@@ -1013,6 +1018,10 @@ Write-Host "Windows: Virtualization-Based Security [DISABLED]" -ForegroundColor 
 
 Set-Registry -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Power\PowerThrottling" -Name "PowerThrottlingOff" -Value 1 -Type DWord
 Write-Host "Windows: Power Throttling [DISABLED]" -ForegroundColor Green
+
+Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "SecurityHealth"
+Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run" -Name "SecurityHealth"
+Write-Host "Windows: Security System Tray Icon [HIDDEN]" -ForegroundColor Green
 
 $VMsRunning = Get-VM | Where-Object { $_.State -eq 'Running' }
 if ($VMsRunning) {
