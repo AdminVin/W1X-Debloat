@@ -391,7 +391,7 @@ Write-Host "3.4.11 Microsoft Dynamic Lighting (RGB Fix) [Disabled]" -ForegroundC
 Write-Host "`n`n4.0 Services and Scheduled Tasks" -ForegroundColor Green
 ## Services
 Write-Host "4.1 Services" -ForegroundColor Green
-# Services - Disable
+#> Disable
 $services = @(
     "MapsBroker",						# Bing Downloaded Maps Manager
     "autotimesvc",						# Celluar Time
@@ -412,7 +412,6 @@ $services = @(
     "WpnService",						# Windows Push Notification System Service
     "CscService"						# Windows Offline Files
 )
-
 foreach ($service in $services) {
     try {
         $svc = Get-Service -Name $service -ErrorAction Stop
@@ -424,7 +423,7 @@ foreach ($service in $services) {
         Write-Host " - Service: $service [NOT FOUND]" -ForegroundColor Yellow
     }
 }
-# Services - Disable - Superfetch/Prefetch Disable (if running SSD)
+#> Disable - Superfetch/Prefetch Disable (if running SSD)
 $disk = Get-PhysicalDisk | Where-Object { $_.DeviceID -eq (Get-Disk -Number (Get-Partition -DriveLetter C).DiskNumber).Number }
 if ($disk.MediaType -eq 'SSD') {
     Stop-Service -Name SysMain -Force
@@ -433,17 +432,29 @@ if ($disk.MediaType -eq 'SSD') {
 } else {
     Write-Host " - Service: Superfetch/Prefetch [UNMODIFIED (HDD Detected)]" -ForegroundColor Green
 }
-#> Services - Delete - Windows Media Player Network Share
+#> Disable - DiagTrack/dmwappushservice
+$intuneInstalled = Get-Service -Name "IntuneManagementExtension" -ErrorAction SilentlyContinue
+if (!($intuneInstalled)) {
+    # DiagTrack (Telemetry + Timeline)
+    Stop-Service DiagTrack -Force -ErrorAction SilentlyContinue
+    Set-Service DiagTrack -StartupType Disabled
+    Write-Host " - Service: DiagTrack (Telemetry + Timeline) [DISABLED]" -ForegroundColor Green
+
+    # dmwappushservice (Push-based Clipboard Sync)
+    Stop-Service dmwappushservice -Force -ErrorAction SilentlyContinue
+    Set-Service dmwappushservice -StartupType Disabled
+    Write-Host " - Service: dmwappushservice (Push-based Clipboard Sync) [DISABLED]" -ForegroundColor Green
+}
+#> Delete - Windows Media Player Network Share
 if (Get-Service -Name 'WMPNetworkSvc' -ErrorAction SilentlyContinue) {
     sc.exe delete WMPNetworkSvc
     Write-Host " - Service: Windows Media Player Network Share [DELETED]" -Foregroundcolor Green
 }
-# Services - Set to Manual
+#> Manual - Bluetooth
 $services = @(
-    "BTAGService",  # Bluetooth (Setting to Manual in the event BT is used.)
-    "bthserv"       # Bluetooth (Setting to Manual in the event BT is used.)
+    "BTAGService",  # Bluetooth
+    "bthserv"       # Bluetooth
 )
-
 foreach ($service in $services) {
     $svc = Get-Service -Name $service -ErrorAction SilentlyContinue
     if ($null -ne $svc) {
@@ -456,48 +467,67 @@ foreach ($service in $services) {
 
 ## Scheduled Tasks
 Write-Host "4.2 Scheduled Tasks" -ForegroundColor Green
-$taskData = @(
-    @{ TaskName = "Proxy"; DisplayName = "Proxy Task" },
-    @{ TaskName = "SmartScreenSpecific"; DisplayName = "SmartScreen Specific Task" },
-    @{ TaskName = "Microsoft Compatibility Appraiser"; DisplayName = "Microsoft Compatibility Appraiser Task" },
-    @{ TaskName = "Consolidator"; DisplayName = "Consolidator Task" },
-    @{ TaskName = "KernelCeipTask"; DisplayName = "Kernel CEIP Task" },
-    @{ TaskName = "UsbCeip"; DisplayName = "USB CEIP Task" },
-    @{ TaskName = "Microsoft-Windows-DiskDiagnosticDataCollector"; DisplayName = "Disk Diagnostic Data Collector Task" },
-    @{ TaskName = "GatherNetworkInfo"; DisplayName = "Gather Network Info Task" },
-    @{ TaskName = "QueueReporting"; DisplayName = "Queue Reporting Task" },
-    @{ TaskName = "UpdateLibrary"; DisplayName = "Update Library Task" },
-    @{ TaskName = "Microsoft Compatibility Appraiser"; DisplayName = "Microsoft Compatibility Appraiser Task" },
-    @{ TaskName = "ProgramDataUpdater"; DisplayName = "Program Data Updater Task" },
-    @{ TaskName = "Microsoft\Windows\Autochk\Proxy"; DisplayName = "Proxy Task" },
-    @{ TaskName = "Consolidator"; DisplayName = "Consolidator Task" },
-    @{ TaskName = "UsbCeip"; DisplayName = "USB CEIP Task" },
-    @{ TaskName = "Microsoft-Windows-DiskDiagnosticDataCollector"; DisplayName = "Disk Diagnostic Data Collector Task" },
-    @{ TaskName = "WinSAT"; DisplayName = "Windows System Assessment Tool" },
-    @{ TaskName = "MapsToastTask"; DisplayName = "MapsToastTask" },
-    @{ TaskName = "MapsUpdateTask"; DisplayName = "MapsUpdateTask" },
-    @{ TaskName = "AnalyzeSystem"; DisplayName = "Power Efficiency Diagnostics" },
-    @{ TaskName = "QueueReporting"; DisplayName = "Windows Error Reporting Queue" },
-    @{ TaskName = "AitAgent"; DisplayName = "Application Experience AIT Agent" }
-)
-
+# Tasks - Intune Related
 $removedCount = 0
+if (!($intuneInstalled)) {
+    $Tasks = @(
+        "\Microsoft\Windows\Application Experience\ProgramDataUpdater",
+        "\Microsoft\Windows\Application Experience\StartupAppTask",
+        "\Microsoft\Windows\Autochk\Proxy",
+        "\Microsoft\Windows\Customer Experience Improvement Program\BthSQM",
+        "\Microsoft\Windows\Customer Experience Improvement Program\Consolidator",
+        "\Microsoft\Windows\Customer Experience Improvement Program\KernelCeipTask",
+        "\Microsoft\Windows\Customer Experience Improvement Program\UsbCeip",
+        "\Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector",
+        "\Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticResolver"
+    )
 
+    foreach ($task in $Tasks) {
+        try {
+            $taskName = ($task.Split('\')[-1])
+            $taskPath = ($task -replace "\\$taskName$", "")
+            Disable-ScheduledTask -TaskName $taskName -TaskPath $taskPath -ErrorAction SilentlyContinue | Out-Null
+            $removedCount++
+            Write-Host " - Task: $task [DISABLED]" -ForegroundColor Green
+        } catch {
+            Write-Host " - Task: $task [NOT FOUND]" -ForegroundColor Yellow
+        }
+    }
+}
+# Tasks - General/All Systems
+$taskData = @(
+    @{ TaskName = "Proxy"; TaskPath = "\Microsoft\Windows\Autochk\"; DisplayName = "Proxy Task" },
+    @{ TaskName = "SmartScreenSpecific"; TaskPath = "\Microsoft\Windows\AppID\"; DisplayName = "SmartScreen Specific Task" },
+    @{ TaskName = "Microsoft Compatibility Appraiser"; TaskPath = "\Microsoft\Windows\Application Experience\"; DisplayName = "Microsoft Compatibility Appraiser Task" },
+    @{ TaskName = "ProgramDataUpdater"; TaskPath = "\Microsoft\Windows\Application Experience\"; DisplayName = "Program Data Updater Task" },
+    @{ TaskName = "AitAgent"; TaskPath = "\Microsoft\Windows\Application Experience\"; DisplayName = "Application Experience AIT Agent" },
+    @{ TaskName = "Consolidator"; TaskPath = "\Microsoft\Windows\Customer Experience Improvement Program\"; DisplayName = "Consolidator Task" },
+    @{ TaskName = "KernelCeipTask"; TaskPath = "\Microsoft\Windows\Customer Experience Improvement Program\"; DisplayName = "Kernel CEIP Task" },
+    @{ TaskName = "UsbCeip"; TaskPath = "\Microsoft\Windows\Customer Experience Improvement Program\"; DisplayName = "USB CEIP Task" },
+    @{ TaskName = "Microsoft-Windows-DiskDiagnosticDataCollector"; TaskPath = "\Microsoft\Windows\DiskDiagnostic\"; DisplayName = "Disk Diagnostic Data Collector Task" },
+    @{ TaskName = "Microsoft-Windows-DiskDiagnosticResolver"; TaskPath = "\Microsoft\Windows\DiskDiagnostic\"; DisplayName = "Disk Diagnostic Resolver Task" },
+    @{ TaskName = "GatherNetworkInfo"; TaskPath = "\Microsoft\Windows\NetTrace\"; DisplayName = "Gather Network Info Task" },
+    @{ TaskName = "QueueReporting"; TaskPath = "\Microsoft\Windows\Windows Error Reporting\"; DisplayName = "Queue Reporting Task" },
+    @{ TaskName = "UpdateLibrary"; TaskPath = "\Microsoft\Windows\Windows Media Sharing\"; DisplayName = "Update Library Task" },
+    @{ TaskName = "WinSAT"; TaskPath = "\Microsoft\Windows\Maintenance\"; DisplayName = "Windows System Assessment Tool" },
+    @{ TaskName = "MapsToastTask"; TaskPath = "\Microsoft\Windows\Maps\"; DisplayName = "Maps Toast Task" },
+    @{ TaskName = "MapsUpdateTask"; TaskPath = "\Microsoft\Windows\Maps\"; DisplayName = "Maps Update Task" },
+    @{ TaskName = "AnalyzeSystem"; TaskPath = "\Microsoft\Windows\Power Efficiency Diagnostics\"; DisplayName = "Power Efficiency Diagnostics" }
+)
 foreach ($taskInfo in $taskData) {
     $taskName = $taskInfo.TaskName
+    $taskPath = $taskInfo.TaskPath
     $displayName = $taskInfo.DisplayName
-
     try {
-        if (Get-ScheduledTask -TaskName $taskName -ErrorAction SilentlyContinue) {
-            Unregister-ScheduledTask -TaskName $taskName -Confirm:$false -ErrorAction Stop | Out-Null
+        if (Get-ScheduledTask -TaskName $taskName -TaskPath $taskPath -ErrorAction SilentlyContinue) {
+            Unregister-ScheduledTask -TaskName $taskName -TaskPath $taskPath -Confirm:$false -ErrorAction Stop | Out-Null
             Write-Host " - Task: '$displayName' [REMOVED]" -ForegroundColor Green
             $removedCount++
         }
     } catch {
-        # Silently ignore
+        Write-Host " - Task: '$displayName' [FAILED or NOT FOUND]" -ForegroundColor Yellow
     }
 }
-
 if ($removedCount -eq 0) {
     Write-Host " - Task: All removed previously!" -ForegroundColor Yellow
 }
