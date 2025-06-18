@@ -44,11 +44,8 @@ function Set-Registry {
 $PCName = (Get-CIMInstance CIM_ComputerSystem).Name
 $Date = Get-Date
 $LogFile = "C:\ProgramData\AV\Cleanup\$PCName.txt"
-if (Test-Path -Path "C:\ProgramData\AV\Cleanup") {
-} else {
-    New-Item "C:\ProgramData\AV\Cleanup" -Type Directory | Out-Null
-	New-Item "C:\ProgramData\AV\Cleanup\$PCName.txt" | Out-Null
-}
+if (!(Test-Path -Path "C:\ProgramData\AV\Cleanup")) { New-Item "C:\ProgramData\AV\Cleanup" -Type Directory | Out-Null }
+if (-not (Select-String -Path $LogFile -Pattern "#" -Quiet)) { Remove-Item -Path $LogFile -Force -ErrorAction SilentlyContinue | Out-Null }
 $Date | Out-File -Append -FilePath $LogFile
 Write-Host "1.0 Log: Script started at $Date" -ForegroundColor Green
 $Timer = [System.Diagnostics.Stopwatch]::StartNew()
@@ -1038,7 +1035,9 @@ Write-Host "Windows: App Smart Screening [DISABLED]" -ForegroundColor Green
 
 # Remote Desktop
 Set-Registry -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name 'fDenyTSConnections' -Value 0 -Type DWord
-Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+if (-not (Get-NetFirewallRule -DisplayName "Remote Desktop - TCP (3389)" -ErrorAction SilentlyContinue)) {
+    netsh advfirewall firewall add rule name="Remote Desktop - TCP (3389)" dir=in action=allow protocol=TCP localport=3389
+}
 Write-Host "Windows: Remote Desktop [ENABLED]" -ForegroundColor Green
 
 # Lockscreen rotating pictures
@@ -1260,14 +1259,19 @@ Write-Host " - Actual Space Freed: $("{0:N2} GB" -f ($FreeSpaceAfter - $FreeSpac
 
 
 <#############################################################################################################################>
-#region 9.0 - Script Settings
+#region 9.0 - Script Log
 ### Log - End
-# Log Locally
+# Log
 "Script Duration" | Out-File -Append -FilePath $LogFile
-$Timer.Elapsed | Select-Object Hours, Minutes, Seconds | Format-Table | Out-File -Append -FilePath $LogFile
 $Timer.Stop()
-$TimerFinal = $Timer.Elapsed | Select-Object Hours, Minutes, Seconds | Format-Table
+$Timer.Elapsed | Select-Object Hours, Minutes, Seconds | Format-Table | Out-File -Append -FilePath $LogFile
+"Drive Space Free (before): $("{0:N2} GB" -f $FreeSpaceBefore)" | Out-File -Append -FilePath $LogFile
+"Drive Space Free (after): $("{0:N2} GB" -f $FreeSpaceAfter)" | Out-File -Append -FilePath $LogFile
+"Drive Space Restored: $("{0:N2} GB`n" -f ($FreeSpaceAfter - $FreeSpaceBefore))" | Out-File -Append -FilePath $LogFile
+"######################################################`n" | Out-File -Append -FilePath $LogFile
+# Output
 Write-Host "`n`n9.0 Log: Script Duration" -ForegroundColor Green
+$TimerFinal = $Timer.Elapsed | Select-Object Hours, Minutes, Seconds | Format-Table
 $TimerFinal
 Write-Host "Log file located at $LogFile" -ForegroundColor Yellow
 #endregion
