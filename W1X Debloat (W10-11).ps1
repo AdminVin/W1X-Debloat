@@ -1036,7 +1036,7 @@ Write-Host "Windows: App Smart Screening [DISABLED]" -ForegroundColor Green
 # Remote Desktop
 Set-Registry -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name 'fDenyTSConnections' -Value 0 -Type DWord
 if (-not (Get-NetFirewallRule -DisplayName "Remote Desktop - TCP (3389)" -ErrorAction SilentlyContinue)) {
-    netsh advfirewall firewall add rule name="Remote Desktop - TCP (3389)" dir=in action=allow protocol=TCP localport=3389
+    netsh advfirewall firewall add rule name="Remote Desktop - TCP (3389)" dir=in action=allow protocol=TCP localport=3389 profile=domain,private
 }
 Write-Host "Windows: Remote Desktop [ENABLED]" -ForegroundColor Green
 
