@@ -74,6 +74,7 @@ Write-Host "`n`n3.0 Applications" -ForegroundColor Green
 #region Windows 10 - 3.1 Applications - Metro
 Write-Host "3.1 Applications - Metro" -ForegroundColor Green
 $Apps = @(
+    # Microsoft - General Bloatware
     "Microsoft.3DBuilder*",
     "Microsoft.549981C3F5F10*",
     "Microsoft.Appconnector*",
@@ -92,7 +93,9 @@ $Apps = @(
     "Microsoft.WindowsFeedbackHub*",
     "Microsoft.GetHelp*",
     "Microsoft.Getstarted*",
+    "*maps*",
     "Microsoft.Messaging*",
+    "Microsoft.Windows.NarratorQuickStart",
     "Microsoft.Microsoft3DViewer*",
     "Microsoft.MicrosoftOfficeHub*",
     "Microsoft.MicrosoftPowerBIForWindows*",
@@ -101,21 +104,21 @@ $Apps = @(
     "Microsoft.Office.Sway*",
     "Microsoft.OneConnect*",
     "Microsoft.People*",
+    "Microsoft.PowerAutomateDesktop",
     "Microsoft.Print3D*",
     "Microsoft.MicrosoftSolitaireCollection",
     "Microsoft.SkypeApp*",
     "MicrosoftTeams*", # Home Version
     "Microsoft.Todos*",
     "Microsoft.Wallet*",
+    "Microsoft.WidgetsPlatformRuntime",
     "Microsoft.Whiteboard*",
-    "MicrosoftWindows.Client.WebExperience",
+    "MicrosoftWindows.Client.WebExperience", # Widget Related
     "Microsoft.WindowsMaps*",
-    "*maps*",
     "Microsoft.WindowsPhone*",
     "Microsoft.WindowsReadingList*",
     "Microsoft.YourPhone*",
-    "Microsoft.ZuneMusic*",
-    "Microsoft.ZuneVideo*",
+    # Microsoft - Random Bloatware
     "*ACGMediaPlayer*",
     "*ActiproSoftwareLLC*",
     "*AdobePhotoshopExpress*",
@@ -160,6 +163,7 @@ $Apps = @(
     "*WinZipUniversal*",
     "*Wunderlist*",
     "*XING*",
+    # Samsung - Bloatware
     "SAMSUNGELECTRONICSCO.LTD.1412377A9806A*",
     "SAMSUNGELECTRONICSCO.LTD.NewVoiceNote*",
     "SAMSUNGELECTRONICSCoLtd.SamsungNotes*",
@@ -177,11 +181,18 @@ $Apps = @(
     "4AE8B7C2.BOOKING.COMPARTNERAPPSAMSUNGEDITION*"
 )
 foreach ($App in $Apps) {
-    Write-Host " - Removed: "$App -ForegroundColor Green
-    Get-AppxPackage -AllUsers $App | Remove-AppxPackage
+    Write-Host " - Removed: $App" -ForegroundColor Green
+
+    $Installed = Get-AppxProvisionedPackage -Online | Where-Object { $_.DisplayName -like $App }
+    foreach ($Install in $Installed) {
+        Remove-AppxProvisionedPackage -Online -PackageName $Install.PackageName -ErrorAction SilentlyContinue
+    }
+
+    Get-AppxPackage -AllUsers -Name $App | Remove-AppxPackage -ErrorAction SilentlyContinue
 }
 
-# REMOVAL - Microsoft Desktop App Installer: silently manages installation and updating of Windows apps, especially those distributed as MSIX or APPX packages.
+# REMOVAL - Microsoft Desktop App Installer
+#> Silently manages installation and updating of Windows apps, especially those distributed as MSIX or APPX packages.
 Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe | Out-Null
 
 # Microsoft Store - Disable SILENT installation of NEW third party apps.
@@ -573,7 +584,7 @@ Write-Host "Explorer: 'Open with PowerShell 5.1 (Admin)' - Right Click Context M
 if (-not (Test-Path "C:\Program Files\PowerShell\7\pwsh.exe")) {
     New-Item -Path "C:\PSTemp" -ItemType Directory | Out-Null
     $PS7InstallerPath = "C:\PSTemp\PowerShell-7.msi"
-    $PS7InstallerURL = "https://github.com/PowerShell/PowerShell/releases/download/v7.5.0/PowerShell-7.5.0-win-x64.msi"
+    $PS7InstallerURL = "https://github.com/PowerShell/PowerShell/releases/download/v7.5.1/PowerShell-7.5.1-win-x64.msi"
     Invoke-WebRequest -Uri $PS7InstallerURL -OutFile $PS7InstallerPath
     Start-Process -FilePath msiexec -ArgumentList "/i $PS7InstallerPath /qn" -Wait
     Remove-Item -Path "C:\PSTemp" -Recurse -Force | Out-Null
