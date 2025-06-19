@@ -1,3 +1,21 @@
+$SV = "3.0"
+<#############################################################################################################################>
+<# 
+[>] Change Log
+2025-06-19 - v3.0
+    - Updated method to detect if OneDrive is signed in and syncing.
+    - Updated log to include space restored.
+        - Log Location: C:/ProgramData/AV/Cleanup
+    - Rewrote all registry modifications, to process faster with a function.
+    - Updated Metro apps list for removal.
+    - Metro apps will be removed system wide (all users).
+    - Updated power plan from "Balanced" to "High Performance" while retaining settings.
+    - Updated Scheduled Tasks & Services method.
+       - Removed Windows Media Player Sharing service.
+    - Updated network tweaks: NetDMA; enabled RSS/DCA; set CTCP for optimized throughput and reduced latency.
+#>
+
+
 <#############################################################################################################################>
 #region 1.0 - Script Settings
 ## Variables
@@ -72,112 +90,124 @@ Write-Host "`n`n3.0 Applications" -ForegroundColor Green
 Write-Host "3.1 Applications - Metro" -ForegroundColor Green
 $Apps = @(
     # Microsoft - General Bloatware
-    "Microsoft.3DBuilder*",
-    "Microsoft.549981C3F5F10*",
-    "Microsoft.Appconnector*",
-    "Microsoft.BingFinance*",
-    "Microsoft.BingFoodAndDrink*",
-    "Microsoft.BingHealthAndFitness*",
-    "Microsoft.BingNews*",
-    "Microsoft.BingSports*",
-    "Microsoft.BingTranslator*",
-    "Microsoft.BingTravel*",
-    "*Cortana*",
-    "*Clipchamp*",
-    "Microsoft.CommsPhone*",
-    "Microsoft.ConnectivityStore*",
-    "Microsoft.Edge.GameAssist",
-    "Microsoft.WindowsFeedbackHub*",
-    "Microsoft.GetHelp*",
-    "Microsoft.Getstarted*",
-    "*maps*",
-    "Microsoft.Messaging*",
-    "Microsoft.Windows.NarratorQuickStart",
-    "Microsoft.Microsoft3DViewer*",
-    "Microsoft.MicrosoftOfficeHub*",
-    "Microsoft.MicrosoftPowerBIForWindows*",
-    "Microsoft.MixedReality.Portal*",
-    "Microsoft.NetworkSpeedTest*",
-    "Microsoft.Office.Sway*",
-    "Microsoft.OneConnect*",
-    "Microsoft.People*",
-    "Microsoft.PowerAutomateDesktop",
-    "Microsoft.Print3D*",
-    "Microsoft.MicrosoftSolitaireCollection",
-    "Microsoft.SkypeApp*",
-    "MicrosoftTeams*", # Home Version
-    "Microsoft.Todos*",
-    "Microsoft.Wallet*",
-    "Microsoft.WidgetsPlatformRuntime",
-    "Microsoft.Whiteboard*",
-    "MicrosoftWindows.Client.WebExperience", # Widget Related
-    "Microsoft.WindowsMaps*",
-    "Microsoft.WindowsPhone*",
-    "Microsoft.WindowsReadingList*",
-    "Microsoft.YourPhone*",
-    "Microsoft.ZuneMusic",
+    "Microsoft.3DBuilder*",                                     # 3D Printing App
+    "Microsoft.549981C3F5F10*",                                 # Cortana Listen Component
+    "Microsoft.Appconnector*",                                  # App Linking Service
+    "Microsoft.BingFinance*",                                   # Finance App
+    "Microsoft.BingFoodAndDrink*",                              # Food & Drink Guide
+    "Microsoft.BingHealthAndFitness*",                          # Health & Fitness App
+    "Microsoft.BingNews*",                                      # News App
+    "Microsoft.BingSports*",                                    # Sports Scores App
+    "Microsoft.BingTranslator*",                                # Translator App
+    "Microsoft.BingTravel*",                                    # Travel App
+    "*Cortana*",                                                # Voice Assistant
+    "*Clipchamp*",                                              # Video Editor
+    "Microsoft.CommsPhone*",                                    # Phone Communications
+    "Microsoft.ConnectivityStore*",                             # Network Settings Storage
+    "Microsoft.ECApp",                                          # Ease of Access (OOBE)
+    "Microsoft.Edge.GameAssist",                                # Edge Gaming Overlay
+    "Microsoft.WindowsFeedbackHub*",                            # Send Feedback to Microsoft
+    "Microsoft.GetHelp*",                                       # Microsoft Support App
+    "Microsoft.Getstarted*",                                    # Introductory Guide
+    "*maps*",                                                   # Mapping App
+    "Microsoft.Messaging*",                                     # SMS Messaging App
+    "Microsoft.Windows.NarratorQuickStart",                     # Narrator Tutorial
+    "Microsoft.Microsoft3DViewer*",                             # View 3D Models
+    "Microsoft.MicrosoftOfficeHub*",                            # Office Promotions
+    "Microsoft.MicrosoftPowerBIForWindows*",                    # PowerBI Desktop
+    "Microsoft.MixedReality.Portal*",                           # Mixed Reality Setup
+    "Microsoft.NetworkSpeedTest*",                              # Network Speed Test
+    "Microsoft.Office.Sway*",                                   # Sway Presentation Tool
+    "Microsoft.OneConnect*",                                    # Device Linking
+    "Microsoft.People*",                                        # Contacts Manager
+    "Microsoft.PowerAutomateDesktop",                           # RPA Tool
+    "Microsoft.Print3D*",                                       # 3D Print Utility
+    "Microsoft.MicrosoftSolitaireCollection",                   # Solitaire Game
+    "Microsoft.SkypeApp*",                                      # Skype Chat App
+    "MicrosoftTeams*",                                          # Teams for Home
+    "Microsoft.Todos*",                                         # To Do List App
+    "Microsoft.Wallet*",                                        # Payment Wallet
+    "Microsoft.WidgetsPlatformRuntime",                         # Widgets Engine
+    "Microsoft.Whiteboard*",                                    # Virtual Whiteboard
+    "MicrosoftWindows.Client.WebExperience",                    # Widgets & Search UI
+    "Microsoft.WindowsMaps*",                                   # Mapping App
+    "Microsoft.WindowsPhone*",                                  # Phone Companion
+    "Microsoft.WindowsReadingList*",                            # Reading List App
+    "Microsoft.YourPhone*",                                     # Phone Link App
+    "Microsoft.ZuneMusic",                                      # Groove Music
     # Microsoft - Random Bloatware
-    "*ACGMediaPlayer*",
-    "*ActiproSoftwareLLC*",
-    "*AdobePhotoshopExpress*",
-    "*Amazon.com.Amazon*",
-    "*Asphalt8Airborne*",
-    "*AutodeskSketchBook*",
-    "*BubbleWitch3Saga*",
-    "*CaesarsSlotsFreeCasino*",
-    "*CandyCrush*",
-    "*COOKINGFEVER*",
-    "*CyberLinkMediaSuiteEssentials*",
-    "*Disney*",
-    "*DrawboardPDF*",
-    "*Duolingo-LearnLanguagesforFree*",
-    "*EclipseManager*",
-    "*FarmVille2CountryEscape*",
-    "*FitbitCoach*",
-    "*Flipboard*",
-    "*HiddenCity*",
-    "*Hulu*",
-    "*iHeartRadio*",
-    "*Keeper*",
-    "*Kindle*",
-    "*LinkedInforWindows*",
-    "*MarchofEmpires*",
-    "*NYTCrossword*",
-    "*OneCalendar*",
-    "*Pandora*",
-    "*PhototasticCollage*",
-    "*PicsArt-PhotoStudio*",
-    "*PolarrPhotoEditorAcademicEdition*",
-    "*Prime*",
-    "*RoyalRevolt*",
-    "*Shazam*",
-    "*Sidia.LiveWallpaper*",
-    "*SlingTV*",
-    "*Speed",
-    "*Sway*",
-    "*TuneInRadio*",
-    "*Twitter*",
-    "*Viber*",
-    "*WinZipUniversal*",
-    "*Wunderlist*",
-    "*XING*",
+    "*ACGMediaPlayer*",                                         # Media Player
+    "*ActiproSoftwareLLC*",                                     # Syntax Editor Component
+    "*AdobePhotoshopExpress*",                                  # Photoshop Express
+    "*Amazon.com.Amazon*",                                      # Amazon Shopping
+    "*Asphalt8Airborne*",                                       # Car Racing Game
+    "*AutodeskSketchBook*",                                     # Drawing App
+    "*BubbleWitch3Saga*",                                       # Puzzle Game
+    "*CaesarsSlotsFreeCasino*",                                 # Casino Game
+    "*CandyCrush*",                                             # Puzzle Game
+    "*COOKINGFEVER*",                                           # Cooking Game
+    "*CyberLinkMediaSuiteEssentials*",                          # Media Suite
+    "*Disney*",                                                 # Disney App
+    "*DrawboardPDF*",                                           # PDF Editor
+    "*Duolingo-LearnLanguagesforFree*",                         # Language Learning
+    "*EclipseManager*",                                         # Education Tool
+    "*FarmVille2CountryEscape*",                                # Farming Game
+    "*FitbitCoach*",                                            # Fitness Coach
+    "*Flipboard*",                                              # News Aggregator
+    "*HiddenCity*",                                             # Hidden Object Game
+    "*Hulu*",                                                   # Streaming App
+    "*iHeartRadio*",                                            # Radio Streaming
+    "*Keeper*",                                                 # Password Manager
+    "*Kindle*",                                                 # eBook Reader
+    "*LinkedInforWindows*",                                     # LinkedIn App
+    "*MarchofEmpires*",                                         # Strategy Game
+    "*NYTCrossword*",                                           # Crossword Puzzle
+    "*OneCalendar*",                                            # Calendar App
+    "*Pandora*",                                                # Music Streaming
+    "*PhototasticCollage*",                                     # Photo Collage
+    "*PicsArt-PhotoStudio*",                                    # Photo Editor
+    "*PolarrPhotoEditorAcademicEdition*",                       # Photo Editor
+    "*Prime*",                                                  # Amazon Prime
+    "*RoyalRevolt*",                                            # Action Strategy
+    "*Shazam*",                                                 # Music Identifier
+    "*Sidia.LiveWallpaper*",                                    # Live Wallpaper
+    "*SlingTV*",                                                # Live TV App
+    "*Speed*",                                                  # Likely Racing Game
+    "*Sway*",                                                   # Presentation App
+    "*TuneInRadio*",                                            # Radio Streaming
+    "*Twitter*",                                                # Twitter Client
+    "*Viber*",                                                  # Messaging App
+    "*WinZipUniversal*",                                        # Archive Tool
+    "*Wunderlist*",                                             # Task Manager
+    "*XING*",                                                   # Business Network
     # Samsung - Bloatware
-    "SAMSUNGELECTRONICSCO.LTD.1412377A9806A*",
-    "SAMSUNGELECTRONICSCO.LTD.NewVoiceNote*",
-    "SAMSUNGELECTRONICSCoLtd.SamsungNotes*",
-    "SAMSUNGELECTRONICSCoLtd.SamsungFlux*",
-    "SAMSUNGELECTRONICSCO.LTD.StudioPlus*",
-    "SAMSUNGELECTRONICSCO.LTD.SamsungWelcome*",
-    "SAMSUNGELECTRONICSCO.LTD.SamsungUpdate*",
-    "SAMSUNGELECTRONICSCO.LTD.SamsungSecurity1.2*",
-    "SAMSUNGELECTRONICSCO.LTD.SamsungScreenRecording*",
-    "SAMSUNGELECTRONICSCO.LTD.SamsungQuickSearch*",
-    "SAMSUNGELECTRONICSCO.LTD.SamsungPCCleaner*",
-    "SAMSUNGELECTRONICSCO.LTD.SamsungCloudBluetoothSync*",
-    "SAMSUNGELECTRONICSCO.LTD.PCGallery*",
-    "SAMSUNGELECTRONICSCO.LTD.OnlineSupportSService*",
-    "4AE8B7C2.BOOKING.COMPARTNERAPPSAMSUNGEDITION*"
+    "SAMSUNGELECTRONICSCO.LTD.1412377A9806A*",                  # Samsung App
+    "SAMSUNGELECTRONICSCO.LTD.NewVoiceNote*",                   # Voice Notes
+    "SAMSUNGELECTRONICSCoLtd.SamsungNotes*",                    # Samsung Notes
+    "SAMSUNGELECTRONICSCoLtd.SamsungFlux*",                     # Unknown Samsung App
+    "SAMSUNGELECTRONICSCO.LTD.StudioPlus*",                     # Video Editor
+    "SAMSUNGELECTRONICSCO.LTD.SamsungWelcome*",                 # Welcome App
+    "SAMSUNGELECTRONICSCO.LTD.SamsungSecurity1.2*",             # Samsung Security Tool
+    "SAMSUNGELECTRONICSCO.LTD.SamsungScreenRecording*",         # Screen Recorder
+    "SAMSUNGELECTRONICSCO.LTD.SamsungQuickSearch*",             # Search App
+    "SAMSUNGELECTRONICSCO.LTD.SamsungPCCleaner*",               # System Cleaner
+    "SAMSUNGELECTRONICSCO.LTD.SamsungCloudBluetoothSync*",      # Cloud Sync
+    "SAMSUNGELECTRONICSCO.LTD.PCGallery*",                      # Photo Viewer
+    "SAMSUNGELECTRONICSCO.LTD.OnlineSupportSService*",          # Online Support
+    "4AE8B7C2.BOOKING.COMPARTNERAPPSAMSUNGEDITION*"             # Booking.com App
+    "Samsung.Free*",                                            # Free (news & media feed)
+    "Samsung.Kids*",                                            # Kids (parental control)
+    "Samsung.Pass*",                                            # Pass (password manager)
+    "Samsung.GlobalGoals*",                                     # Global Goals (charity)
+    "Samsung.Internet*",                                        # Internet (browser)
+    "Samsung.Email*",                                           # Email (mail client)
+    "Samsung.Members*",                                         # Members (community/support)
+    "Samsung.Health*",                                          # Health (fitness tracking)
+    "Samsung.SmartThings*",                                     # SmartThings (smart home)
+    "Samsung.TVPlus*"                                           # TV Plus (free TV service)
+
 )
+
 foreach ($App in $Apps) {
     Write-Host " - Removed: $App" -ForegroundColor Green
 
@@ -199,15 +229,21 @@ if (Test-Path "C:\Program Files\Microsoft Office\root\Office16\OUTLOOK.EXE") {
 # REMOVAL - Microsoft Desktop App Installer
 #> Silently manages installation and updating of Windows apps, especially those distributed as MSIX or APPX packages.
 Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe | Out-Null
-
-# Microsoft Store - Disable SILENT installation of NEW third party apps.
+# Disable silent installation of third-party apps suggested by Microsoft Store
 Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SilentInstalledAppsEnabled" -Type DWord -Value "0"
+# Block all content recommendations in Windows (e.g. tips, app suggestions)
 Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "ContentDeliveryAllowed" -Type DWord -Value "0"
+# Disable personalized and cloud-driven suggestions (e.g. Start menu recommendations)
 Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SubscribedContentEnabled" -Type DWord -Value "0"
-# Disable future automatic installs/re-installs of factory/OEM Metro Apps.
+# Prevent reinstall of preloaded OEM/factory apps
 Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEnabled" -Type DWord -Value "0"
+# Mark system as never having allowed OEM preinstalled apps (prevents reinstall triggers)
 Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEverEnabled" -Type String -Value "0"
+# Disable OEM-specific apps from auto-installing
 Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "OEMPreInstalledAppsEnabled" -Type DWord -Value "0"
+# Turn off Start menu suggestions (e.g. WhatsApp recommendations under "Recommended")
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_IrisRecommendations" -Type DWord -Value "0"
+
 #endregion
 
 
@@ -1287,12 +1323,18 @@ Write-Host "Log file located at $LogFile" -ForegroundColor Yellow
 
 <#############################################################################################################################>
 #region 9.0 - Notify User / Reboot
-Write-Host " "
-Write-Host " "
-Write-Host "***************************************************************" -ForegroundColor Green
-Write-Host "*                                                             *" -ForegroundColor Green
-Write-Host "*             W1X Debloat v2.0 has finished!                  *" -ForegroundColor Green
-Write-Host "*                                                             *" -ForegroundColor Green
-Write-Host "***************************************************************" -ForegroundColor Green
-Write-Host "`n PLEASE REBOOT YOUR COMPUTER FOR ALL CHANGES TO TAKE EFFECT.`n" -ForegroundColor Red
+Write-Host "`n`n"
+Write-Host "╔═══════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
+Write-Host "║                                                               ║" -ForegroundColor Cyan
+Write-Host "║      █▓▒░  W1X Debloat Script  ░▒▓█  |  Version $sv           ║" -ForegroundColor Green
+Write-Host "║                                                               ║" -ForegroundColor Cyan
+Write-Host "║      ✔️  Optimization Complete                                 ║" -ForegroundColor Cyan
+Write-Host "║                                                               ║" -ForegroundColor Cyan
+Write-Host "║      ☕ Helped your system? Sponsor my next coffee?           ║" -ForegroundColor Cyan
+Write-Host "║         https://github.com/AdminVin/W1X-Debloat               ║" -ForegroundColor Cyan
+Write-Host "║                                                               ║" -ForegroundColor Cyan
+Write-Host "╚═══════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
+Write-Host ""
+Write-Host ">>> PLEASE REBOOT YOUR COMPUTER FOR ALL CHANGES TO TAKE EFFECT <<<`n" -ForegroundColor Red
+
 #endregion
