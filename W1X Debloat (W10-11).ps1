@@ -215,9 +215,10 @@ foreach ($App in $Apps) {
 
     $Installed = Get-AppxProvisionedPackage -Online | Where-Object { $_.DisplayName -like $App }
     foreach ($Install in $Installed) {
+        # Remove for all existing users
         Remove-AppxProvisionedPackage -Online -PackageName $Install.PackageName -ErrorAction SilentlyContinue
     }
-
+    # Remove provisioned package (prevents future installs)
     Get-AppxPackage -AllUsers -Name $App | Remove-AppxPackage -ErrorAction SilentlyContinue
 }
 
