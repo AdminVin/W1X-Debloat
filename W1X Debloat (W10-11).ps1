@@ -1330,7 +1330,6 @@ Write-Host "║      █▓▒░  W1X Debloat Script  ░▒▓█  |  Version 
 Write-Host "║                                                               ║" -ForegroundColor Cyan
 Write-Host "║      ✔️  Optimization Complete                                 ║" -ForegroundColor Cyan
 Write-Host "║                                                               ║" -ForegroundColor Cyan
-Write-Host "║      ☕ Helped your system? Sponsor my next coffee?           ║" -ForegroundColor Cyan
 Write-Host "║         https://github.com/AdminVin/W1X-Debloat               ║" -ForegroundColor Cyan
 Write-Host "║                                                               ║" -ForegroundColor Cyan
 Write-Host "╚═══════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
