@@ -10,6 +10,8 @@ $SV = "3.0"
     - Updated Metro apps list for removal.
     - Metro apps will be removed system wide (all users).
     - Updated power plan from "Balanced" to "High Performance" while retaining settings.
+    - Added Sysinternals "Autoruns" & "Autoruns64" to install.
+        - Start > Run > autoruns to quick launch.
     - Updated Scheduled Tasks & Services method.
        - Removed Windows Media Player Sharing service.
     - Updated network tweaks: NetDMA; enabled RSS/DCA; set CTCP for optimized throughput and reduced latency.
