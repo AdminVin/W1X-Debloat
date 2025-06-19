@@ -115,6 +115,7 @@ $Apps = @(
     "Microsoft.WindowsPhone*",
     "Microsoft.WindowsReadingList*",
     "Microsoft.YourPhone*",
+    "Microsoft.ZuneMusic",
     # Microsoft - Random Bloatware
     "*ACGMediaPlayer*",
     "*ActiproSoftwareLLC*",
@@ -186,6 +187,13 @@ foreach ($App in $Apps) {
     }
 
     Get-AppxPackage -AllUsers -Name $App | Remove-AppxPackage -ErrorAction SilentlyContinue
+}
+
+# Outlook (only if Desktop version installed)
+if (Test-Path "C:\Program Files\Microsoft Office\root\Office16\OUTLOOK.EXE") {
+    Remove-AppxProvisionedPackage -Online -PackageName (Get-AppxPackage -AllUsers -Name "Microsoft.OutlookForWindows").PackageName -ErrorAction SilentlyContinue
+    Get-AppxPackage -AllUsers -Name "Microsoft.OutlookForWindows" | Remove-AppxPackage -ErrorAction SilentlyContinue
+    Write-Host " - Removed: Outlook (Metro)" -ForegroundColor Green
 }
 
 # REMOVAL - Microsoft Desktop App Installer
