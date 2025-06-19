@@ -411,10 +411,7 @@ Write-Host "Windows Suggestions/Tips/Welcome Experience [DISABLED]" -ForegroundC
 Write-Host "3.2.9 Sysinternals" -ForegroundColor Green
 Invoke-WebRequest -Uri "https://live.sysinternals.com/Autoruns.exe" -OutFile "C:\Windows\System32\Autoruns.exe"
 Invoke-WebRequest -Uri "https://live.sysinternals.com/Autoruns64.exe" -OutFile "C:\Windows\System32\Autoruns64.exe"
-Invoke-WebRequest -Uri "https://download.sysinternals.com/files/PSTools.zip" -OutFile "C:\Windows\Temp\PSTools.zip"
-Expand-Archive -Path "C:\Windows\Temp\PSTools.zip" -DestinationPath "C:\Windows\System32" -Force
-Remove-Item "C:\Windows\Temp\PSTools.zip" -Force
-Write-Host "Sysinternals Suite [INSTALLED]" -ForegroundColor Green
+Write-Host "Sysinternals - Autoruns / Autoruns64 [INSTALLED]" -ForegroundColor Green
 Write-Host "Official Website: https://learn.microsoft.com/en-us/sysinternals/" -ForegroundColor Green
 
 ## 3.3.10 Cortana
@@ -626,12 +623,14 @@ Write-Host "Explorer: 'Open with PowerShell 5.1 (Admin)' - Right Click Context M
 # Right Click Context Menu - Add "Open with Powershell 7 (Admin)"
 # Install
 if (-not (Test-Path "C:\Program Files\PowerShell\7\pwsh.exe")) {
+    Write-Host "Explorer: 'Open with PowerShell 7 [DOWNLOADING]" -ForegroundColor Yellow
     New-Item -Path "C:\PSTemp" -ItemType Directory | Out-Null
     $PS7InstallerPath = "C:\PSTemp\PowerShell-7.msi"
     $PS7InstallerURL = "https://github.com/PowerShell/PowerShell/releases/download/v7.5.1/PowerShell-7.5.1-win-x64.msi"
     Invoke-WebRequest -Uri $PS7InstallerURL -OutFile $PS7InstallerPath
     Start-Process -FilePath msiexec -ArgumentList "/i $PS7InstallerPath /qn" -Wait
     Remove-Item -Path "C:\PSTemp" -Recurse -Force | Out-Null
+    Write-Host "Explorer: 'Open with PowerShell 7 [INSTALLED]" -ForegroundColor Green
 }
 # Add
 Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\Classes\LibraryFolder\Background\shell\PowerShell7AsAdmin"
