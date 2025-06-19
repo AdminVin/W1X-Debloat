@@ -1284,7 +1284,7 @@ Remove-ItemRecursively -Path "C:\Windows\Temp\*"
 Write-Host " - Clearing C:\Windows\Temp\" -ForegroundColor Yellow
 ## Windows Update
 Write-Host " - Clearing old Windows Updates" -ForegroundColor Yellow
-Write-Host "`n*NOTE* This may take some time and is expected. Especially, if this is the first run the script is running." -ForegroundColor Red
+Write-Host "`n*NOTE* This may take some time and is expected. Especially, if this is the first time running the script." -ForegroundColor Red
 # SoftwareDistribution
 ## Windows Update
 # SoftwareDistribution
