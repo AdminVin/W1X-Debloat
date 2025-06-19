@@ -1323,17 +1323,15 @@ Write-Host "Log file located at $LogFile" -ForegroundColor Yellow
 
 <#############################################################################################################################>
 #region 9.0 - Notify User / Reboot
-Write-Host "`n`n"
-Write-Host "╔═══════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
+Write-Host "`n`n╔═══════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
 Write-Host "║                                                               ║" -ForegroundColor Cyan
 Write-Host "║      █▓▒░  W1X Debloat Script  ░▒▓█  |  Version $sv           ║" -ForegroundColor Green
 Write-Host "║                                                               ║" -ForegroundColor Cyan
 Write-Host "║      ✔️  Optimization Complete                                 ║" -ForegroundColor Cyan
 Write-Host "║                                                               ║" -ForegroundColor Cyan
-Write-Host "║         https://github.com/AdminVin/W1X-Debloat               ║" -ForegroundColor Cyan
+Write-Host "║      ⚙️  https://github.com/AdminVin/W1X-Debloat               ║" -ForegroundColor Cyan
 Write-Host "║                                                               ║" -ForegroundColor Cyan
-Write-Host "╚═══════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
-Write-Host ""
+Write-Host "╚═══════════════════════════════════════════════════════════════╝`n" -ForegroundColor Cyan
 Write-Host ">>> PLEASE REBOOT YOUR COMPUTER FOR ALL CHANGES TO TAKE EFFECT <<<`n" -ForegroundColor Red
 
 #endregion
