@@ -24,7 +24,7 @@ $SV = "3.01"
 #region 1.0 - Script Settings
 ## Variables
 $ErrorActionPreference = "SilentlyContinue"
-$ProgressPreference = "SilentlyContinue"
+$ProgressPreference = "SilentlyContinue"            # Disable Progress Bars
 ## Functions
 function Set-Registry {
     param (
@@ -251,7 +251,7 @@ Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliv
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_IrisRecommendations" -Type DWord -Value "0"
 
 # Restore Progress Bars
-$ProgressPreference = "Continue"
+$ProgressPreference = "Continue"                    # Restore Progress Bars
 #endregion
 
 
