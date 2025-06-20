@@ -250,6 +250,8 @@ Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliv
 # Turn off Start menu suggestions (e.g. WhatsApp recommendations under "Recommended")
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_IrisRecommendations" -Type DWord -Value "0"
 
+# Restore Progress Bars
+$ProgressPreference = "Continue"
 #endregion
 
 
