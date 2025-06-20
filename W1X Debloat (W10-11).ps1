@@ -22,6 +22,7 @@ $SV = "3.0"
 #region 1.0 - Script Settings
 ## Variables
 $ErrorActionPreference = "SilentlyContinue"
+$ProgressPreference = "SilentlyContinue"
 ## Functions
 function Set-Registry {
     param (
