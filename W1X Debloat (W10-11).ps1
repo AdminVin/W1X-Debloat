@@ -623,14 +623,14 @@ Write-Host "Explorer: 'Open with PowerShell 5.1 (Admin)' - Right Click Context M
 # Right Click Context Menu - Add "Open with Powershell 7 (Admin)"
 # Install
 if (-not (Test-Path "C:\Program Files\PowerShell\7\pwsh.exe")) {
-    Write-Host "Explorer: 'Open with PowerShell 7 [DOWNLOADING]" -ForegroundColor Yellow
+    Write-Host "Explorer: PowerShell 7 [DOWNLOADING]" -ForegroundColor Yellow
     New-Item -Path "C:\PSTemp" -ItemType Directory | Out-Null
     $PS7InstallerPath = "C:\PSTemp\PowerShell-7.msi"
     $PS7InstallerURL = "https://github.com/PowerShell/PowerShell/releases/download/v7.5.1/PowerShell-7.5.1-win-x64.msi"
     Invoke-WebRequest -Uri $PS7InstallerURL -OutFile $PS7InstallerPath
     Start-Process -FilePath msiexec -ArgumentList "/i $PS7InstallerPath /qn" -Wait
     Remove-Item -Path "C:\PSTemp" -Recurse -Force | Out-Null
-    Write-Host "Explorer: 'Open with PowerShell 7 [INSTALLED]" -ForegroundColor Green
+    Write-Host "Explorer: PowerShell 7 [INSTALLED]" -ForegroundColor Green
 }
 # Add
 Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\Classes\LibraryFolder\Background\shell\PowerShell7AsAdmin"
