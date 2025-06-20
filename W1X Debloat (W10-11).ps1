@@ -1,8 +1,10 @@
-$SV = "3.0"
+$SV = "3.01"
 <#############################################################################################################################>
 <# 
 [>] Change Log
-2025-06-19 - v3.0
+2025-06-20 - v3.01
+    - Fixed progress bar bug.
+2025-06-19 - v3.00
     - Updated method to detect if OneDrive is signed in and syncing.
     - Updated log to include space restored.
         - Log Location: C:/ProgramData/AV/Cleanup
@@ -1328,12 +1330,14 @@ Write-Host "Log file located at $LogFile" -ForegroundColor Yellow
 #region 9.0 - Notify User / Reboot
 <#############################################################################################################################>
 #region 9.0 - Notify User / Reboot
-Write-Host "`n`n╔═══════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "║                                                               ║" -ForegroundColor Cyan
-Write-Host "║      █▓▒░  W1X Debloat Script  ░▒▓█  |  Version $sv           ║" -ForegroundColor Green
-Write-Host "║                                                               ║" -ForegroundColor Cyan
-Write-Host "╚═══════════════════════════════════════════════════════════════╝`n" -ForegroundColor Cyan
-Write-Host "✔️  Optimization Complete`n" -ForegroundColor Cyan
-Write-Host "⚙️  https://github.com/AdminVin/W1X-Debloat`n" -ForegroundColor Cyan
+Write-Host "`n`n╔════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
+Write-Host "║                                                                ║" -ForegroundColor Cyan
+Write-Host ("║      █▓▒░  W1X Debloat Script  ░▒▓█  |  Version {0}           ║" -f $sv) -ForegroundColor Green
+Write-Host "║                                                                ║" -ForegroundColor Cyan
+Write-Host "╚════════════════════════════════════════════════════════════════╝`n" -ForegroundColor Cyan
+
+Write-Host "$([char]9989)  Optimization Complete`n" -ForegroundColor Cyan
+Write-Host "$([char]9881)  https://github.com/AdminVin/W1X-Debloat`n" -ForegroundColor Cyan
 Write-Host ">>> PLEASE REBOOT YOUR COMPUTER FOR ALL CHANGES TO TAKE EFFECT <<<`n" -ForegroundColor Red
+
 #endregion
