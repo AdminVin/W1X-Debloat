@@ -4,6 +4,7 @@ $SV = "3.02"
 [>] Change Log
 2025-07-07 - v3.02
     - Added PowerShell 7 Updater
+    - Removed 'Ask Co-Pilot' from Right Click Context Menu
 2025-06-20 - v3.01
     - Fixed progress bar bug.
 2025-06-19 - v3.00
@@ -892,7 +893,10 @@ Write-Host "Explorer: Transparency [DISABLED]" -ForegroundColor Green
 
 # Co-Pilot
 Set-Registry -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Name "TurnOffWindowsCopilot" -Value 0 -Type DWord
+# Task Bar Removal
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowCopilotButton" -Value 0 -Type DWord
+# Right Click Menu "Ask Co-Pilot"
+Set-Registry -Path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked' -Name '{CB3B0003-8088-4EDE-8769-8B354AB2FF8C}' -Value '' -Type String
 Write-Host "Explorer: Microsoft Co-Pilot SHORTCUT [REMOVED]" -ForegroundColor Green
 <###################################### EXPLORER TWEAKS (End) ######################################>
 
