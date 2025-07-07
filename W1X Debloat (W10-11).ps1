@@ -1,7 +1,9 @@
-$SV = "3.01"
+$SV = "3.02"
 <#############################################################################################################################>
 <# 
 [>] Change Log
+2025-07-07 - v3.02
+    - Added PowerShell 7 Updater
 2025-06-20 - v3.01
     - Fixed progress bar bug.
 2025-06-19 - v3.00
@@ -626,17 +628,31 @@ Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Sys
 Write-Host "Explorer: 'Open with PowerShell 5.1 (Admin)' - Right Click Context Menu [ADDED]" -ForegroundColor Green
 
 # Right Click Context Menu - Add "Open with Powershell 7 (Admin)"
+$PS7InstallerURL = "https://github.com/PowerShell/PowerShell/releases/download/v7.5.2/PowerShell-7.5.2-win-x64.msi"
+if ($url -match "download/v([^/]+)") { $PS7_version = $matches[1] }
+
 # Install
 if (-not (Test-Path "C:\Program Files\PowerShell\7\pwsh.exe")) {
     Write-Host "Explorer: PowerShell 7 [DOWNLOADING]" -ForegroundColor Yellow
     New-Item -Path "C:\PSTemp" -ItemType Directory | Out-Null
-    $PS7InstallerPath = "C:\PSTemp\PowerShell-7.msi"
-    $PS7InstallerURL = "https://github.com/PowerShell/PowerShell/releases/download/v7.5.1/PowerShell-7.5.1-win-x64.msi"
-    Invoke-WebRequest -Uri $PS7InstallerURL -OutFile $PS7InstallerPath
-    Start-Process -FilePath msiexec -ArgumentList "/i $PS7InstallerPath /qn" -Wait
+    Invoke-WebRequest -Uri $PS7InstallerURL -OutFile "C:\PSTemp\PowerShell-7.msi"
+    Start-Process -FilePath msiexec -ArgumentList "/i `"C:\PSTemp\PowerShell-7.msi`" /qn" -Wait
     Remove-Item -Path "C:\PSTemp" -Recurse -Force | Out-Null
     Write-Host "Explorer: PowerShell 7 [INSTALLED]" -ForegroundColor Green
 }
+
+# Update
+if ((& "C:\Program Files\PowerShell\7\pwsh.exe" -NoLogo -NoProfile -Command '$PSVersionTable.PSVersion.ToString()') -lt $PS7_version) {
+    Write-Host "Explorer: PowerShell 7 [OUTDATED] → [UPDATING]" -ForegroundColor Yellow
+    New-Item -Path "C:\PSTemp" -ItemType Directory -Force | Out-Null
+    Invoke-WebRequest -Uri $PS7InstallerURL -OutFile "C:\PSTemp\PowerShell-7.msi"
+    Start-Process -FilePath msiexec -ArgumentList "/i `"C:\PSTemp\PowerShell-7.msi`" /qn" -Wait
+    Remove-Item -Path "C:\PSTemp" -Recurse -Force | Out-Null
+    Write-Host "Explorer: PowerShell 7 [UPDATED]" -ForegroundColor Green
+} else {
+    Write-Host "Explorer: PowerShell 7 [UP-TO-DATE]" -ForegroundColor Green
+}
+
 # Add
 Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\Classes\LibraryFolder\Background\shell\PowerShell7AsAdmin"
 Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Directory\Background\shell\PowerShell7AsAdmin' -Name '(default)' -Value 'Open with PowerShell 7 (Admin)'
