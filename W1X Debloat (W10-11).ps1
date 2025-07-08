@@ -455,6 +455,7 @@ Write-Host "4.1 Services" -ForegroundColor Green
 $services = @(
     "MapsBroker",						# Bing Downloaded Maps Manager
     "autotimesvc",						# Celluar Time
+    "cbdhsvc_*",                        # Clipboard History Service
     "WpcMonSvc",						# Parental Controls
     "PhoneSvc",							# Phone Service
     "WPDBusEnum",						# Portable Device Enumerator Service
