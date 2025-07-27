@@ -188,6 +188,7 @@ $Apps = @(
     "*WinZipUniversal*",                                        # Archive Tool
     "*Wunderlist*",                                             # Task Manager
     "*XING*",                                                   # Business Network
+    "*zune*",                                                   # Zune Music/Video
     # Samsung - Bloatware
     "SAMSUNGELECTRONICSCO.LTD.1412377A9806A*",                  # Samsung App
     "SAMSUNGELECTRONICSCO.LTD.NewVoiceNote*",                   # Voice Notes
