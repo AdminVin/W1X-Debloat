@@ -1,10 +1,13 @@
-$SV = "3.02"
+$SV = "3.03"
 <#############################################################################################################################>
 <# 
 [>] Change Log
+2025-08-03 - v3.03
+    - Updated Hyper-V tweak, skipping if Docker is installed.
+    - Updated OneDrive detection and cleaned up output.
 2025-07-07 - v3.02
     - Added PowerShell 7 Updater
-    - Removed 'Ask Co-Pilot' from Right Click Context Menu
+    - Removed 'Ask Co-Pilot' from Right Click Context Menu.
 2025-06-20 - v3.01
     - Fixed progress bar bug.
 2025-06-19 - v3.00
@@ -20,6 +23,8 @@ $SV = "3.02"
     - Updated Scheduled Tasks & Services method.
        - Removed Windows Media Player Sharing service.
     - Updated network tweaks: NetDMA; enabled RSS/DCA; set CTCP for optimized throughput and reduced latency.
+2022-07-01 - v1.00
+    - Initial creation of script.
 #>
 
 
@@ -65,6 +70,22 @@ function Set-Registry {
     } else {
         $null = Set-ItemProperty -Path $Path -Name $Name -Value $Value -Force
     }
+}
+
+function Test-OneDriveSyncing {
+    $configPaths = Get-ChildItem "$env:LOCALAPPDATA\Microsoft\OneDrive\settings" -Directory -ErrorAction SilentlyContinue |
+        Where-Object { Test-Path "$($_.FullName)\ClientPolicy.ini" }
+
+    foreach ($path in $configPaths) {
+        $ini = "$($path.FullName)\ClientPolicy.ini"
+        if (
+            (Get-Process -Name "OneDrive" -ErrorAction SilentlyContinue) -and
+            (Get-Content $ini -ErrorAction SilentlyContinue | Select-String "UserSID=")
+        ) {
+            return $true
+        }
+    }
+    return $false
 }
 ### Log - Start
 $PCName = (Get-CIMInstance CIM_ComputerSystem).Name
@@ -298,7 +319,7 @@ Write-Host "Microsoft Edge - Bloat Search Addon [REMOVED]" -ForegroundColor Gree
 
 # 3.2.2 OneDrive
 Write-Host "3.2.2 One Drive" -ForegroundColor Green
-if (Test-Path $env:OneDrive) {
+if (Test-OneDriveSyncing) {
     # DisableFileSync (Enable)
     Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Type DWord -Value 0
     # DisableFileSyncNGSC (Enable)
@@ -309,29 +330,39 @@ if (Test-Path $env:OneDrive) {
 		taskkill /f /im OneDrive.exe
 		taskkill /f /im FileCoAuth.exe
 		#> Official Removal
-		# x86
-		Start-Process -FilePath "$Env:WinDir\System32\OneDriveSetup.exe" -WorkingDirectory "$Env:WinDir\System32\" -ArgumentList "/uninstall" | Out-Null
-		# x64
-		Start-Process -FilePath "$Env:WinDir\SysWOW64\OneDriveSetup.exe" -WorkingDirectory "$Env:WinDir\SysWOW64\" -ArgumentList "/uninstall" | Out-Null
+        # x86
+        $OneDriveSetup32 = "$Env:WinDir\System32\OneDriveSetup.exe"
+        if (Test-Path $OneDriveSetup32) { Start-Process -FilePath $OneDriveSetup32 -WorkingDirectory "$Env:WinDir\System32" -ArgumentList "/uninstall" | Out-Null }
+
+        # x64
+        $OneDriveSetup64 = "$Env:WinDir\SysWOW64\OneDriveSetup.exe"
+        if (Test-Path $OneDriveSetup64) { Start-Process -FilePath $OneDriveSetup64 -WorkingDirectory "$Env:WinDir\SysWOW64" -ArgumentList "/uninstall" | Out-Null }
 		#> Files Cleanup
 		# File Explorer - Navigation Bar
         Set-Registry -Path 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name '(default)' -Type String -Value 'OneDrive'
         Set-Registry -Path 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name 'System.IsPinnedToNameSpaceTree' -Type DWord -Value 0
 		# AppData / Local
-		Remove-Item -Path "$env:localappdata\OneDrive" -Recurse -Confirm:$false -Force
-		# ProgramData
-		Remove-Item -Path "$env:programdata\Microsoft OneDrive" -Recurse -Force 
-		# Shortcuts
-		Remove-Item -Path "$env:userprofile\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" -Force
-		Remove-Item -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk" -Force
-		# Program Files
-		Remove-Item -LiteralPath "C:\Program Files (x86)\Microsoft OneDrive" -Recurse -Confirm:$false -Force
-		Remove-Item -LiteralPath "C:\Program Files\Microsoft OneDrive" -Recurse -Confirm:$false -Force
+        $LocalOneDrive = "$env:LOCALAPPDATA\OneDrive"
+        if (Test-Path $LocalOneDrive) { Remove-Item -Path $LocalOneDrive -Recurse -Confirm:$false -Force }
+        # ProgramData
+        $ProgramDataOneDrive = "$env:PROGRAMDATA\Microsoft OneDrive"
+        if (Test-Path $ProgramDataOneDrive) { Remove-Item -Path $ProgramDataOneDrive -Recurse -Force | Out-Null }
+        # Shortcuts
+        $ShortcutUser = "$env:USERPROFILE\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk"
+        if (Test-Path $ShortcutUser) { Remove-Item -Path $ShortcutUser -Force | Out-Null }
+        $ShortcutCommon = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\OneDrive.lnk"
+        if (Test-Path $ShortcutCommon) { Remove-Item -Path $ShortcutCommon -Force | Out-Null }
+        # Program Files
+        $OneDrivePFx86 = "C:\Program Files (x86)\Microsoft OneDrive"
+        if (Test-Path $OneDrivePFx86) { Remove-Item -LiteralPath $OneDrivePFx86 -Recurse -Confirm:$false -Force | Out-Null }
+        $OneDrivePF = "C:\Program Files\Microsoft OneDrive"
+        if (Test-Path $OneDrivePF) { Remove-Item -LiteralPath $OneDrivePF -Recurse -Confirm:$false -Force | Out-Null }
 		#> Scheduled Tasks
 		Get-ScheduledTask "*OneDrive*" | Unregister-ScheduledTask -Confirm:$false
 		#> Services
-		$ODUPdaterService = Get-WmiObject -Class Win32_Service -Filter "Name='OneDrive Updater Service'"
-		$ODUPdaterService.delete() | Out-Null
+		$ODUPdaterService = Get-WmiObject -Class Win32_Service -Filter "Name='OneDrive Updater Service'" | Out-Null
+		$ODUpdaterService = Get-WmiObject -Class Win32_Service -Filter "Name='OneDrive Updater Service'" -ErrorAction SilentlyContinue
+        if ($ODUpdaterService) { $ODUpdaterService.Delete() | Out-Null }
 		#> Registry
         # Remove Previous Accounts/Sync Options
         Set-Registry -Remove Path -Path "HKCU:\Software\Microsoft\OneDrive"
@@ -1175,7 +1206,7 @@ Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersio
 Write-Host "Windows: Security System Tray Icon [HIDDEN]" -ForegroundColor Green
 
 $VMsRunning = Get-VM | Where-Object { $_.State -eq 'Running' }
-if ($VMsRunning) {
+if ($VMsRunning -or (Test-Path "C:\Program Files\Docker\")) {
     Write-Host "Windows: Hyper-V [Skipped]" -ForegroundColor Yellow
 } else {
     Set-Registry -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" -Name "Enabled" -Value 0 -Type DWord
