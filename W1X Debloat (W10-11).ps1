@@ -3,7 +3,7 @@ $SV = "3.04"
 <# 
 [>] Change Log
 2025-08-04 - v3.04
-    - Added Enabling of Shadow Copies (Snapshot Schedule 7 AM, 12 PM, and 4 PM).
+    - Added enabling of Shadow Copies (Snapshot Schedule 7 AM, 12 PM, and 4 PM).
 2025-08-03 - v3.03
     - Updated Hyper-V tweak, skipping if Docker is installed.
     - Updated OneDrive detection and cleaned up output.
