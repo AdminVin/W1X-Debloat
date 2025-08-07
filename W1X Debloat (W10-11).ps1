@@ -2,8 +2,8 @@ $SV = "3.04"
 <#############################################################################################################################>
 <# 
 [>] Change Log
-2025-08-04 - v3.04
-    - Added enabling of Shadow Copies (Snapshot Schedule 7 AM, 12 PM, and 4 PM).
+2025-08-07 - v3.04
+    - Misc Code cleanup/fixes.
 2025-08-03 - v3.03
     - Updated Hyper-V tweak, skipping if Docker is installed.
     - Updated OneDrive detection and cleaned up output.
@@ -934,24 +934,6 @@ Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Adv
 Set-Registry -Path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked' -Name '{CB3B0003-8088-4EDE-8769-8B354AB2FF8C}' -Value '' -Type String
 Write-Host "Explorer: Microsoft Co-Pilot SHORTCUT [REMOVED]" -ForegroundColor Green
 <###################################### EXPLORER TWEAKS (End) ######################################>
-
-
-
-<###################################### FILE TWEAKS (Start) ######################################>
-# Shadow Copies (Restore Previous Versions)
-$vssDrive = "C:"
-$maxSize = "10%"
-$taskName = "ShadowCopies(7AM12PM4PM)"
-$startTime = "07:00"
-Set-Service -Name vss -StartupType Automatic; Start-Service -Name vss
-Start-Process -FilePath "vssadmin.exe" -ArgumentList "Add ShadowStorage /For=$vssDrive /On=$vssDrive /MaxSize=$maxSize" -Wait -Verb RunAs
-$cmd = "vssadmin create shadow /for=$vssDrive"
-$quotedCmd = "`"cmd.exe /c $cmd`""
-schtasks.exe /Delete /TN $taskName /F *> $null
-schtasks.exe /Create /TN $taskName /TR $quotedCmd /SC DAILY /ST $startTime /RI 300 /DU 015:00 /RL HIGHEST /F
-Start-Process -FilePath "vssadmin.exe" -ArgumentList "create shadow /for=$vssDrive" -Verb RunAs
-Write-Host "File: Shadow Copies (Schedule: 7 AM, 12 PM, and 4 PM) [ENABLED]" -ForegroundColor Green
-<###################################### FILE TWEAKS (End) ########################################>
 
 
 
