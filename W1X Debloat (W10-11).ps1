@@ -11,7 +11,7 @@ $SV = "3.04"
     - Added PowerShell 7 Updater
     - Removed 'Ask Co-Pilot' from Right Click Context Menu.
 2025-06-20 - v3.01
-    - Fixed progress bar bug.
+    - Fixed progress bar bug (being stuck on screen, post operation).
 2025-06-19 - v3.00
     - Updated method to detect if OneDrive is signed in and syncing.
     - Updated log to include space restored.
