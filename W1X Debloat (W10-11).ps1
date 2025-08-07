@@ -943,11 +943,13 @@ $vssDrive = "C:"
 $maxSize = "10%"
 $taskName = "ShadowCopies(7AM12PM4PM)"
 $startTime = "07:00"
+Set-Service -Name vss -StartupType Automatic; Start-Service -Name vss
 Start-Process -FilePath "vssadmin.exe" -ArgumentList "Add ShadowStorage /For=$vssDrive /On=$vssDrive /MaxSize=$maxSize" -Wait -Verb RunAs
 $cmd = "vssadmin create shadow /for=$vssDrive"
 $quotedCmd = "`"cmd.exe /c $cmd`""
 schtasks.exe /Delete /TN $taskName /F *> $null
 schtasks.exe /Create /TN $taskName /TR $quotedCmd /SC DAILY /ST $startTime /RI 300 /DU 015:00 /RL HIGHEST /F
+Start-Process -FilePath "vssadmin.exe" -ArgumentList "create shadow /for=$vssDrive" -Verb RunAs
 Write-Host "File: Shadow Copies (Schedule: 7 AM, 12 PM, and 4 PM) [ENABLED]" -ForegroundColor Green
 <###################################### FILE TWEAKS (End) ########################################>
 
