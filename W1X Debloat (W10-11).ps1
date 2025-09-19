@@ -1,7 +1,9 @@
-$SV = "3.04"
+$SV = "3.05"
 <#############################################################################################################################>
 <# 
 [>] Change Log
+2025-09-19 - v3.05
+    - OneDrive removal commented out, until a better detection method can be identified.
 2025-08-07 - v3.04
     - Misc Code cleanup/fixes.
 2025-08-03 - v3.03
@@ -318,7 +320,7 @@ Write-Host "Microsoft Edge - Tracking [DISABLED]" -ForegroundColor Green
 #> Addons
 Get-WmiObject -Query "SELECT * FROM Win32_Product WHERE Name LIKE '%Microsoft Search in Bing%'" | ForEach-Object { $_.Uninstall() > $null 2>&1 }
 Write-Host "Microsoft Edge - Bloat Search Addon [REMOVED]" -ForegroundColor Green
-
+<#
 # 3.2.2 OneDrive
 Write-Host "3.2.2 One Drive" -ForegroundColor Green
 if (Test-OneDriveSyncing) {
@@ -328,10 +330,10 @@ if (Test-OneDriveSyncing) {
     Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Type DWord -Value 0  
 	Write-Host "3.2.2 Microsoft One Drive Removal [Skipped]" -ForegroundColor Yellow
 } else {
-    	#> Close OneDrive (if running in background)
+    	## Close OneDrive (if running in background)
 		taskkill /f /im OneDrive.exe
 		taskkill /f /im FileCoAuth.exe
-		#> Official Removal
+		## Official Removal
         # x86
         $OneDriveSetup32 = "$Env:WinDir\System32\OneDriveSetup.exe"
         if (Test-Path $OneDriveSetup32) { Start-Process -FilePath $OneDriveSetup32 -WorkingDirectory "$Env:WinDir\System32" -ArgumentList "/uninstall" | Out-Null }
@@ -339,7 +341,7 @@ if (Test-OneDriveSyncing) {
         # x64
         $OneDriveSetup64 = "$Env:WinDir\SysWOW64\OneDriveSetup.exe"
         if (Test-Path $OneDriveSetup64) { Start-Process -FilePath $OneDriveSetup64 -WorkingDirectory "$Env:WinDir\SysWOW64" -ArgumentList "/uninstall" | Out-Null }
-		#> Files Cleanup
+		## Files Cleanup
 		# File Explorer - Navigation Bar
         Set-Registry -Path 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name '(default)' -Type String -Value 'OneDrive'
         Set-Registry -Path 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name 'System.IsPinnedToNameSpaceTree' -Type DWord -Value 0
@@ -359,13 +361,13 @@ if (Test-OneDriveSyncing) {
         if (Test-Path $OneDrivePFx86) { Remove-Item -LiteralPath $OneDrivePFx86 -Recurse -Confirm:$false -Force | Out-Null }
         $OneDrivePF = "C:\Program Files\Microsoft OneDrive"
         if (Test-Path $OneDrivePF) { Remove-Item -LiteralPath $OneDrivePF -Recurse -Confirm:$false -Force | Out-Null }
-		#> Scheduled Tasks
+		## Scheduled Tasks
 		Get-ScheduledTask "*OneDrive*" | Unregister-ScheduledTask -Confirm:$false
-		#> Services
+		## Services
 		$ODUPdaterService = Get-WmiObject -Class Win32_Service -Filter "Name='OneDrive Updater Service'" | Out-Null
 		$ODUpdaterService = Get-WmiObject -Class Win32_Service -Filter "Name='OneDrive Updater Service'" -ErrorAction SilentlyContinue
         if ($ODUpdaterService) { $ODUpdaterService.Delete() | Out-Null }
-		#> Registry
+		## Registry
         # Remove Previous Accounts/Sync Options
         Set-Registry -Remove Path -Path "HKCU:\Software\Microsoft\OneDrive"
         # Remove previously set One Drive settings
@@ -385,7 +387,7 @@ if (Test-OneDriveSyncing) {
         Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Type DWord -Value 0  
 		Write-Host "3.2.2 Microsoft One Drive [Removed]" -ForegroundColor Yellow
 }
-
+#>
 ## 3.2.3 Internet Explorer
 Write-Host "3.2.3 Internet Explorer" -ForegroundColor Green
 #> Add-Ons
