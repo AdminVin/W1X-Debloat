@@ -3,7 +3,7 @@ $SV = "3.05"
 <# 
 [>] Change Log
 2025-09-19 - v3.05
-    - OneDrive removal commented out, until a better detection method can be identified.
+    - OneDrive removal commented out, until a more reliable in use/sync detection method can be identified.
 2025-08-07 - v3.04
     - Misc Code cleanup/fixes.
 2025-08-03 - v3.03
