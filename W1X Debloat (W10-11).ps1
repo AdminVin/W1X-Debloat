@@ -1,7 +1,9 @@
-$SV = "3.05"
+$SV = "3.06"
 <#############################################################################################################################>
 <# 
 [>] Change Log
+2025-10-15 - v3.06
+    - Added autoruns/autoruns64 check to speed up script.
 2025-09-19 - v3.05
     - OneDrive removal commented out, until a more reliable in use/sync detection method can be identified.
 2025-08-07 - v3.04
@@ -453,10 +455,15 @@ Write-Host "Windows Suggestions/Tips/Welcome Experience [DISABLED]" -ForegroundC
 
 ## 3.2.9 Sysinternals Installation
 Write-Host "3.2.9 Sysinternals" -ForegroundColor Green
-Invoke-WebRequest -Uri "https://live.sysinternals.com/Autoruns.exe" -OutFile "C:\Windows\System32\Autoruns.exe"
-Invoke-WebRequest -Uri "https://live.sysinternals.com/Autoruns64.exe" -OutFile "C:\Windows\System32\Autoruns64.exe"
-Write-Host "Sysinternals - Autoruns / Autoruns64 [INSTALLED]" -ForegroundColor Green
-Write-Host "Official Website: https://learn.microsoft.com/en-us/sysinternals/" -ForegroundColor Green
+if (-not (Test-Path "C:\Windows\System32\Autoruns.exe")) {
+    Invoke-WebRequest -Uri "https://live.sysinternals.com/Autoruns.exe" -OutFile "C:\Windows\System32\Autoruns.exe"
+    Invoke-WebRequest -Uri "https://live.sysinternals.com/Autoruns64.exe" -OutFile "C:\Windows\System32\Autoruns64.exe"
+    Write-Host "Sysinternals - Autoruns/64 [INSTALLED]" -ForegroundColor Green
+    Write-Host "Official Website: https://learn.microsoft.com/en-us/sysinternals/" -ForegroundColor Green
+} else {
+    Write-Host "Sysinternals - Autoruns/64 [SKIPPED / ALREADY INSTALLED]" -ForegroundColor Green
+}
+
 
 ## 3.3.10 Cortana
 # Disable
