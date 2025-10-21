@@ -4,8 +4,7 @@ $SV = "3.07"
 [>] Change Log
 2025-10-21 - v3.07
     - OneDrive removal re-added.
-        - Fresh Windows installation/pre-sign in creates key below:
-            -HKEY_CURRENT_USER\Software\Microsoft\OneDrive\Installer\BITS\PreSignInSettingsConfigJSON
+        - Fresh Windows installation/pre-sign in creates key: HKCU\Software\Microsoft\OneDrive\Installer\BITS\PreSignInSettingsConfigJSON
         - Signing into OneDrive removes the registry key.
 2025-10-15 - v3.06
     - Added autoruns/autoruns64 check to speed up script.
