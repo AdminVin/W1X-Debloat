@@ -1,7 +1,12 @@
-$SV = "3.06"
+$SV = "3.07"
 <#############################################################################################################################>
 <# 
 [>] Change Log
+2025-10-21 - v3.07
+    - OneDrive removal re-added.
+        - Fresh Windows installation/pre-sign in creates key below:
+            -HKEY_CURRENT_USER\Software\Microsoft\OneDrive\Installer\BITS\PreSignInSettingsConfigJSON
+        - Post sign in the registry key is removed.
 2025-10-15 - v3.06
     - Added autoruns/autoruns64 check to speed up script.
 2025-09-19 - v3.05
@@ -79,19 +84,15 @@ function Set-Registry {
 }
 
 function Test-OneDriveSyncing {
-    $configPaths = Get-ChildItem "$env:LOCALAPPDATA\Microsoft\OneDrive\settings" -Directory -ErrorAction SilentlyContinue |
-        Where-Object { Test-Path "$($_.FullName)\ClientPolicy.ini" }
+    $regPath = "HKCU:\Software\Microsoft\OneDrive\Installer\BITS"
+    $valueName = "PreSignInSettingsConfigJSON"
 
-    foreach ($path in $configPaths) {
-        $ini = "$($path.FullName)\ClientPolicy.ini"
-        if (
-            (Get-Process -Name "OneDrive" -ErrorAction SilentlyContinue) -and
-            (Get-Content $ini -ErrorAction SilentlyContinue | Select-String "UserSID=")
-        ) {
-            return $true
-        }
+    # If the key/value exists, OneDrive is NOT in use
+    if (Get-ItemProperty -Path $regPath -Name $valueName -ErrorAction SilentlyContinue) {
+        return $false
+    } else {
+        return $true
     }
-    return $false
 }
 ### Log - Start
 $PCName = (Get-CIMInstance CIM_ComputerSystem).Name
@@ -322,7 +323,6 @@ Write-Host "Microsoft Edge - Tracking [DISABLED]" -ForegroundColor Green
 #> Addons
 Get-WmiObject -Query "SELECT * FROM Win32_Product WHERE Name LIKE '%Microsoft Search in Bing%'" | ForEach-Object { $_.Uninstall() > $null 2>&1 }
 Write-Host "Microsoft Edge - Bloat Search Addon [REMOVED]" -ForegroundColor Green
-<#
 # 3.2.2 OneDrive
 Write-Host "3.2.2 One Drive" -ForegroundColor Green
 if (Test-OneDriveSyncing) {
@@ -389,7 +389,6 @@ if (Test-OneDriveSyncing) {
         Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Type DWord -Value 0  
 		Write-Host "3.2.2 Microsoft One Drive [Removed]" -ForegroundColor Yellow
 }
-#>
 ## 3.2.3 Internet Explorer
 Write-Host "3.2.3 Internet Explorer" -ForegroundColor Green
 #> Add-Ons
