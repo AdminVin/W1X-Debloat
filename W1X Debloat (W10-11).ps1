@@ -6,7 +6,7 @@ $SV = "3.07"
     - OneDrive removal re-added.
         - Fresh Windows installation/pre-sign in creates key below:
             -HKEY_CURRENT_USER\Software\Microsoft\OneDrive\Installer\BITS\PreSignInSettingsConfigJSON
-        - Post sign in the registry key is removed.
+        - Signing into OneDrive removes the registry key.
 2025-10-15 - v3.06
     - Added autoruns/autoruns64 check to speed up script.
 2025-09-19 - v3.05
@@ -87,7 +87,6 @@ function Test-OneDriveSyncing {
     $regPath = "HKCU:\Software\Microsoft\OneDrive\Installer\BITS"
     $valueName = "PreSignInSettingsConfigJSON"
 
-    # If the key/value exists, OneDrive is NOT in use
     if (Get-ItemProperty -Path $regPath -Name $valueName -ErrorAction SilentlyContinue) {
         return $false
     } else {
