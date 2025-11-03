@@ -3,9 +3,10 @@ $SV = "3.08"
 <# 
 [>] Change Log
 2025-11-03 - v3.08
-    - Removed "Home" shortcut in File Explorer.
-    - Disabled recommendations for file/folders relating to "Home".
+    - Removed "Home" shortcut in File Explorer, and disabled recommendations.
     - Updated PowerShell 7 link to latest version (v7.5.4).
+    - Added battery percentage in system tray for mobile devices.
+    - Added "Startup" restore for Settings > Apps > Startup to easier manage startup items.
 2025-10-21 - v3.07
     - OneDrive removal re-added.
         - Fresh Windows installation/pre-sign in creates key: HKCU\Software\Microsoft\OneDrive\Installer\BITS\PreSignInSettingsConfigJSON
@@ -1230,6 +1231,17 @@ if ($VMsRunning -or (Test-Path "C:\Program Files\Docker\")) {
     bcdedit /set hypervisorlaunchtype off
     Write-Host "Windows: Hyper-V [DISABLED]" -ForegroundColor Green
 }
+
+# Source: https://www.elevenforum.com/t/restore-missing-startup-apps-page-in-settings-in-windows-11.30997/
+Set-Registry -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "SettingsPageVisibility" -Remove Value
+Set-Registry -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "SupportUwpStartupTasks" -Value 1 -Type DWord
+Set-Registry -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableFullTrustStartupTasks" -Value 2 -Type DWord
+Set-Registry -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "EnableUwpStartupTasks" -Value 2 -Type DWord
+Set-Registry -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "SupportFullTrustStartupTasks" -Value 1 -Type DWord
+Write-Host "Windows: 'Startup' option restored in Settings > Apps  [RESTORED]" -ForegroundColor Green
+
+Set-Registry -Path "HKCU:\Control Panel\International" -Name "sShortDate" -Value "M/d/yy" -Type String
+Write-Host "Windows: System Tray time set to MM/DD/YY [UPDATED]" -ForegroundColor Green
 <###################################### WINDOWS TWEAKS (End) ######################################>
 
 
@@ -1274,6 +1286,9 @@ Write-Host "Sleep Settings: 'Closing Lid' action to turn off screen" [CHANGED] -
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings' -Name 'ShowSleepOption' -Value 0 -Type DWord
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings' -Name 'ShowHibernateOption' -Value 0 -Type DWord
 Write-Host "Sleep Settings: Sleep/Hibernate from Start Menu [DISABLED]" -ForegroundColor Green
+
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "IsBatteryPercentageEnabled" -Value 1 -Type DWord
+Write-Host "Battery: Percentage [ENABLED]" -ForegroundColor Green
 #endregion
 
 
