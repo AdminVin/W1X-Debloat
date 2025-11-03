@@ -1,7 +1,11 @@
-$SV = "3.07"
+$SV = "3.08"
 <#############################################################################################################################>
 <# 
 [>] Change Log
+2025-11-03 - v3.08
+    - Removed "Home" shortcut in File Explorer.
+    - Disabled recommendations for file/folders relating to "Home".
+    - Updated PowerShell 7 link to latest version (v7.5.4).
 2025-10-21 - v3.07
     - OneDrive removal re-added.
         - Fresh Windows installation/pre-sign in creates key: HKCU\Software\Microsoft\OneDrive\Installer\BITS\PreSignInSettingsConfigJSON
@@ -670,8 +674,7 @@ Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Sys
 Write-Host "Explorer: 'Open with PowerShell 5.1 (Admin)' - Right Click Context Menu [ADDED]" -ForegroundColor Green
 
 # Right Click Context Menu - Add "Open with Powershell 7 (Admin)"
-$PS7InstallerURL = "https://github.com/PowerShell/PowerShell/releases/download/v7.5.2/PowerShell-7.5.2-win-x64.msi"
-if ($url -match "download/v([^/]+)") { $PS7_version = $matches[1] }
+$PS7InstallerURL = "https://github.com/PowerShell/PowerShell/releases/download/v7.5.4/PowerShell-7.5.4-win-x64.msi"
 
 # Install
 if (-not (Test-Path "C:\Program Files\PowerShell\7\pwsh.exe")) {
@@ -681,18 +684,6 @@ if (-not (Test-Path "C:\Program Files\PowerShell\7\pwsh.exe")) {
     Start-Process -FilePath msiexec -ArgumentList "/i `"C:\PSTemp\PowerShell-7.msi`" /qn" -Wait
     Remove-Item -Path "C:\PSTemp" -Recurse -Force | Out-Null
     Write-Host "Explorer: PowerShell 7 [INSTALLED]" -ForegroundColor Green
-}
-
-# Update
-if ((& "C:\Program Files\PowerShell\7\pwsh.exe" -NoLogo -NoProfile -Command '$PSVersionTable.PSVersion.ToString()') -lt $PS7_version) {
-    Write-Host "Explorer: PowerShell 7 [OUTDATED] → [UPDATING]" -ForegroundColor Yellow
-    New-Item -Path "C:\PSTemp" -ItemType Directory -Force | Out-Null
-    Invoke-WebRequest -Uri $PS7InstallerURL -OutFile "C:\PSTemp\PowerShell-7.msi"
-    Start-Process -FilePath msiexec -ArgumentList "/i `"C:\PSTemp\PowerShell-7.msi`" /qn" -Wait
-    Remove-Item -Path "C:\PSTemp" -Recurse -Force | Out-Null
-    Write-Host "Explorer: PowerShell 7 [UPDATED]" -ForegroundColor Green
-} else {
-    Write-Host "Explorer: PowerShell 7 [UP-TO-DATE]" -ForegroundColor Green
 }
 
 # Add
@@ -862,17 +853,34 @@ foreach ($key in $regKeys) {
 Write-Host "Explorer: .JPG/.PNG 'Add Watermark' - Right Click Context Menu [ADDED]" -ForegroundColor Green
 
 Set-Registry -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'LaunchTo' -Value 1 -Type DWord
-Write-Host "Explorer: Set Explorer to open with 'This PC' instead of 'Most Recent'" -ForegroundColor Green
+Write-Host "Explorer: Explorer defaults to 'This PC' instead of 'Home/Most Recent'" -ForegroundColor Green
+
+# Source: https://www.elevenforum.com/t/add-or-remove-gallery-in-file-explorer-navigation-pane-in-windows-11.14178/
+Set-Registry -Path "HKCU:\Software\Classes\CLSID\{e88865ea-0e1c-4e20-9aa6-edcd0212c87c}" -Name "System.IsPinnedToNameSpaceTree" -Value 0 -Type DWord
+Write-Host "Explorer: 'Gallery' Shorcut [REMOVED]" -ForegroundColor Green
+
+# Source: https://www.elevenforum.com/t/add-or-remove-home-in-navigation-pane-of-file-explorer-in-windows-11.2449/#Two
+Set-Registry -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\{f874310e-b6b7-47dc-bc84-b9e6b38f5903}" -Name "(default)" -Value "CLSID_MSGraphHomeFolder" -Type String
+Set-Registry -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\Desktop\NameSpace\{f874310e-b6b7-47dc-bc84-b9e6b38f5903}" -Name "HiddenByDefault" -Value 1 -Type DWord
+Write-Host "Explorer: 'Home' Shortcut [REMOVED]'" -ForegroundColor Green
+
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecommendations" -Value 0 -Type DWord
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowCloudFilesInQuickAccess" -Value 0 -Type DWord
+Write-Host "Explorer: Windows Explorer Recommendations [DISABLED]" -ForegroundColor Green
+
+<# [>] 2025/11/3 - Note: Windows 25H2 still tracks recent files with this off; no performance gain.
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Value 1 -Type DWord
+Write-Host "Explorer: 'Recent Files' in Quick Access [DISABLED]" -ForegroundColor Yellow
+
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackDocs" -Value 1 -Type DWord
+Write-Host "Explorer: Disabled Recent Files/Folders in Start Menu and Explorer [Skipped]" -ForegroundColor Yellow
+#>
 
 Set-Registry -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowDriveLettersFirst" -Type DWord -Value 4
 Write-Host "Explorer: Drive letters PRE drive label [Example: '(C:) Windows vs. Windows (C:)]'" -ForegroundColor Green
 
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "HideFileExt" -Value 0 -Type DWord
 Write-Host "Explorer: Display of Known File Extensions [ENABLED]" -ForegroundColor Green
-
-# Gallery - Source: https://www.elevenforum.com/t/add-or-remove-gallery-in-file-explorer-navigation-pane-in-windows-11.14178/
-Set-Registry -Path "HKCU:\Software\Classes\CLSID\{e88865ea-0e1c-4e20-9aa6-edcd0212c87c}" -Name "System.IsPinnedToNameSpaceTree" -Value 0 -Type DWord
-Write-Host "Explorer: 'Gallery' Shorcut [REMOVED]" -ForegroundColor Green
 
 # Windows 'Get most of out this device' Suggestions
 New-Item -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\UserProfileEngagement" -Force | Out-Null
@@ -1227,14 +1235,6 @@ if ($VMsRunning -or (Test-Path "C:\Program Files\Docker\")) {
 
 
 <###################################### TEST TWEAKS (Start) ######################################>
-<# Tracking
-Set-ItemProperty -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Value "1" -Force | Out-Null
-Write-Host "Explorer: Disabled 'Recent Files' in Explorer [Skipped]" -ForegroundColor Yellow
-
-Set-ItemProperty -LiteralPath "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_TrackDocs" -Value "1" -Force | Out-Null
-Write-Host "Explorer: Disabled Recent Files/Folders in Start Menu and Explorer [Skipped]" -ForegroundColor Yellow
-#>
-
 <# Visual Settings
 Set-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects' -Name 'VisualFXSetting' -Value "0"
 Set-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects' -Name 'VisualFXSetting' -Value 393241
