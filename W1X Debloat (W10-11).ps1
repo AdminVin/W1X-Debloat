@@ -2,11 +2,12 @@ $SV = "3.08"
 <#############################################################################################################################>
 <# 
 [>] Change Log
-2025-11-03 - v3.08
+2025-11-04 - v3.08
     - Removed "Home" shortcut in File Explorer, and disabled recommendations.
     - Updated PowerShell 7 link to latest version (v7.5.4).
     - Added battery percentage in system tray for mobile devices.
     - Added "Startup" restore for Settings > Apps > Startup to easier manage startup items.
+    - Removed log and cleaned up script end output.
 2025-10-21 - v3.07
     - OneDrive removal re-added.
         - Fresh Windows installation/pre-sign in creates key: HKCU\Software\Microsoft\OneDrive\Installer\BITS\PreSignInSettingsConfigJSON
@@ -27,8 +28,6 @@ $SV = "3.08"
     - Fixed progress bar bug (being stuck on screen, post operation).
 2025-06-19 - v3.00
     - Updated method to detect if OneDrive is signed in and syncing.
-    - Updated log to include space restored.
-        - Log Location: C:/ProgramData/AV/Cleanup
     - Rewrote all registry modifications, to process faster with a function.
     - Updated Metro apps list for removal.
     - Metro apps will be removed system wide (all users).
@@ -44,11 +43,20 @@ $SV = "3.08"
 
 
 <#############################################################################################################################>
-#region 1.0 - Script Settings
+#region 0.0 - Script Variables/Functions
 ## Variables
 $ErrorActionPreference = "SilentlyContinue"
 $ProgressPreference = "SilentlyContinue"            # Disable Progress Bars
 ## Functions
+function Remove-ItemRecursively {
+    param (
+        [string]$Path
+    )
+    
+    Get-ChildItem -Path $Path -Recurse -Force | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+    Remove-Item -Path $Path -Recurse -Force -ErrorAction SilentlyContinue
+}
+
 function Set-Registry {
     param (
         [string]$Path,
@@ -97,14 +105,10 @@ function Test-OneDriveSyncing {
         return $true
     }
 }
-### Log - Start
-$PCName = (Get-CIMInstance CIM_ComputerSystem).Name
-$Date = Get-Date
-$LogFile = "C:\ProgramData\AV\Cleanup\$PCName.txt"
-if (!(Test-Path -Path "C:\ProgramData\AV\Cleanup")) { New-Item "C:\ProgramData\AV\Cleanup" -Type Directory | Out-Null }
-if (-not (Select-String -Path $LogFile -Pattern "#" -Quiet)) { Remove-Item -Path $LogFile -Force -ErrorAction SilentlyContinue | Out-Null }
-$Date | Out-File -Append -FilePath $LogFile
-Write-Host "1.0 Log: Script started at $Date" -ForegroundColor Green
+
+<#############################################################################################################################>
+#region 1.0  - Script Status
+Write-Host "1.0 Status: Started at $(Get-Date)" -ForegroundColor Green
 $Timer = [System.Diagnostics.Stopwatch]::StartNew()
 # Free Space - Retrieve Existing Free Space
 $FreeSpaceBefore = (Get-PSDrive -Name C).Free / 1GB
@@ -163,7 +167,6 @@ $Apps = @(
     "Microsoft.Print3D*",                                       # 3D Print Utility
     "Microsoft.MicrosoftSolitaireCollection",                   # Solitaire Game
     "Microsoft.SkypeApp*",                                      # Skype Chat App
-    "MicrosoftTeams*",                                          # Teams for Home
     "Microsoft.Todos*",                                         # To Do List App
     "Microsoft.Wallet*",                                        # Payment Wallet
     "Microsoft.WidgetsPlatformRuntime",                         # Widgets Engine
@@ -438,7 +441,8 @@ Write-Host "Teams (Home / Small Business) - Taskbar Shortcut [REMOVED]" -Foregro
 
 ## 3.2.7 Teams (Work or School)
 Write-Host "3.2.7 Teams (Work or School) - Disabled Auto Start" -ForegroundColor Green
-Set-Registry -Remove Value -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "com.squirrel.Teams.Teams"
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\MSTeams_8wekyb3d8bbwe" -Name "Disabled" -Value 1 -Type DWord
+Set-Registry -Remove Value -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "Teams"
 Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run" -Name "TeamsMachineInstaller"
 Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run32" -Name "TeamsMachineUninstallerLocalAppData"
 Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run32" -Name "TeamsMachineUninstallerProgramData"
@@ -466,7 +470,6 @@ if (-not (Test-Path "C:\Windows\System32\Autoruns.exe")) {
     Write-Host "Sysinternals - Autoruns/64 [SKIPPED / ALREADY INSTALLED]" -ForegroundColor Green
 }
 
-
 ## 3.3.10 Cortana
 # Disable
 Set-Registry -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Value 0 -Type DWord
@@ -484,8 +487,12 @@ Get-AppxPackage -AllUsers Microsoft.549981C3F5F10 | Remove-AppxPackage | Out-Nul
 Write-Host "3.3.10 Explorer: Cortana [DISABLED]" -ForegroundColor Green
 
 ## 3.4.11 Dynamic Lighting
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Lighting" -Name "AmbientLightingEnabled" -Value "0"
-Write-Host "3.4.11 Microsoft Dynamic Lighting (RGB Fix) [Disabled]" -ForegroundColor Green
+Set-Registry -Path "HKCU:\Software\Microsoft\Lighting" -Name "AmbientLightingEnabled" -Value 0 -Type DWord
+Write-Host "3.4.11 Microsoft Dynamic Lighting (RGB Fix) [DISABLED]" -ForegroundColor Green
+
+## 3.4.12 Terminal
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\Microsoft.WindowsTerminal_8wekyb3d8bbwe" -Name "Disabled" -Value 1 -Type DWord
+Write-Host "3.4.12 Microsoft Terminal - Autostart [DISABLED]" -ForegroundColor Green
 #endregion
 
 #endregion
@@ -943,6 +950,8 @@ Write-Host "Explorer: Transparency [DISABLED]" -ForegroundColor Green
 
 # Co-Pilot
 Set-Registry -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Name "TurnOffWindowsCopilot" -Value 0 -Type DWord
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\Microsoft.Copilot_8wekyb3d8bbwe" -Name "Disabled" -Value 1 -Type DWord
+
 # Task Bar Removal
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowCopilotButton" -Value 0 -Type DWord
 # Right Click Menu "Ask Co-Pilot"
@@ -1348,37 +1357,30 @@ Write-Host "Windows: Telementry Internet Connection [DISABLED]" -ForegroundColor
 <#############################################################################################################################>
 #region 8.0 - Space Cleanup
 Write-Host "`n`n8.0 Space Cleanup" -ForegroundColor Green
-function Remove-ItemRecursively {
-    param (
-        [string]$Path
-    )
-    
-    Get-ChildItem -Path $Path -Recurse -Force | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-    Remove-Item -Path $Path -Recurse -Force -ErrorAction SilentlyContinue
-}
+## Drivers
+    # Plug and Play
+    rundll32.exe pnpclean.dll,RunDLL_PnpClean /drivers/maxclean
 ## Temporary Files
-# Temp - User
-Remove-ItemRecursively -Path "$env:TEMP\*" -Recurse -Force
-Write-Host " - Clearing C:\User\$env:username\Temp" -ForegroundColor Yellow
-# Temp - Windows
-Remove-ItemRecursively -Path "C:\Windows\Temp\*"
-Write-Host " - Clearing C:\Windows\Temp\" -ForegroundColor Yellow
+    # User
+    Remove-ItemRecursively -Path "$env:TEMP\*" -Recurse -Force
+    Write-Host " - Clearing C:\User\$env:username\Temp" -ForegroundColor Yellow
+    # Windows
+    Remove-ItemRecursively -Path "C:\Windows\Temp\*"
+    Write-Host " - Clearing C:\Windows\Temp\" -ForegroundColor Yellow
 ## Windows Update
 Write-Host " - Clearing old Windows Updates" -ForegroundColor Yellow
 Write-Host "`n*NOTE* This may take some time and is expected. Especially, if this is the first time running the script." -ForegroundColor Red
-# SoftwareDistribution
-## Windows Update
-# SoftwareDistribution
-Stop-Service -Name wuauserv
-if (Test-Path "C:\Windows\SoftwareDistribution.old") {
+    # SoftwareDistribution
+    Stop-Service -Name wuauserv
+    if (Test-Path "C:\Windows\SoftwareDistribution.old") {
+        cmd.exe /c rd /s /q "C:\Windows\SoftwareDistribution.old"
+    }   # Remove any .old variations of 'SoftwareDistribution'
+    Rename-Item -Path "C:\Windows\SoftwareDistribution" -NewName "SoftwareDistribution.old"
     cmd.exe /c rd /s /q "C:\Windows\SoftwareDistribution.old"
-}   # Remove any .old variations of 'SoftwareDistribution'
-Rename-Item -Path "C:\Windows\SoftwareDistribution" -NewName "SoftwareDistribution.old"
-cmd.exe /c rd /s /q "C:\Windows\SoftwareDistribution.old"
-Start-Service -Name wuauserv
-# WinSxS
-# Service Pack Backups / Superseded Updates / Replaced Componets
-dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase
+    Start-Service -Name wuauserv
+    # WinSxS
+    # Service Pack Backups / Superseded Updates / Replaced Componets
+    dism.exe /online /Cleanup-Image /StartComponentCleanup /ResetBase
 ## Free Space - Retrieve Updated Free Space
 $FreeSpaceAfter = (Get-PSDrive -Name C).Free / 1GB
 Write-Host "`n - Disk Space Free (after): $("{0:N2} GB" -f $FreeSpaceAfter)" -ForegroundColor Yellow
@@ -1386,36 +1388,21 @@ Write-Host " - Actual Space Freed: $("{0:N2} GB" -f ($FreeSpaceAfter - $FreeSpac
 
 
 <#############################################################################################################################>
-#region 9.0 - Script Log
-### Log - End
-# Log
-"Script Duration" | Out-File -Append -FilePath $LogFile
-$Timer.Stop()
-$Timer.Elapsed | Select-Object Hours, Minutes, Seconds | Format-Table | Out-File -Append -FilePath $LogFile
-"Drive Space Free (before): $("{0:N2} GB" -f $FreeSpaceBefore)" | Out-File -Append -FilePath $LogFile
-"Drive Space Free (after): $("{0:N2} GB" -f $FreeSpaceAfter)" | Out-File -Append -FilePath $LogFile
-"Drive Space Restored: $("{0:N2} GB`n" -f ($FreeSpaceAfter - $FreeSpaceBefore))" | Out-File -Append -FilePath $LogFile
-"######################################################`n" | Out-File -Append -FilePath $LogFile
-# Output
-Write-Host "`n`n9.0 Log: Script Duration" -ForegroundColor Green
-$TimerFinal = $Timer.Elapsed | Select-Object Hours, Minutes, Seconds | Format-Table
-$TimerFinal
-Write-Host "Log file located at $LogFile" -ForegroundColor Yellow
-#endregion
+#region 9.0 - Script Status
+Write-Host "`n`n9.0 Status: Ended at $(Get-Date)" -ForegroundColor Green
+    # Storage
+    Write-Host " - Storage" -ForegroundColor Yellow
+    Write-Host "   - Drive Space Free [BEFORE]: $("{0:N2} GB" -f $FreeSpaceBefore)"
+    Write-Host "   - Drive Space Free [AFTER]: $("{0:N2} GB" -f $FreeSpaceAfter)"
+    Write-Host "   - Drive Space Restored: $("{0:N2} GB" -f ($FreeSpaceAfter - $FreeSpaceBefore))"
+    # Timer
+    Write-Host " - Timer" -ForegroundColor Yellow
+    $Timer.Stop()
+    $ElapsedTime = "{0:D2}:{1:D2}:{2:D2}" -f $Timer.Elapsed.Hours, $Timer.Elapsed.Minutes, $Timer.Elapsed.Seconds
+    Write-Host "   - Elapsed Time: $ElapsedTime"
+    # Script
+    Write-Host " - Script" -ForegroundColor Yellow
+    Write-Host "   - W1X Debloat Script  | Version $sv"
+    Write-Host "   - GitHub: https://github.com/AdminVin/W1X-Debloat "
 
-
-<#############################################################################################################################>
-#region 9.0 - Notify User / Reboot
-<#############################################################################################################################>
-#region 9.0 - Notify User / Reboot
-Write-Host "`n`n╔════════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "║                                                                ║" -ForegroundColor Cyan
-Write-Host ("║      █▓▒░  W1X Debloat Script  ░▒▓█  |  Version {0}           ║" -f $sv) -ForegroundColor Green
-Write-Host "║                                                                ║" -ForegroundColor Cyan
-Write-Host "╚════════════════════════════════════════════════════════════════╝`n" -ForegroundColor Cyan
-
-Write-Host "$([char]9989)  Optimization Complete`n" -ForegroundColor Cyan
-Write-Host "$([char]9881)  https://github.com/AdminVin/W1X-Debloat`n" -ForegroundColor Cyan
-Write-Host ">>> PLEASE REBOOT YOUR COMPUTER FOR ALL CHANGES TO TAKE EFFECT <<<`n" -ForegroundColor Red
-
-#endregion
+Write-Host "`n> > > PLEASE REBOOT YOUR COMPUTER FOR THE CHANGES TO TAKE EFFECT < < <`n" -ForegroundColor Red

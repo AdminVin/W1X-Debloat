@@ -14,15 +14,13 @@ You can download the script here:
 
 **Windows 10-11**: https://github.com/AdminVin/W1X-Debloat/raw/main/W1X%20Debloat%20(W10-11).ps1
 
-**Windows 12 (Next Valley)**: TBD
-
 ____________________________________
 
 1. Find your OS link above > Right click > Select "Save link as" > Save to your PC
 
 2. Click Start > Search for **PowerShell ISE** > Right Click > Run As Administrator
 
-3. File > Open > Browse to the file downloaded "W1X Debloat (W****).ps1" > Click the "Green Arrow" or press F5 to run. 
+3. File > Open > Browse to the file downloaded "W1X Debloat (W10-11).ps1" > Click the "Green Arrow" or press F5 to run. 
 <br><br>
 
 ## Donate
