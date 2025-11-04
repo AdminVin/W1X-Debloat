@@ -1237,6 +1237,8 @@ if ($VMsRunning -or (Test-Path "C:\Program Files\Docker\")) {
 } else {
     Set-Registry -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" -Name "Enabled" -Value 0 -Type DWord
     Disable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All -NoRestart | Out-Null
+    Disable-WindowsOptionalFeature -Online -FeatureName "HypervisorPlatform" -NoRestart | Out-Null
+    Disable-WindowsOptionalFeature -Online -FeatureName "VirtualMachinePlatform" -NoRestart | Out-Null
     bcdedit /set hypervisorlaunchtype off
     Write-Host "Windows: Hyper-V [DISABLED]" -ForegroundColor Green
 }
