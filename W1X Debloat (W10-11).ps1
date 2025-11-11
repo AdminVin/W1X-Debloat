@@ -1375,6 +1375,7 @@ Write-Host "8.1 User Files" -ForegroundColor Green
 
     foreach ($UserProfile in $UserProfiles) {
         Write-Host " - User Profiles" -ForegroundColor Green
+        <#
         # Browsers
             # IE / Edge
             Remove-Item "$($UserProfile.FullName)\AppData\Local\Microsoft\Windows\INetCache\*" -Recurse -Force -ErrorAction SilentlyContinue
@@ -1390,7 +1391,7 @@ Write-Host "8.1 User Files" -ForegroundColor Green
             # Firefox
             Get-ChildItem "$($UserProfile.FullName)\AppData\Local\Mozilla\Firefox\Profiles" -Directory -ErrorAction SilentlyContinue |
                 ForEach-Object { Remove-Item "$($_.FullName)\cache2\*" -Recurse -Force -ErrorAction SilentlyContinue }
-
+        #>
         # Microsoft Store App
         Remove-ItemRecursively -Path "$($UserProfile.FullName)\AppData\Local\Packages\*\TempState\*"
 
