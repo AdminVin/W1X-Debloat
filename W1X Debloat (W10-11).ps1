@@ -51,18 +51,6 @@ $SV = "3.09"
 $ErrorActionPreference = "SilentlyContinue"
 $ProgressPreference = "SilentlyContinue"            # Disable Progress Bars
 ## Functions
-function Remove-ItemRecursively {
-    param (
-        [string]$Path
-    )
-
-    if (Test-Path $Path) {
-        Get-ChildItem -Path $Path -Recurse -Force -ErrorAction SilentlyContinue | 
-            Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
-        Remove-Item -Path $Path -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
-    }
-}
-
 function Set-Registry {
     param (
         [string]$Path,
@@ -98,6 +86,18 @@ function Set-Registry {
         $null = New-ItemProperty -Path $Path -Name $Name -Value $Value -PropertyType $Type -Force
     } else {
         $null = Set-ItemProperty -Path $Path -Name $Name -Value $Value -Force
+    }
+}
+
+function Remove-ItemRecursively {
+    param (
+        [string]$Path
+    )
+
+    if (Test-Path $Path) {
+        Get-ChildItem -Path $Path -Recurse -Force -ErrorAction SilentlyContinue | 
+            Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+        Remove-Item -Path $Path -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
     }
 }
 
