@@ -100,7 +100,7 @@ function Remove-ItemRecursively {
         Remove-Item -Path $Path -Recurse -Force -ErrorAction SilentlyContinue | Out-Null
     }
 }
-
+ 
 function Test-OneDriveSyncing {
     $regPath = "HKCU:\Software\Microsoft\OneDrive\Installer\BITS"
     $valueName = "PreSignInSettingsConfigJSON"
