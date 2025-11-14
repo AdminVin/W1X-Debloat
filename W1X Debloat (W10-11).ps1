@@ -1401,7 +1401,13 @@ Write-Host "8.1 User Files" -ForegroundColor Green
         # Crash Dumps
         Remove-ItemRecursively -Path "$($UserProfile.FullName)\AppData\Local\CrashDumps\*"
 
-        # Local Low
+        # Temp - User
+        Remove-ItemRecursively -Path "$($UserProfile.FullName)\Temp\*"
+
+        # Temp - Local
+        Remove-ItemRecursively -Path "$($UserProfile.FullName)\AppData\Local\Temp\*"
+
+        # Temp - Local Low
         Remove-ItemRecursively -Path "$($UserProfile.FullName)\AppData\LocalLow\Temp\*"
 
         Write-Host "  - Cleaned Profile: $($UserProfile.FullName)" -ForegroundColor Green
@@ -1423,7 +1429,6 @@ Write-Host "8.2 System Files" -ForegroundColor Green
 
         # Temporary Files
         Write-Host " - Clearing: Temporary Files" -ForegroundColor Green
-        Remove-ItemRecursively -Path "$env:TEMP\*" -Recurse -Force
         Remove-ItemRecursively -Path "C:\Windows\Temp\*"
         Remove-ItemRecursively -Path "C:\Windows\ServiceProfiles\LocalService\AppData\Local\Temp\*"
         Remove-ItemRecursively -Path "C:\Windows\ServiceProfiles\NetworkService\AppData\Local\Temp\*"
