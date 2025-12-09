@@ -1,7 +1,9 @@
-$SV = "3.09"
+$SV = "3.10"
 <#############################################################################################################################>
 <# 
 [>] Change Log
+2025-12-09 - v3.10
+    - Added Bing Search and Weather for app removal.
 2025-11-10 - v3.09
     - Updated 'Cleanup'Section.
         - Added more in depth cleaning of temporary files for all user profiles and system files.
@@ -152,8 +154,8 @@ $Apps = @(
     "*Cortana*",                                                # Voice Assistant
     "*Clipchamp*",                                              # Video Editor
     "Microsoft.CommsPhone*",                                    # Phone Communications
-    "Microsoft.ConnectivityStore*",                             # Network Settings Storage
-    "Microsoft.ECApp",                                          # Ease of Access (OOBE)
+    "Microsoft.ConnectivityStore*",                             # Network Settings Storage    
+    "Microsoft.ECApp",                                          # Ease of Access (OOBE)    
     "Microsoft.Edge.GameAssist",                                # Edge Gaming Overlay
     "Microsoft.WindowsFeedbackHub*",                            # Send Feedback to Microsoft
     "Microsoft.GetHelp*",                                       # Microsoft Support App
@@ -178,6 +180,7 @@ $Apps = @(
     "Microsoft.WidgetsPlatformRuntime",                         # Widgets Engine
     "Microsoft.Whiteboard*",                                    # Virtual Whiteboard
     "MicrosoftWindows.Client.WebExperience",                    # Widgets & Search UI
+    "Microsoft.Windows.DevHome",                                # Developer Dashboard
     "Microsoft.WindowsMaps*",                                   # Mapping App
     "Microsoft.WindowsPhone*",                                  # Phone Companion
     "Microsoft.WindowsReadingList*",                            # Reading List App
@@ -190,6 +193,8 @@ $Apps = @(
     "*Amazon.com.Amazon*",                                      # Amazon Shopping
     "*Asphalt8Airborne*",                                       # Car Racing Game
     "*AutodeskSketchBook*",                                     # Drawing App
+    "*BingSearch*",                                             # Bing Search
+    "*BingWeather*",                                            # Bing Weather
     "*BubbleWitch3Saga*",                                       # Puzzle Game
     "*CaesarsSlotsFreeCasino*",                                 # Casino Game
     "*CandyCrush*",                                             # Puzzle Game
@@ -258,15 +263,23 @@ $Apps = @(
 )
 
 foreach ($App in $Apps) {
-    Write-Host " - Removed: $App" -ForegroundColor Green
-
-    $Installed = Get-AppxProvisionedPackage -Online | Where-Object { $_.DisplayName -like $App }
-    foreach ($Install in $Installed) {
+    # Check if installed for any user
+    $Installed = Get-AppxPackage -AllUsers | Where-Object { $_.Name -like $App }
+    
+    if ($Installed) {
+        Write-Host " - Removing: $App" -ForegroundColor Green
+        
         # Remove for all existing users
-        Remove-AppxProvisionedPackage -Online -PackageName $Install.PackageName -ErrorAction SilentlyContinue
+        foreach ($Install in $Installed) {
+            Remove-AppxPackage -Package $Install.PackageFullName -ErrorAction SilentlyContinue
+        }
+
+        # Remove provisioned package (prevents future installs)
+        $Provisioned = Get-AppxProvisionedPackage -Online | Where-Object { $_.DisplayName -like $App }
+        foreach ($Prov in $Provisioned) {
+            Remove-AppxProvisionedPackage -Online -PackageName $Prov.PackageName -ErrorAction SilentlyContinue
+        }
     }
-    # Remove provisioned package (prevents future installs)
-    Get-AppxPackage -AllUsers -Name $App | Remove-AppxPackage -ErrorAction SilentlyContinue
 }
 
 # Outlook (only if Desktop version installed)
