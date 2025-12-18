@@ -401,6 +401,10 @@ if (Test-OneDriveSyncing) {
         Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive"
         # Remove Right Click Menu Context Options
         Set-Registry -Remove Path -Path "HKLM:\SYSTEM\CurrentControlSet\Services\FileSyncHelper"
+        # Remove from launching on new user profiles
+        Set-Registry -Remove Value -Path 'HKU:\.DEFAULT\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' -Name 'OneDriveSetup'
+        Set-Registry -Remove Value -Path 'HKU:\.DEFAULT\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce' -Name 'OneDrive'
+
 		# Remove from 'Default' user account
 		reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
 		reg delete "HKEY_USERS\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v "OneDriveSetup" /f
