@@ -17,4 +17,3 @@ Legal:
 	- This project is provided "as-is" without any warranties.
 	- The author is not responsible for any damages or losses resulting from its use.
 	- Use of the name "AdminVin" or associated branding is not permitted without explicit permission.
-	- © AdminVin 2025. All rights reserved.
