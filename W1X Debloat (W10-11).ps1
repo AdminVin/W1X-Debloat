@@ -1043,6 +1043,10 @@ $Shortcut.Save()
 [System.Runtime.Interopservices.Marshal]::ReleaseComObject($WshShell) | Out-Null
 Write-Host "Start Menu: 'Devices & Printers (Add Network)' [ADDED]" -ForegroundColor Green
 
+# Source: https://www.reddit.com/r/Windows11/comments/1qbnfwj/seriously_how_do_i_hide_this_thing_from_my_start/
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoStartMenuMorePrograms" -Remove Value
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoStartMenuMorePrograms" -Value 1 -Type DWord
+Write-Host "Start Menu: App Categories [REMOVED]" -ForegroundColor Green
 <###################################### START MENU TWEAKS (End) ######################################>
 
 
