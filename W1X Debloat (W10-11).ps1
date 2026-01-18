@@ -980,6 +980,10 @@ Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Adv
 # Right Click Menu "Ask Co-Pilot"
 Set-Registry -Path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked' -Name '{CB3B0003-8088-4EDE-8769-8B354AB2FF8C}' -Value '' -Type String
 Write-Host "Explorer: Microsoft Co-Pilot SHORTCUT [REMOVED]" -ForegroundColor Green
+
+# Source: https://www.makeuseof.com/i-fixed-windows-11-file-explorer-lag-by-disabling-this-old-service/
+Set-Registry -Path 'HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell' -Name 'FolderType' -Value 'NotSpecified' -Type String
+Write-Host "Explorer: Folder Content Detection [DISABLED]" -ForegroundColor Green
 <###################################### EXPLORER TWEAKS (End) ######################################>
 
 
