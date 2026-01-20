@@ -5,6 +5,8 @@ $SV = "3.11"
 2026-01-20 - v3.11
     - Added Start Menu App category removal.
     - Added Taskbar right click 'End Task' option.
+    - OneDrive removal re-added.
+        - Using key: HKEY_CURRENT_USER\Software\Microsoft\OneDrive\ClientEverSignedIn for OneDrive usage.
 2025-12-09 - v3.10
     - Added Bing Search and Weather for app removal.
 2025-11-10 - v3.09
@@ -107,15 +109,18 @@ function Remove-ItemRecursively {
 }
  
 function Test-OneDriveSyncing {
-    $regPath = "HKCU:\Software\Microsoft\OneDrive\Installer\BITS"
-    $valueName = "PreSignInSettingsConfigJSON"
-
-    if (Get-ItemProperty -Path $regPath -Name $valueName -ErrorAction SilentlyContinue) {
-        return $false
-    } else {
+    try {
+        Get-ItemPropertyValue `
+            -Path "HKCU:\Software\Microsoft\OneDrive" `
+            -Name "ClientEverSignedIn" `
+            -ErrorAction Stop | Out-Null
         return $true
     }
+    catch {
+        return $false
+    }
 }
+
 
 <#############################################################################################################################>
 #region 1.0  - Script Status
