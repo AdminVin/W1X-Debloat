@@ -1,7 +1,10 @@
-$SV = "3.10"
+$SV = "3.11"
 <#############################################################################################################################>
 <# 
 [>] Change Log
+2026-01-20 - v3.11
+    - Added Start Menu App category removal.
+    - Added Taskbar right click 'End Task' option.
 2025-12-09 - v3.10
     - Added Bing Search and Weather for app removal.
 2025-11-10 - v3.09
@@ -984,6 +987,9 @@ Write-Host "Explorer: Microsoft Co-Pilot SHORTCUT [REMOVED]" -ForegroundColor Gr
 # Source: https://www.makeuseof.com/i-fixed-windows-11-file-explorer-lag-by-disabling-this-old-service/
 Set-Registry -Path 'HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell' -Name 'FolderType' -Value 'NotSpecified' -Type String
 Write-Host "Explorer: Folder Content Detection [DISABLED]" -ForegroundColor Green
+
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarEndTaskEnabled" -Value 1 -Type DWord
+Write-Host "Explorer: Taskbar - Right Click 'End Task' [ENABLED]" -ForegroundColor Green
 <###################################### EXPLORER TWEAKS (End) ######################################>
 
 
