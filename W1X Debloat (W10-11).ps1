@@ -1519,11 +1519,12 @@ Write-Host " - Actual Space Freed: $("{0:N2} GB" -f ($FreeSpaceAfter - $FreeSpac
 
 <#############################################################################################################################>
 #region 9.0 - Script Status
-# Log: Text File Notification
-Remove-Item -Path (Join-Path $env:TEMP "W1X-Debloat.txt") -ErrorAction SilentlyContinue
-$LogFile = Join-Path $env:TEMP "W1X-Debloat.txt"
+# Log: Pop Up
+Add-Type -AssemblyName System.Windows.Forms
+[System.Windows.Forms.Application]::EnableVisualStyles()
+
 $Output = @"
-W1X Debloat Completed Succesfully at $(Get-Date)
+W1X Debloat Completed Successfully at $(Get-Date)
 
  - Storage
    - Drive Space Free [BEFORE]: {0:N2} GB
@@ -1537,11 +1538,21 @@ W1X Debloat Completed Succesfully at $(Get-Date)
    - W1X Debloat Script | Version $sv
    - GitHub: https://github.com/AdminVin/W1X-Debloat
 
->>> PLEASE REBOOT YOUR COMPUTER FOR THE CHANGES TO TAKE EFFECT <<<
+>>> PLEASE REBOOT YOUR COMPUTER! <<<
 "@ -f $FreeSpaceBefore, $FreeSpaceAfter, ($FreeSpaceAfter - $FreeSpaceBefore)
 
-$Output | Out-File -FilePath $LogFile -Encoding UTF8 -Append
-Invoke-Item $LogFile
+$form = New-Object System.Windows.Forms.Form
+$form.TopMost = $true
+$form.ShowInTaskbar = $false
+$form.WindowState = 'Minimized'
+
+[System.Windows.Forms.MessageBox]::Show(
+    $form,
+    $Output,
+    "W1X Debloat",
+    [System.Windows.Forms.MessageBoxButtons]::OK,
+    [System.Windows.Forms.MessageBoxIcon]::Information
+)
 
 # Log: Console
 Write-Host "`n`n9.0 Status: W1X Debloat Completed Succesfully at $(Get-Date)" -ForegroundColor Green
@@ -1560,4 +1571,4 @@ Write-Host "`n`n9.0 Status: W1X Debloat Completed Succesfully at $(Get-Date)" -F
     Write-Host "   - W1X Debloat Script  | Version $sv"
     Write-Host "   - GitHub: https://github.com/AdminVin/W1X-Debloat "
 
-Write-Host "`n> > > PLEASE REBOOT YOUR COMPUTER FOR THE CHANGES TO TAKE EFFECT < < <`n`n" -ForegroundColor Red
+Write-Host "`n> > > PLEASE REBOOT YOUR COMPUTER!< < <`n`n" -ForegroundColor Red
