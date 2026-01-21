@@ -1535,4 +1535,6 @@ Write-Host "`n`n9.0 Status: Ended at $(Get-Date)" -ForegroundColor Green
     Write-Host "   - GitHub: https://github.com/AdminVin/W1X-Debloat "
 
 Write-Host "`n> > > PLEASE REBOOT YOUR COMPUTER FOR THE CHANGES TO TAKE EFFECT < < <`n`n" -ForegroundColor Red
-Read-Host "Press Enter to exit"
+
+Write-Host "You can close this window and continue working or restart your computer." -ForegroundColor Yellow
+Start-Sleep -Seconds 9999999
