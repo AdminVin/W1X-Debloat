@@ -11,6 +11,7 @@ W1X (wix) Debloat is a small PowerShell script that optimizes your Windows 10/11
 You can either the BAT file or the script. The bat file is recommended as you can just run click and run as administrator. You can also download the script and run it yourself manually.
 
 **BAT File (Recommended):** https://github.com/AdminVin/W1X-Debloat/releases/tag/Installer
+
 **PowerShell Script:** https://github.com/AdminVin/W1X-Debloat/raw/main/W1X%20Debloat%20(W10-11).ps1
 
 ____________________________________
