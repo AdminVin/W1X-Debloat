@@ -1513,8 +1513,7 @@ Write-Host "8.2 System Files" -ForegroundColor Green
 
 ## Free Space - Retrieve Updated Free Space
 $FreeSpaceAfter = (Get-PSDrive -Name C).Free / 1GB
-Write-Host "`n - Disk Space Free (after): $("{0:N2} GB" -f $FreeSpaceAfter)" -ForegroundColor Yellow
-Write-Host " - Actual Space Freed: $("{0:N2} GB" -f ($FreeSpaceAfter - $FreeSpaceBefore))" -ForegroundColor Green
+
 
 
 <#############################################################################################################################>
