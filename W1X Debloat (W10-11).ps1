@@ -1519,6 +1519,9 @@ Write-Host " - Actual Space Freed: $("{0:N2} GB" -f ($FreeSpaceAfter - $FreeSpac
 
 <#############################################################################################################################>
 #region 9.0 - Script Status
+# Timer: Stop
+$Timer.Stop()
+$ElapsedTime = "{0:D2}:{1:D2}:{2:D2}" -f $Timer.Elapsed.Hours, $Timer.Elapsed.Minutes, $Timer.Elapsed.Seconds
 # Log: Pop Up
 Add-Type -AssemblyName System.Windows.Forms
 [System.Windows.Forms.Application]::EnableVisualStyles()
@@ -1563,8 +1566,6 @@ Write-Host "`n`n9.0 Status: W1X Debloat Completed Succesfully at $(Get-Date)" -F
     Write-Host "   - Drive Space Restored: $("{0:N2} GB" -f ($FreeSpaceAfter - $FreeSpaceBefore))"
     # Timer
     Write-Host " - Timer" -ForegroundColor Yellow
-    $Timer.Stop()
-    $ElapsedTime = "{0:D2}:{1:D2}:{2:D2}" -f $Timer.Elapsed.Hours, $Timer.Elapsed.Minutes, $Timer.Elapsed.Seconds
     Write-Host "   - Elapsed Time: $ElapsedTime"
     # Script
     Write-Host " - Script" -ForegroundColor Yellow

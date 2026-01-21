@@ -13,7 +13,7 @@ set SCRIPT_DIR=%~dp0
 
 :: Script name and URL
 set PS_SCRIPT=%SCRIPT_DIR%W1X_Debloat_(W10-11).ps1
-set PS_URL=https://github.com/AdminVin/W1X-Debloat/blob/main/W1X%20Debloat%20(W10-11).ps1
+set PS_URL=https://raw.githubusercontent.com/AdminVin/W1X-Debloat/main/W1X%%20Debloat%%20(W10-11).ps1
 
 
 :: Download latest version
