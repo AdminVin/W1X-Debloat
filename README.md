@@ -15,6 +15,7 @@ You can either the BAT file or the script. The bat file is recommended as you ca
 **PowerShell Script:** https://github.com/AdminVin/W1X-Debloat/raw/main/W1X%20Debloat%20(W10-11).ps1
 
 <br>
+
 ____________________________________
 ### BAT File Instructions ###
 1. Download the BAT File
@@ -32,5 +33,6 @@ ____________________________________
 3. File > Open > Browse to the file downloaded "W1X Debloat (W10-11).ps1" > Click the "Green Arrow" or press F5 to run.
 
 <br>
+
 ## Donate
 Helped your system? Great! --- Sponsor my next coffee? [PayPal](https://www.paypal.com/donate/?hosted_button_id=EZU78ZANFT24C)
