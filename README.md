@@ -16,7 +16,7 @@ You can either the BAT file or the script. The bat file is recommended as you ca
 
 
 ____________________________________
-**BAT File Instructions**
+### BAT File Instructions ###
 1. Download the BAT File
 
 2. Right Click and Run As Administrator
@@ -24,7 +24,7 @@ ____________________________________
 3. Script will run and cleanup your computer.
 
 ____________________________________
-**PowerShell Script Instructions**
+### PowerShell Script Instructions ###
 1. Download the PowerShell Script File
 
 2. Click Start > Search for PowerShell ISE > Right Click > Run As Administrator
