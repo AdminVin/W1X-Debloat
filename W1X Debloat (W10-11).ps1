@@ -1519,24 +1519,6 @@ Write-Host " - Actual Space Freed: $("{0:N2} GB" -f ($FreeSpaceAfter - $FreeSpac
 
 <#############################################################################################################################>
 #region 9.0 - Script Status
-Write-Host "`n`n9.0 Status: W1X Debloat Completed Succesfully at $(Get-Date)" -ForegroundColor Green
-    # Storage
-    Write-Host " - Storage" -ForegroundColor Yellow
-    Write-Host "   - Drive Space Free [BEFORE]: $("{0:N2} GB" -f $FreeSpaceBefore)"
-    Write-Host "   - Drive Space Free [AFTER]: $("{0:N2} GB" -f $FreeSpaceAfter)"
-    Write-Host "   - Drive Space Restored: $("{0:N2} GB" -f ($FreeSpaceAfter - $FreeSpaceBefore))"
-    # Timer
-    Write-Host " - Timer" -ForegroundColor Yellow
-    $Timer.Stop()
-    $ElapsedTime = "{0:D2}:{1:D2}:{2:D2}" -f $Timer.Elapsed.Hours, $Timer.Elapsed.Minutes, $Timer.Elapsed.Seconds
-    Write-Host "   - Elapsed Time: $ElapsedTime"
-    # Script
-    Write-Host " - Script" -ForegroundColor Yellow
-    Write-Host "   - W1X Debloat Script  | Version $sv"
-    Write-Host "   - GitHub: https://github.com/AdminVin/W1X-Debloat "
-
-Write-Host "`n> > > PLEASE REBOOT YOUR COMPUTER FOR THE CHANGES TO TAKE EFFECT < < <`n`n" -ForegroundColor Red
-
 # Log: Text File Notification
 Remove-Item -Path (Join-Path $env:TEMP "W1X-Debloat.txt") -ErrorAction SilentlyContinue
 $LogFile = Join-Path $env:TEMP "W1X-Debloat.txt"
@@ -1560,3 +1542,22 @@ W1X Debloat Completed Succesfully at $(Get-Date)
 
 $Output | Out-File -FilePath $LogFile -Encoding UTF8 -Append
 Invoke-Item $LogFile
+
+# Log: Console
+Write-Host "`n`n9.0 Status: W1X Debloat Completed Succesfully at $(Get-Date)" -ForegroundColor Green
+    # Storage
+    Write-Host " - Storage" -ForegroundColor Yellow
+    Write-Host "   - Drive Space Free [BEFORE]: $("{0:N2} GB" -f $FreeSpaceBefore)"
+    Write-Host "   - Drive Space Free [AFTER]: $("{0:N2} GB" -f $FreeSpaceAfter)"
+    Write-Host "   - Drive Space Restored: $("{0:N2} GB" -f ($FreeSpaceAfter - $FreeSpaceBefore))"
+    # Timer
+    Write-Host " - Timer" -ForegroundColor Yellow
+    $Timer.Stop()
+    $ElapsedTime = "{0:D2}:{1:D2}:{2:D2}" -f $Timer.Elapsed.Hours, $Timer.Elapsed.Minutes, $Timer.Elapsed.Seconds
+    Write-Host "   - Elapsed Time: $ElapsedTime"
+    # Script
+    Write-Host " - Script" -ForegroundColor Yellow
+    Write-Host "   - W1X Debloat Script  | Version $sv"
+    Write-Host "   - GitHub: https://github.com/AdminVin/W1X-Debloat "
+
+Write-Host "`n> > > PLEASE REBOOT YOUR COMPUTER FOR THE CHANGES TO TAKE EFFECT < < <`n`n" -ForegroundColor Red
