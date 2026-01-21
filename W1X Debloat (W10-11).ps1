@@ -1522,7 +1522,7 @@ $FreeSpaceAfter = (Get-PSDrive -Name C).Free / 1GB
 $Timer.Stop()
 $ElapsedTime = "{0:D2}:{1:D2}:{2:D2}" -f $Timer.Elapsed.Hours, $Timer.Elapsed.Minutes, $Timer.Elapsed.Seconds
 # Log: Console
-Write-Host "`n`n9.0 Status: W1X Debloat Completed Succesfully at $(Get-Date)" -ForegroundColor Green
+Write-Host "`n`n9.0 Status: W1X Debloat completed succesfully at $(Get-Date)" -ForegroundColor Green
     # Storage
     Write-Host " - Storage" -ForegroundColor Yellow
     Write-Host "   - Drive Space Free [BEFORE]: $("{0:N2} GB" -f $FreeSpaceBefore)"
@@ -1543,7 +1543,7 @@ Add-Type -AssemblyName System.Windows.Forms
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
 $Output = @"
-W1X Debloat Completed Successfully at $(Get-Date)
+W1X Debloat completed successfully at $(Get-Date)
 
  - Storage
    - Drive Space Free [BEFORE]: {0:N2} GB
