@@ -2,11 +2,12 @@ $SV = "3.11"
 <#############################################################################################################################>
 <# 
 [>] Change Log
-2026-01-20 - v3.11
+2026-01-21 - v3.11
     - Added Start Menu App category removal.
     - Added Taskbar right click 'End Task' option.
     - OneDrive removal re-added.
         - Using key: HKEY_CURRENT_USER\Software\Microsoft\OneDrive\ClientEverSignedIn for OneDrive usage.
+    - Updating logging: Added text file notification post script run.
 2025-12-09 - v3.10
     - Added Bing Search and Weather for app removal.
 2025-11-10 - v3.09
@@ -1518,7 +1519,7 @@ Write-Host " - Actual Space Freed: $("{0:N2} GB" -f ($FreeSpaceAfter - $FreeSpac
 
 <#############################################################################################################################>
 #region 9.0 - Script Status
-Write-Host "`n`n9.0 Status: Ended at $(Get-Date)" -ForegroundColor Green
+Write-Host "`n`n9.0 Status: W1X Debloat Completed Succesfully at $(Get-Date)" -ForegroundColor Green
     # Storage
     Write-Host " - Storage" -ForegroundColor Yellow
     Write-Host "   - Drive Space Free [BEFORE]: $("{0:N2} GB" -f $FreeSpaceBefore)"
@@ -1536,5 +1537,26 @@ Write-Host "`n`n9.0 Status: Ended at $(Get-Date)" -ForegroundColor Green
 
 Write-Host "`n> > > PLEASE REBOOT YOUR COMPUTER FOR THE CHANGES TO TAKE EFFECT < < <`n`n" -ForegroundColor Red
 
-Write-Host "You can close this window and continue working or restart your computer." -ForegroundColor Yellow
-Start-Sleep -Seconds 9999999
+# Log: Text File Notification
+Remove-Item -Path (Join-Path $env:TEMP "W1X-Debloat.txt") -ErrorAction SilentlyContinue
+$LogFile = Join-Path $env:TEMP "W1X-Debloat.txt"
+$Output = @"
+W1X Debloat Completed Succesfully at $(Get-Date)
+
+ - Storage
+   - Drive Space Free [BEFORE]: {0:N2} GB
+   - Drive Space Free [AFTER]:  {1:N2} GB
+   - Drive Space Restored:      {2:N2} GB
+
+ - Timer
+   - Elapsed Time: $ElapsedTime
+
+ - Script
+   - W1X Debloat Script | Version $sv
+   - GitHub: https://github.com/AdminVin/W1X-Debloat
+
+>>> PLEASE REBOOT YOUR COMPUTER FOR THE CHANGES TO TAKE EFFECT <<<
+"@ -f $FreeSpaceBefore, $FreeSpaceAfter, ($FreeSpaceAfter - $FreeSpaceBefore)
+
+$Output | Out-File -FilePath $LogFile -Encoding UTF8 -Append
+Invoke-Item $LogFile
