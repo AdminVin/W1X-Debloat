@@ -7,7 +7,7 @@ $SV = "3.11"
     - Added Taskbar right click 'End Task' option.
     - OneDrive removal re-added.
         - Using key: HKEY_CURRENT_USER\Software\Microsoft\OneDrive\ClientEverSignedIn for OneDrive usage.
-    - Updating logging: Added text file notification post script run.
+    - Added pop up notification for script completion.
 2025-12-09 - v3.10
     - Added Bing Search and Weather for app removal.
 2025-11-10 - v3.09
