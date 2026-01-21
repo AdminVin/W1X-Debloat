@@ -1522,6 +1522,23 @@ Write-Host " - Actual Space Freed: $("{0:N2} GB" -f ($FreeSpaceAfter - $FreeSpac
 # Timer: Stop
 $Timer.Stop()
 $ElapsedTime = "{0:D2}:{1:D2}:{2:D2}" -f $Timer.Elapsed.Hours, $Timer.Elapsed.Minutes, $Timer.Elapsed.Seconds
+# Log: Console
+Write-Host "`n`n9.0 Status: W1X Debloat Completed Succesfully at $(Get-Date)" -ForegroundColor Green
+    # Storage
+    Write-Host " - Storage" -ForegroundColor Yellow
+    Write-Host "   - Drive Space Free [BEFORE]: $("{0:N2} GB" -f $FreeSpaceBefore)"
+    Write-Host "   - Drive Space Free [AFTER]: $("{0:N2} GB" -f $FreeSpaceAfter)"
+    Write-Host "   - Drive Space Restored: $("{0:N2} GB" -f ($FreeSpaceAfter - $FreeSpaceBefore))"
+    # Timer
+    Write-Host " - Timer" -ForegroundColor Yellow
+    Write-Host "   - Elapsed Time: $ElapsedTime"
+    # Script
+    Write-Host " - Script" -ForegroundColor Yellow
+    Write-Host "   - W1X Debloat Script  | Version $sv"
+    Write-Host "   - GitHub: https://github.com/AdminVin/W1X-Debloat "
+
+Write-Host "`n> > > PLEASE REBOOT YOUR COMPUTER!< < <`n`n" -ForegroundColor Red
+
 # Log: Pop Up
 Add-Type -AssemblyName System.Windows.Forms
 [System.Windows.Forms.Application]::EnableVisualStyles()
@@ -1556,20 +1573,3 @@ $form.WindowState = 'Minimized'
     [System.Windows.Forms.MessageBoxButtons]::OK,
     [System.Windows.Forms.MessageBoxIcon]::Information
 )
-
-# Log: Console
-Write-Host "`n`n9.0 Status: W1X Debloat Completed Succesfully at $(Get-Date)" -ForegroundColor Green
-    # Storage
-    Write-Host " - Storage" -ForegroundColor Yellow
-    Write-Host "   - Drive Space Free [BEFORE]: $("{0:N2} GB" -f $FreeSpaceBefore)"
-    Write-Host "   - Drive Space Free [AFTER]: $("{0:N2} GB" -f $FreeSpaceAfter)"
-    Write-Host "   - Drive Space Restored: $("{0:N2} GB" -f ($FreeSpaceAfter - $FreeSpaceBefore))"
-    # Timer
-    Write-Host " - Timer" -ForegroundColor Yellow
-    Write-Host "   - Elapsed Time: $ElapsedTime"
-    # Script
-    Write-Host " - Script" -ForegroundColor Yellow
-    Write-Host "   - W1X Debloat Script  | Version $sv"
-    Write-Host "   - GitHub: https://github.com/AdminVin/W1X-Debloat "
-
-Write-Host "`n> > > PLEASE REBOOT YOUR COMPUTER!< < <`n`n" -ForegroundColor Red
