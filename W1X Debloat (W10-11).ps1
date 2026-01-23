@@ -603,7 +603,7 @@ $services = @(
 foreach ($service in $services) {
     $svc = Get-Service -Name $service -ErrorAction SilentlyContinue
     if ($null -ne $svc) {
-        $svc | Stop-Service -ErrorAction SilentlyContinue
+        #$svc | Stop-Service -ErrorAction SilentlyContinue
         $svc | Set-Service -StartupType Manual -ErrorAction SilentlyContinue
         Write-Host " - Service: $($svc.DisplayName) [Set to Manual]" -ForegroundColor Green
     }
