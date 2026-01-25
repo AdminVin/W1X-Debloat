@@ -1,7 +1,9 @@
-$SV = "3.11"
+$SV = "3.12"
 <#############################################################################################################################>
 <# 
 [>] Change Log
+2026-01-25 - v3.12
+    - Added Windows 11 Start Menu restore (original look on release).
 2026-01-21 - v3.11
     - Added Start Menu App category removal.
     - Added Taskbar right click 'End Task' option.
@@ -996,6 +998,17 @@ Write-Host "Explorer: Folder Content Detection [DISABLED]" -ForegroundColor Gree
 
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarEndTaskEnabled" -Value 1 -Type DWord
 Write-Host "Explorer: Taskbar - Right Click 'End Task' [ENABLED]" -ForegroundColor Green
+
+# Source: https://www.elevenforum.com/t/new-start-menu-rollout-timeline.42558/
+Set-Registry -Path "HKLM:\SYSTEM\ControlSet001\Control\FeatureManagement\Overrides\14" -Remove Path
+
+# Scheduled Task to Set on Boot
+$action = New-ScheduledTaskAction -Execute powershell.exe -Argument "-NoProfile -WindowStyle Hidden -Command `"Remove-Item 'HKLM:\SYSTEM\ControlSet001\Control\FeatureManagement\Overrides\14' -Recurse -Force -ErrorAction SilentlyContinue`""
+$trigger = New-ScheduledTaskTrigger -AtStartup
+$principal = New-ScheduledTaskPrincipal -UserId SYSTEM -RunLevel Highest
+Register-ScheduledTask -TaskName FixStartMenuFeatureOverride -Action $action -Trigger $trigger -Principal $principal -Force | Out-Null
+
+Write-Host "Explorer: Reverting to Classic Windows 11 Start Menu [UPDATED]" -ForegroundColor Green
 <###################################### EXPLORER TWEAKS (End) ######################################>
 
 
