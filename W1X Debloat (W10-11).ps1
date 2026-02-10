@@ -431,7 +431,7 @@ if (Test-OneDriveSyncing) {
 }
 ## 3.2.3 Internet Explorer
 Write-Host "3.2.3 Internet Explorer" -ForegroundColor Green
-#> Add-Ons
+#-> Add-Ons
 # Send to One Note
 Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{2670000A-7350-4f3c-8081-5663EE0C6C49}"
 Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer\Extensions\{2670000A-7350-4f3c-8081-5663EE0C6C49}"
@@ -444,6 +444,9 @@ Write-Host "Internet Explorer - Add-On: 'OneNote Linked Notes' [REMOVED]" -Foreg
 Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions" -Name "{31D09BA0-12F5-4CCE-BE8A-2923E76605DA}"
 Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects" -Name "{31D09BA0-12F5-4CCE-BE8A-2923E76605DA}"
 Write-Host "Internet Explorer - Add-On: 'Lync Click to Call' [REMOVED]" -ForegroundColor Green
+<# 2026-02-10 - NO LONGER NEEDED | Internet Explorer was retired on June 15 2022.
+# If you're using a computer that needs IE, this script isn't for you.
+#-> Scheduled Tasks
 # IE to Edge Browser Helper Object
 Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects\{1FD49718-1D00-4B19-AF5F-070AF6D5D54C}"
 $existingTask = Get-ScheduledTask | Where-Object { $_.TaskName -like "Internet Explorer - IEtoEDGE Addon Removal" }
@@ -454,7 +457,10 @@ if ($null -eq $existingTask) {
     $STPrin = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount
     Register-ScheduledTask -Action $action -Trigger $trigger -TaskName "Internet Explorer - IEtoEDGE Addon Removal" -Description "Removes the Internet Explorer Addon IEtoEDGE.  This will permit the use of Internet Explorer." -Principal $STPrin | Out-Null
 }
+#>
+Unregister-ScheduledTask -TaskName "Internet Explorer - IEtoEDGE Addon Removal" -Confirm:$false | Out-Null
 Write-Host "Internet Explorer - Add-On: 'IE to Edge' [REMOVED]" -ForegroundColor Green
+#>
 
 ## 3.2.4 One Note
 Write-Host "3.2.4 One Note" -ForegroundColor Green
@@ -527,6 +533,12 @@ Write-Host "3.4.11 Microsoft Dynamic Lighting (RGB Fix) [DISABLED]" -ForegroundC
 ## 3.4.12 Terminal
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\Microsoft.WindowsTerminal_8wekyb3d8bbwe" -Name "Disabled" -Value 1 -Type DWord
 Write-Host "3.4.12 Microsoft Terminal - Autostart [DISABLED]" -ForegroundColor Green
+
+## 3.4.13 Windows Feedback
+Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\Feedback\Siuf\" -TaskName "DmClient" -Confirm:$false
+Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\Feedback\Siuf\" -TaskName "DmClientOnScenarioDownload" -Confirm:$false
+Write-Host "3.4.13 Microsoft Feedback - Telementry Tasks [DISABLED]" -ForegroundColor Green
+
 #endregion
 
 #endregion
@@ -1003,10 +1015,13 @@ Write-Host "Explorer: Taskbar - Right Click 'End Task' [ENABLED]" -ForegroundCol
 Set-Registry -Path "HKLM:\SYSTEM\ControlSet001\Control\FeatureManagement\Overrides\14" -Remove Path
 
 # Scheduled Task to Set on Boot
+# Cleanup Old Task
+Unregister-ScheduledTask -TaskName FixStartMenuFeatureOverride -Confirm:$false
+# Set Task
 $action = New-ScheduledTaskAction -Execute powershell.exe -Argument "-NoProfile -WindowStyle Hidden -Command `"Remove-Item 'HKLM:\SYSTEM\ControlSet001\Control\FeatureManagement\Overrides\14' -Recurse -Force -ErrorAction SilentlyContinue`""
 $trigger = New-ScheduledTaskTrigger -AtStartup
 $principal = New-ScheduledTaskPrincipal -UserId SYSTEM -RunLevel Highest
-Register-ScheduledTask -TaskName FixStartMenuFeatureOverride -Action $action -Trigger $trigger -Principal $principal -Force | Out-Null
+Register-ScheduledTask -TaskName "W1XDebloat_FixStartMenuOverride" -Action $action -Trigger $trigger -Principal $principal -Force | Out-Null
 
 Write-Host "Explorer: Reverting to Classic Windows 11 Start Menu [UPDATED]" -ForegroundColor Green
 <###################################### EXPLORER TWEAKS (End) ######################################>
@@ -1393,6 +1408,8 @@ Write-Host "Windows: Activity Feed [DISABLED]" -ForegroundColor Green
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'AllowTelemetry' -Value 0 -Type DWord
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'MaxTelemetryAllowed' -Value 0 -Type DWord
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection' -Name 'AllowTelemetry' -Value 0 -Type DWord
+# Usage / Quality Insights
+Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\UsageAndQualityInsights\" -TaskName "UsageAndQualityInsights-MaintenanceTask" -Confirm:$false
 Write-Host "Windows: Telementry [DISABLED]" -ForegroundColor Green
 
 # Firewall Block
