@@ -1,7 +1,10 @@
-$SV = "3.12"
+$SV = "3.13"
 <#############################################################################################################################>
 <# 
 [>] Change Log
+2026-02-11 - v3.313
+    - Added blocking of telementry for OneDrive and Windows Feedback.
+    - Disabled adding IEtoEdge Addon for Internet Explorer.
 2026-01-25 - v3.12
     - Added Windows 11 Start Menu restore (original look on release).
 2026-01-21 - v3.11
@@ -366,6 +369,8 @@ if (Test-OneDriveSyncing) {
     Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Type DWord -Value 0
     # DisableFileSyncNGSC (Enable)
     Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Type DWord -Value 0  
+    # Remove Telementry
+    Get-ScheduledTask -TaskPath "\" | Where-Object {$_.TaskName -like "OneDrive Reporting Task*"} | Unregister-ScheduledTask -Confirm:$false
 	Write-Host "3.2.2 Microsoft One Drive Removal [Skipped]" -ForegroundColor Yellow
 } else {
     	## Close OneDrive (if running in background)
