@@ -2,7 +2,7 @@ $SV = "3.13"
 <#############################################################################################################################>
 <# 
 [>] Change Log
-2026-02-11 - v3.313
+2026-02-11 - v3.13
     - Added blocking of telementry for OneDrive and Windows Feedback.
     - Disabled adding IEtoEdge Addon for Internet Explorer.
 2026-01-25 - v3.12
