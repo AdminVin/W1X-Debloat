@@ -1,7 +1,9 @@
-$SV = "3.13"
+$SV = "3.14"
 <#############################################################################################################################>
 <# 
 [>] Change Log
+2026-02-20 - v3.14
+    - Removed PowerShell 7 installer, not needed.
 2026-02-11 - v3.13
     - Added blocking of telementry for OneDrive and Windows Feedback.
     - Disabled adding IEtoEdge Addon for Internet Explorer.
@@ -733,36 +735,25 @@ Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Sys
 Write-Host "Explorer: 'Open with PowerShell 5.1 (Admin)' - Right Click Context Menu [ADDED]" -ForegroundColor Green
 
 # Right Click Context Menu - Add "Open with Powershell 7 (Admin)"
-$PS7InstallerURL = "https://github.com/PowerShell/PowerShell/releases/download/v7.5.4/PowerShell-7.5.4-win-x64.msi"
-
-# Install
-if (-not (Test-Path "C:\Program Files\PowerShell\7\pwsh.exe")) {
-    Write-Host "Explorer: PowerShell 7 [DOWNLOADING]" -ForegroundColor Yellow
-    New-Item -Path "C:\PSTemp" -ItemType Directory | Out-Null
-    Invoke-WebRequest -Uri $PS7InstallerURL -OutFile "C:\PSTemp\PowerShell-7.msi"
-    Start-Process -FilePath msiexec -ArgumentList "/i `"C:\PSTemp\PowerShell-7.msi`" /qn" -Wait
-    Remove-Item -Path "C:\PSTemp" -Recurse -Force | Out-Null
-    Write-Host "Explorer: PowerShell 7 [INSTALLED]" -ForegroundColor Green
+if (Get-Command pwsh -ErrorAction SilentlyContinue) {
+    Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\Classes\LibraryFolder\Background\shell\PowerShell7AsAdmin"
+    Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Directory\Background\shell\PowerShell7AsAdmin' -Name '(default)' -Value 'Open with PowerShell 7 (Admin)'
+    Set-Registry -Remove Value -Path 'HKLM:\SOFTWARE\Classes\Directory\Background\shell\PowerShell7AsAdmin' -Name 'Extended'
+    Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Directory\Background\shell\PowerShell7AsAdmin' -Name 'HasLUAShield' -Value ''
+    Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Directory\Background\shell\PowerShell7AsAdmin' -Name 'Icon' -Value 'powershell.exe'
+    Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Directory\Background\shell\PowerShell7AsAdmin\command' -Name '(default)' -Value 'powershell -WindowStyle Hidden -NoProfile -Command "Start-Process -Verb RunAs pwsh.exe -ArgumentList \"-NoExit -Command Push-Location \\\"\"%V/\\\"\"\""'
+    Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Directory\shell\PowerShell7AsAdmin' -Name '(default)' -Value 'Open with PowerShell 7 (Admin)'
+    Set-Registry -Remove Value -Path 'HKLM:\SOFTWARE\Classes\Directory\shell\PowerShell7AsAdmin' -Name 'Extended'
+    Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Directory\shell\PowerShell7AsAdmin' -Name 'HasLUAShield' -Value ''
+    Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Directory\shell\PowerShell7AsAdmin' -Name 'Icon' -Value 'pwsh.exe'
+    Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Directory\shell\PowerShell7AsAdmin\command' -Name '(default)' -Value 'powershell -WindowStyle Hidden -NoProfile -Command "Start-Process -Verb RunAs pwsh.exe -ArgumentList \"-NoExit -Command Push-Location \\\"\"%V/\\\"\"\""'
+    Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Drive\shell\PowerShell7AsAdmin' -Name '(default)' -Value 'Open with PowerShell 7 (Admin)'
+    Set-Registry -Remove Value -Path 'HKLM:\SOFTWARE\Classes\Drive\shell\PowerShell7AsAdmin' -Name 'Extended'
+    Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Drive\shell\PowerShell7AsAdmin' -Name 'HasLUAShield' -Value ''
+    Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Drive\shell\PowerShell7AsAdmin' -Name 'Icon' -Value 'pwsh.exe'
+    Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Drive\shell\PowerShell7AsAdmin\command' -Name '(default)' -Value 'powershell -WindowStyle Hidden -NoProfile -Command "Start-Process -Verb RunAs pwsh.exe -ArgumentList \"-NoExit -Command Push-Location \\\"\"%V/\\\"\"\""'
+    Write-Host "Explorer: 'Open with PowerShell 7 (Admin)' - Right Click Context Menu [ADDED]" -ForegroundColor Green
 }
-
-# Add
-Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\Classes\LibraryFolder\Background\shell\PowerShell7AsAdmin"
-Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Directory\Background\shell\PowerShell7AsAdmin' -Name '(default)' -Value 'Open with PowerShell 7 (Admin)'
-Set-Registry -Remove Value -Path 'HKLM:\SOFTWARE\Classes\Directory\Background\shell\PowerShell7AsAdmin' -Name 'Extended'
-Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Directory\Background\shell\PowerShell7AsAdmin' -Name 'HasLUAShield' -Value ''
-Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Directory\Background\shell\PowerShell7AsAdmin' -Name 'Icon' -Value 'powershell.exe'
-Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Directory\Background\shell\PowerShell7AsAdmin\command' -Name '(default)' -Value 'powershell -WindowStyle Hidden -NoProfile -Command "Start-Process -Verb RunAs pwsh.exe -ArgumentList \"-NoExit -Command Push-Location \\\"\"%V/\\\"\"\""'
-Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Directory\shell\PowerShell7AsAdmin' -Name '(default)' -Value 'Open with PowerShell 7 (Admin)'
-Set-Registry -Remove Value -Path 'HKLM:\SOFTWARE\Classes\Directory\shell\PowerShell7AsAdmin' -Name 'Extended'
-Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Directory\shell\PowerShell7AsAdmin' -Name 'HasLUAShield' -Value ''
-Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Directory\shell\PowerShell7AsAdmin' -Name 'Icon' -Value 'pwsh.exe'
-Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Directory\shell\PowerShell7AsAdmin\command' -Name '(default)' -Value 'powershell -WindowStyle Hidden -NoProfile -Command "Start-Process -Verb RunAs pwsh.exe -ArgumentList \"-NoExit -Command Push-Location \\\"\"%V/\\\"\"\""'
-Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Drive\shell\PowerShell7AsAdmin' -Name '(default)' -Value 'Open with PowerShell 7 (Admin)'
-Set-Registry -Remove Value -Path 'HKLM:\SOFTWARE\Classes\Drive\shell\PowerShell7AsAdmin' -Name 'Extended'
-Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Drive\shell\PowerShell7AsAdmin' -Name 'HasLUAShield' -Value ''
-Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Drive\shell\PowerShell7AsAdmin' -Name 'Icon' -Value 'pwsh.exe'
-Set-Registry -Path 'HKLM:\SOFTWARE\Classes\Drive\shell\PowerShell7AsAdmin\command' -Name '(default)' -Value 'powershell -WindowStyle Hidden -NoProfile -Command "Start-Process -Verb RunAs pwsh.exe -ArgumentList \"-NoExit -Command Push-Location \\\"\"%V/\\\"\"\""'
-Write-Host "Explorer: 'Open with PowerShell 7 (Admin)' - Right Click Context Menu [ADDED]" -ForegroundColor Green
 
 # Right Click Context Menu - Add "Run as Different User"
 Set-Registry -Path 'HKLM:\SOFTWARE\Classes\exefile\shell\runasuser' -Name 'Extended' -Value $null -Type String
