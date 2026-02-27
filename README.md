@@ -36,6 +36,8 @@ ____________________________________
 
 3. File > Open > Browse to the file downloaded "W1X Debloat (W10-11).ps1" > Click the "Green Arrow" or press F5 to run.
 
+4. Script will run and cleanup your computer.
+
 <br>
 
 ## Donate
