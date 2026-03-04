@@ -1,7 +1,9 @@
-$SV = "3.14"
+$SV = "3.15"
 <#############################################################################################################################>
 <# 
 [>] Change Log
+2026-03-04 - v3.15
+    - Adjusted TCP Tuning for better throughput.
 2026-02-20 - v3.14
     - Removed PowerShell 7 installer, not needed.
 2026-02-11 - v3.13
@@ -1105,8 +1107,8 @@ Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedi
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Psched' -Name 'NonBestEffortLimit' -Value 0 -Type DWord
 Write-Host "Network: Throttling Index [DISABLED]" -ForegroundColor Green
 
-netsh int tcp set global autotuninglevel=disabled
-Write-Host "Network: TCP Auto-Tuning [DISABLED]" -ForegroundColor Green
+netsh int tcp set global autotuninglevel=normal
+Write-Host "Network: TCP Auto-Tuning [UPDATED]" -ForegroundColor Green
 
 netsh int tcp set global rss=enabled
 Write-Host "Network: Receive-Side Scaling (RSS) [ENABLED]" -ForegroundColor Green
