@@ -1,7 +1,9 @@
-$SV = "3.15"
+$SV = "3.16"
 <#############################################################################################################################>
 <# 
 [>] Change Log
+2026-03-10 - v3.16
+    - Updated parameters for disabling "High Precision Event Timer" and setting to "Time Stamp Counter" (CPU Clock).
 2026-03-04 - v3.15
     - Adjusted TCP Tuning for better throughput.
 2026-02-20 - v3.14
@@ -1131,8 +1133,8 @@ Write-Host "Network: TCP Congestion Provider set to Compound TCP (CTCP)" -Foregr
 <###################################### WINDOWS TWEAKS (Start) ######################################>
 # Disable 'High Precision Event Timer' to prevent input lag/delays
 bcdedit /deletevalue useplatformclock
-bcdedit /set useplatformtick yes
-bcdedit /set disabledynamictick yes
+bcdedit /deletevalue useplatformtick
+bcdedit /deletevalue disabledynamictick
 Write-Host "Windows: Disabled 'High Precision Event Timer' - Formerly Multimedia Timer" -ForegroundColor Green
 
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games' -Name 'GPU Priority' -Value 7 -Type DWord
