@@ -1,7 +1,9 @@
-$SV = "3.16"
+$SV = "3.17"
 <#############################################################################################################################>
 <# 
 [>] Change Log
+2026-04-10 - v3.17
+    - Updated 'Cleanup' section, added additional temp/cache directories.
 2026-03-10 - v3.16
     - Updated parameters for disabling "High Precision Event Timer" and setting to "Time Stamp Counter" (CPU Clock).
 2026-03-04 - v3.15
@@ -1437,12 +1439,12 @@ Write-Host "8.1 User Files" -ForegroundColor Green
 # User
     # User Profiles
     $UserProfiles = Get-ChildItem "C:\Users" -Directory | Where-Object {
-        $_.Name -notin @("All Users","Default","Default User","Public")
+        $_.Name -notin @("All Users","Default", "DefaultAppPool", "Default User","Public")
     }
 
     foreach ($UserProfile in $UserProfiles) {
         Write-Host " - User Profiles" -ForegroundColor Green
-        <#
+
         # Browsers
             # IE / Edge
             Remove-Item "$($UserProfile.FullName)\AppData\Local\Microsoft\Windows\INetCache\*" -Recurse -Force -ErrorAction SilentlyContinue
