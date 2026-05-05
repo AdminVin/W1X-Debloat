@@ -1,7 +1,15 @@
-$SV = "3.17"
+$SV = "3.18"
 <#############################################################################################################################>
 <# 
 [>] Change Log
+2026-05-05 - v3.18
+    - Updated Edge service removal.
+    - Updated OneDrive removal process.
+    - Updated Windows Suggestions/Tips/Welcome Experience removal with descriptions.
+    - Updated Windows 'Getting to Know You' disabling process.
+    - Updated Windows Cleanup to disable Windows space reservation.
+    - Added performance optimizations: MMCSS SystemResponsiveness, Win32PrioritySeparation, HAGS, DisablePagingExecutive, Game Mode.
+    - Disabled CoPilot Recall automatic screenshots.
 2026-04-10 - v3.17
     - Updated 'Cleanup' section, added additional temp/cache directories.
 2026-03-10 - v3.16
@@ -323,7 +331,7 @@ Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliv
 # Prevent reinstall of preloaded OEM/factory apps
 Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEnabled" -Type DWord -Value "0"
 # Mark system as never having allowed OEM preinstalled apps (prevents reinstall triggers)
-Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEverEnabled" -Type String -Value "0"
+Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "PreInstalledAppsEverEnabled" -Type DWord -Value 0
 # Disable OEM-specific apps from auto-installing
 Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "OEMPreInstalledAppsEnabled" -Type DWord -Value "0"
 # Turn off Start menu suggestions (e.g. WhatsApp recommendations under "Recommended")
@@ -343,8 +351,8 @@ Get-Service "edgeupdate" | Stop-Service -ErrorAction SilentlyContinue
 Get-Service "edgeupdatem" | Stop-Service -ErrorAction SilentlyContinue
 Get-Service "edgeupdate" | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
 Get-Service "edgeupdatem" | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
-Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Services' -Name 'edgeupdate' -Remove Path
-Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Services' -Name 'edgeupdatem' -Remove Path
+Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdate' -Remove Path
+Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdatem' -Remove Path
 Write-Host "Microsoft Edge - Auto Update Services [DISABLED]" -ForegroundColor Green
 #> Scheduled Tasks
 Get-Scheduledtask "*edge*" | Disable-ScheduledTask | Out-Null
@@ -368,7 +376,7 @@ Write-Host "Microsoft Edge - Auto Start - Startup Entries [DISABLED]" -Foregroun
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main' -Name 'DoNotTrack' -Value 1 -Type DWord
 Write-Host "Microsoft Edge - Tracking [DISABLED]" -ForegroundColor Green
 #> Addons
-Get-WmiObject -Query "SELECT * FROM Win32_Product WHERE Name LIKE '%Microsoft Search in Bing%'" | ForEach-Object { $_.Uninstall() > $null 2>&1 }
+Get-CimInstance -Query "SELECT * FROM Win32_Product WHERE Name LIKE '%Microsoft Search in Bing%'" | ForEach-Object { Invoke-CimMethod -InputObject $_ -MethodName "Uninstall" | Out-Null }
 Write-Host "Microsoft Edge - Bloat Search Addon [REMOVED]" -ForegroundColor Green
 # 3.2.2 OneDrive
 Write-Host "3.2.2 One Drive" -ForegroundColor Green
@@ -382,16 +390,16 @@ if (Test-OneDriveSyncing) {
 	Write-Host "3.2.2 Microsoft One Drive Removal [Skipped]" -ForegroundColor Yellow
 } else {
     	## Close OneDrive (if running in background)
-		taskkill /f /im OneDrive.exe
-		taskkill /f /im FileCoAuth.exe
+		Stop-Process -Name "OneDrive" -Force
+		Stop-Process -Name "FileCoAuth" -Force
 		## Official Removal
         # x86
         $OneDriveSetup32 = "$Env:WinDir\System32\OneDriveSetup.exe"
-        if (Test-Path $OneDriveSetup32) { Start-Process -FilePath $OneDriveSetup32 -WorkingDirectory "$Env:WinDir\System32" -ArgumentList "/uninstall" | Out-Null }
+        if (Test-Path $OneDriveSetup32) { Start-Process -FilePath $OneDriveSetup32 -WorkingDirectory "$Env:WinDir\System32" -ArgumentList "/uninstall" -Wait }
 
         # x64
         $OneDriveSetup64 = "$Env:WinDir\SysWOW64\OneDriveSetup.exe"
-        if (Test-Path $OneDriveSetup64) { Start-Process -FilePath $OneDriveSetup64 -WorkingDirectory "$Env:WinDir\SysWOW64" -ArgumentList "/uninstall" | Out-Null }
+        if (Test-Path $OneDriveSetup64) { Start-Process -FilePath $OneDriveSetup64 -WorkingDirectory "$Env:WinDir\SysWOW64" -ArgumentList "/uninstall" -Wait }
 		## Files Cleanup
 		# File Explorer - Navigation Bar
         Set-Registry -Path 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name '(default)' -Type String -Value 'OneDrive'
@@ -415,9 +423,8 @@ if (Test-OneDriveSyncing) {
 		## Scheduled Tasks
 		Get-ScheduledTask "*OneDrive*" | Unregister-ScheduledTask -Confirm:$false
 		## Services
-		$ODUPdaterService = Get-WmiObject -Class Win32_Service -Filter "Name='OneDrive Updater Service'" | Out-Null
-		$ODUpdaterService = Get-WmiObject -Class Win32_Service -Filter "Name='OneDrive Updater Service'" -ErrorAction SilentlyContinue
-        if ($ODUpdaterService) { $ODUpdaterService.Delete() | Out-Null }
+		$ODUpdaterService = Get-CimInstance -ClassName Win32_Service -Filter "Name='OneDrive Updater Service'"
+        if ($ODUpdaterService) { Invoke-CimMethod -InputObject $ODUpdaterService -MethodName "Delete" | Out-Null }
 		## Registry
         # Remove Previous Accounts/Sync Options
         Set-Registry -Remove Path -Path "HKCU:\Software\Microsoft\OneDrive"
@@ -437,9 +444,9 @@ if (Test-OneDriveSyncing) {
         ### DISABLE ONE DRIVE FROM BEING USED ###
         #########################################
         # DisableFileSync
-        Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Type DWord -Value 0
+        Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Type DWord -Value 1
         # DisableFileSyncNGSC
-        Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Type DWord -Value 0  
+        Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Type DWord -Value 1  
 		Write-Host "3.2.2 Microsoft One Drive [Removed]" -ForegroundColor Yellow
 }
 ## 3.2.3 Internet Explorer
@@ -503,12 +510,30 @@ Write-Host "Teams (Work or School) - Auto Start [DISABLED]" -ForegroundColor Gre
 
 ## 3.2.8 Windows Suggestions/Tips/Welcome Experience
 Write-Host "3.2.8 Windows Suggestions/Tips/Welcome Experience" -ForegroundColor Green
-# Source: https://www.elevenforum.com/t/disable-ads-in-windows-11.8004/
-Get-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" |
+$cdmPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
+
+# Static/Known Keys
+# Windows Welcome Experience — the full-screen "Here's what's new" page that appears after major updates
+Set-Registry -Path $cdmPath -Name "SubscribedContent-310093Enabled" -Type DWord -Value 0
+# Suggested content in Settings — tips and recommendations inside the Settings app
+Set-Registry -Path $cdmPath -Name "SubscribedContent-338387Enabled" -Type DWord -Value 0
+# App suggestions in Start — "You might like..." app promotions in the Start menu
+Set-Registry -Path $cdmPath -Name "SubscribedContent-338388Enabled" -Type DWord -Value 0
+# Tips, tricks and suggestions — the notification balloon tips that appear while you're using Windows
+Set-Registry -Path $cdmPath -Name "SubscribedContent-338389Enabled" -Type DWord -Value 0
+# Suggested content in Settings (second category) — specifically around personalisation and privacy nudges
+Set-Registry -Path $cdmPath -Name "SubscribedContent-338393Enabled" -Type DWord -Value 0
+# Suggested content in Settings (third category) — device setup and OneDrive nudges
+Set-Registry -Path $cdmPath -Name "SubscribedContent-353694Enabled" -Type DWord -Value 0
+# Timeline suggestions — recommended content in the Task View / Timeline feature
+Set-Registry -Path $cdmPath -Name "SubscribedContent-353698Enabled" -Type DWord -Value 0
+
+# Dynamic Keys
+Get-ItemProperty -Path $cdmPath |
     Get-Member -MemberType NoteProperty |
     Where-Object { $_.Name -like "SubscribedContent*" } |
     ForEach-Object {
-        Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name $_.Name -Value 0
+        Set-Registry -Path $cdmPath -Name $_.Name -Type DWord -Value 0
     }
 Write-Host "Windows Suggestions/Tips/Welcome Experience [DISABLED]" -ForegroundColor Green
 
@@ -999,6 +1024,7 @@ Write-Host "Explorer: Transparency [DISABLED]" -ForegroundColor Green
 # Co-Pilot
 Set-Registry -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Name "TurnOffWindowsCopilot" -Value 0 -Type DWord
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\Microsoft.Copilot_8wekyb3d8bbwe" -Name "Disabled" -Value 1 -Type DWord
+Write-Host "Explorer: Co-Pilot Shortcut [REMOVED]"
 
 # Task Bar Removal
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowCopilotButton" -Value 0 -Type DWord
@@ -1024,14 +1050,17 @@ $action = New-ScheduledTaskAction -Execute powershell.exe -Argument "-NoProfile 
 $trigger = New-ScheduledTaskTrigger -AtStartup
 $principal = New-ScheduledTaskPrincipal -UserId SYSTEM -RunLevel Highest
 Register-ScheduledTask -TaskName "W1XDebloat_FixStartMenuOverride" -Action $action -Trigger $trigger -Principal $principal -Force | Out-Null
-
 Write-Host "Explorer: Reverting to Classic Windows 11 Start Menu [UPDATED]" -ForegroundColor Green
+
+Set-Registry -Path 'HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell' -Name 'LogicalViewMode' -Value 1 -Type DWord
+Set-Registry -Path 'HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell' -Name 'Mode' -Value 4 -Type DWord
+Write-Host "Explorer: Default Folder View - Details [UPDATED]" -ForegroundColor Green
 <###################################### EXPLORER TWEAKS (End) ######################################>
 
 
 
 <###################################### START MENU TWEAKS (Start) ######################################>
-if ((Get-WMIObject win32_operatingsystem) | Where-Object { $_.Name -like "Microsoft Windows 11*" }) {
+if ((Get-CimInstance -ClassName Win32_OperatingSystem).Caption -like "Microsoft Windows 11*") {
     #Source: https://vhorizon.co.uk/windows-11-start-menu-layout-group-policy/
     Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Value 0 -Type DWord
 	Write-Host "Start Menu: Alignment - Left" -ForegroundColor Green
@@ -1090,7 +1119,6 @@ $Shortcut.Save()
 Write-Host "Start Menu: 'Devices & Printers (Add Network)' [ADDED]" -ForegroundColor Green
 
 # Source: https://www.reddit.com/r/Windows11/comments/1qbnfwj/seriously_how_do_i_hide_this_thing_from_my_start/
-Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoStartMenuMorePrograms" -Remove Value
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoStartMenuMorePrograms" -Value 1 -Type DWord
 Write-Host "Start Menu: App Categories [REMOVED]" -ForegroundColor Green
 <###################################### START MENU TWEAKS (End) ######################################>
@@ -1142,7 +1170,11 @@ Write-Host "Windows: Disabled 'High Precision Event Timer' - Formerly Multimedia
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games' -Name 'GPU Priority' -Value 7 -Type DWord
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games' -Name 'Priority' -Value 5 -Type DWord
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile\Tasks\Games' -Name 'Scheduling Category' -Value 'High' -Type String
-Write-Host "Windows: Updating 'MMCSS' to prioritize games with higher system resources" -ForegroundColor Green
+Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Multimedia\SystemProfile' -Name 'SystemResponsiveness' -Value 10 -Type DWord
+Write-Host "Windows: MMCSS - Game Priority & System Responsiveness [UPDATED]" -ForegroundColor Green
+
+Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\GraphicsDrivers' -Name 'HwSchMode' -Value 2 -Type DWord
+Write-Host "Windows: Hardware-Accelerated GPU Scheduling (HAGS) [ENABLED]" -ForegroundColor Green
 
 Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Power' -Name 'HiberbootEnabled' -Value 0 -Type DWord
 Write-Host "Windows: Disabled Fast Startup - Restored 'Fresh' Reboot" -ForegroundColor Green
@@ -1228,6 +1260,8 @@ Write-Host "Windows: Troubleshooting 'Steps Recorder' [DISABLED]" -ForegroundCol
 
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Value 0 -Type DWord
 Set-Registry -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Value 0 -Type DWord
+Set-Registry -Path 'HKCU:\Software\Microsoft\GameBar' -Name 'AllowAutoGameMode' -Value 1 -Type DWord
+Set-Registry -Path 'HKCU:\Software\Microsoft\GameBar' -Name 'AutoGameModeEnabled' -Value 1 -Type DWord
 Write-Host "Windows: Game Bar [DISABLED]" -ForegroundColor Green
 
 # Smart Screening
@@ -1256,8 +1290,8 @@ Write-Host "Windows: Faster Shutdown [ENABLED]" -ForegroundColor Green
 
 # 'Microsoft from getting to know you'
 Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Personalization\Settings" -Name "AcceptedPrivacyPolicy" -Value 0 -Type DWord
-Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization" -Name "RestrictImplicitTextCollection" -Value 0 -Type DWord
-Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization" -Name "RestrictImplicitInkCollection" -Value 0 -Type DWord
+Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization" -Name "RestrictImplicitTextCollection" -Value 1 -Type DWord
+Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization" -Name "RestrictImplicitInkCollection" -Value 1 -Type DWord
 Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization\TrainedDataStore" -Name "HarvestContacts" -Value 0 -Type DWord
 Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Input\TIPC" -Name "Enabled" -Value 0 -Type DWord
 Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "HistoryViewEnabled" -Value 0 -Type DWord
@@ -1266,12 +1300,26 @@ Write-Host "Windows: 'Microsoft from getting to know you' [DISABLED]" -Foregroun
 # Split Service Host Threshold for increased reliablity
 # Source: https://www.tenforums.com/tutorials/94628-change-split-threshold-svchost-exe-windows-10-a.html
 $RamInKB = (Get-CimInstance -ClassName Win32_PhysicalMemory | Measure-Object -Property Capacity -Sum).Sum / 1KB
-$RamInKB = (Get-CimInstance -ClassName Win32_PhysicalMemory | Measure-Object -Property Capacity -Sum).Sum / 1KB
 if ($RamInKB -ge 16000000) {
     Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control" -Name "SvcHostSplitThresholdInKB" -Value $RamInKB -Force
     Write-Host "Windows: Reduced Service Host Threshold [UPDATED]" -ForegroundColor Green
+
+    Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' -Name 'DisablePagingExecutive' -Value 1 -Type DWord
+    Write-Host "Windows: Kernel Paging to Disk [DISABLED]" -ForegroundColor Green
+
+    Disable-MMAgent -MemoryCompression
+    Write-Host "Windows: Memory Compression (RAM >= 16GB) [DISABLED]" -ForegroundColor Green
+} elseif ($RamInKB -ge 8000000) {
+    Write-Host "Windows: Reduced Service Host Threshold (RAM < 16GB) [SKIPPED]" -ForegroundColor Yellow
+
+    Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' -Name 'DisablePagingExecutive' -Value 1 -Type DWord
+    Write-Host "Windows: Kernel Paging to Disk [DISABLED]" -ForegroundColor Green
+
+    Write-Host "Windows: Memory Compression (RAM < 16GB) [SKIPPED]" -ForegroundColor Yellow
 } else {
-    Write-Host "Windows: Reduced Service Host Threshold (Ram <16GB) [SKIPPED]" -ForegroundColor Yellow
+    Write-Host "Windows: Reduced Service Host Threshold (RAM < 16GB) [SKIPPED]" -ForegroundColor Yellow
+    Write-Host "Windows: Kernel Paging to Disk (RAM < 8GB) [SKIPPED]" -ForegroundColor Yellow
+    Write-Host "Windows: Memory Compression (RAM < 8GB) [SKIPPED]" -ForegroundColor Yellow
 }
 
 # Windows Update Delivery Optimization
@@ -1365,7 +1413,7 @@ Write-Host "Sleep Settings: Hibernate [DISABLED]" -ForegroundColor Green
 
 powercfg -setacvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 4f971e89-eebd-4455-a8de-9e59040e7347 5ca83367-6e45-459f-a27b-476b1d01c936 0
 powercfg -setdcvalueindex 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c 4f971e89-eebd-4455-a8de-9e59040e7347 5ca83367-6e45-459f-a27b-476b1d01c936 0
-Write-Host "Sleep Settings: 'Closing Lid' action to turn off screen" [CHANGED] -ForegroundColor Green
+Write-Host "Sleep Settings: 'Closing Lid' action to turn off screen [CHANGED]" -ForegroundColor Green
 
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings' -Name 'ShowSleepOption' -Value 0 -Type DWord
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FlyoutMenuSettings' -Name 'ShowHibernateOption' -Value 0 -Type DWord
@@ -1382,20 +1430,23 @@ Write-Host "`n`n7.0 Privacy" -ForegroundColor Green
 ## Applications
 Write-Host "7.1 Applications" -ForegroundColor Green
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location' -Name 'Value' -Value 'Deny' -Type String
-Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}' -Name 'SensorPermissionState' -Value 1 -Type DWord -CreatePath
-Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\lfsvc\Service\Configuration' -Name 'EnableStatus' -Value 1 -Type DWord -CreatePath
+Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}' -Name 'SensorPermissionState' -Value 1 -Type DWord
+Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\lfsvc\Service\Configuration' -Name 'EnableStatus' -Value 1 -Type DWord
 Write-Host "Applications - Location Permissions [DISABLED]" -ForegroundColor Green
+
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsAI' -Name 'DisableAIDataAnalysis' -Value 1 -Type DWord
+Write-Host "Applications - CoPilot Recall Screenshots [DISABLED]"
 
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appDiagnostics' -Name 'Value' -Value 'Deny' -Type String
 Write-Host "Applications - Diagnostics [DISABLED]" -ForegroundColor Green
 
 Write-Host "7.2 Keyboard" -ForegroundColor Green
-Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\PolicyManager\default\TextInput\AllowLinguisticDataCollection' -Name 'value' -Value 0 -Type DWord -CreatePath
-Set-Registry -Path 'HKCU:\Software\Microsoft\Input\TIPC' -Name 'Enabled' -Value 0 -Type DWord -CreatePath
+Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\PolicyManager\default\TextInput\AllowLinguisticDataCollection' -Name 'value' -Value 0 -Type DWord
+Set-Registry -Path 'HKCU:\Software\Microsoft\Input\TIPC' -Name 'Enabled' -Value 0 -Type DWord
 Write-Host "Keyboard - Improved Inking and Typing Reconition [DISABLED]" -ForegroundColor Green
 
 Write-Host "7.3 Clipboard" -ForegroundColor Green
-Set-Registry -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\SmartActionPlatform\SmartClipboard' -Name 'Disabled' -Value 1 -Type DWord -CreatePath
+Set-Registry -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\SmartActionPlatform\SmartClipboard' -Name 'Disabled' -Value 1 -Type DWord
 Write-Host "Clipboard - 'Smart Clipboard' [DISABLED]" -ForegroundColor Green
 
 Write-Host "7.4 Telemetry" -ForegroundColor Green #InTune Required
@@ -1515,9 +1566,6 @@ Write-Host "8.2 System Files" -ForegroundColor Green
             Rename-Item -Path "C:\Windows\SoftwareDistribution" -NewName "SoftwareDistribution.old"
             cmd.exe /c rd /s /q "C:\Windows\SoftwareDistribution.old"
 
-            # Windows Update Internal Cache
-            Remove-ItemRecursively -Path "C:\Windows\SoftwareDistribution\EventCache.v2\*"
-
             # CBS (logs from Windows Update and DISM)
             Remove-ItemRecursively -Path "C:\Windows\Logs\CBS\*"
 
@@ -1540,12 +1588,18 @@ Write-Host "8.2 System Files" -ForegroundColor Green
                 cmd.exe /c rd /s /q "C:\Windows.old"
             }
 
+            # Windows Reserved Space
+            $reservedState = DISM /Online /Get-ReservedStorageState
+            if ($reservedState -like "*Enabled*") {
+                DISM /Online /Set-ReservedStorageState /State:Disabled
+            }
+
             # Windows Update - Start
             Start-Service -Name wuauserv
 
 ## Free Space - Retrieve Updated Free Space
 $FreeSpaceAfter = (Get-PSDrive -Name C).Free / 1GB
-
+#endregion
 
 
 <#############################################################################################################################>
