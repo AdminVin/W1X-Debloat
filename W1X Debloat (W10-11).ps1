@@ -358,7 +358,7 @@ Write-Host "Microsoft Edge - Auto Update Services [DISABLED]" -ForegroundColor G
 Get-Scheduledtask "*edge*" | Disable-ScheduledTask | Out-Null
 Write-Host "Microsoft Edge - Auto Start - Scheduled Task [DISABLED]" -ForegroundColor Green
 #> Auto Start
-Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main' -Name 'AllowPrelaunch' -Value 0 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'StartupBoostEnabled' -Value 0 -Type DWord
 $paths = @(
   "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run",
   "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
@@ -373,7 +373,7 @@ foreach ($path in $paths) {
 }
 Write-Host "Microsoft Edge - Auto Start - Startup Entries [DISABLED]" -ForegroundColor Green
 #> Tracking
-Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\MicrosoftEdge\Main' -Name 'DoNotTrack' -Value 1 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'ConfigureDoNotTrack' -Value 1 -Type DWord
 Write-Host "Microsoft Edge - Tracking [DISABLED]" -ForegroundColor Green
 #> Addons
 Get-CimInstance -Query "SELECT * FROM Win32_Product WHERE Name LIKE '%Microsoft Search in Bing%'" | ForEach-Object { Invoke-CimMethod -InputObject $_ -MethodName "Uninstall" | Out-Null }
