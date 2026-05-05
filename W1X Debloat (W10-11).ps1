@@ -1024,7 +1024,7 @@ Write-Host "Explorer: Transparency [DISABLED]" -ForegroundColor Green
 # Co-Pilot
 Set-Registry -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Name "TurnOffWindowsCopilot" -Value 0 -Type DWord
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\Microsoft.Copilot_8wekyb3d8bbwe" -Name "Disabled" -Value 1 -Type DWord
-Write-Host "Explorer: Co-Pilot Shortcut [REMOVED]"
+Write-Host "Explorer: Co-Pilot Shortcut [REMOVED]" -ForegroundColor Green
 
 # Task Bar Removal
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowCopilotButton" -Value 0 -Type DWord
