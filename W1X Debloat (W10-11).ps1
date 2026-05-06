@@ -1,7 +1,9 @@
-$SV = "3.18"
+$SV = "3.19"
 <#############################################################################################################################>
 <# 
 [>] Change Log
+2026-05-06 - v3.19
+    - Added script counter for tracking total PC's optimized (https://counterapi.dev/).
 2026-05-05 - v3.18
     - Updated Edge service removal.
     - Updated OneDrive removal process.
@@ -75,7 +77,13 @@ $SV = "3.18"
 
 
 <#############################################################################################################################>
-#region 0.0 - Script Variables/Functions
+#region 0.0 - Script Settings
+## Counter
+#> Add
+Start-Job { Invoke-RestMethod -Uri "https://api.counterapi.dev/v2/vincent-s-team-4021/w1x-debloat/up" -Headers @{ Authorization = "Bearer ut_rGGnbETldmrgxugUWf4E4UxxPoMDqan51QMNBcVa" } -ErrorAction SilentlyContinue } | Out-Null
+#> Pull Total
+$ComputersHelped = (Invoke-RestMethod -Uri "https://api.counterapi.dev/v2/vincent-s-team-4021/w1x-debloat" -Headers @{ Authorization = "Bearer ut_rGGnbETldmrgxugUWf4E4UxxPoMDqan51QMNBcVa" } -ErrorAction SilentlyContinue).count
+if (-not [int]::TryParse([string]$ComputersHelped, [ref]$null)) { $ComputersHelped = "N/A" }
 ## Variables
 $ErrorActionPreference = "SilentlyContinue"
 $ProgressPreference = "SilentlyContinue"            # Disable Progress Bars
@@ -167,7 +175,7 @@ Write-Host "2.1 Verbose Status Messaging [Enabled]" -ForegroundColor Green
 #region 3.0 Applications
 Write-Host "`n`n3.0 Applications" -ForegroundColor Green
 
-#region Windows 10 - 3.1 Applications - Metro
+#region Windows 10/11 - 3.1 Applications - Metro
 Write-Host "3.1 Applications - Metro" -ForegroundColor Green
 $Apps = @(
     # Microsoft - General Bloatware
@@ -465,8 +473,6 @@ Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet 
 Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects" -Name "{31D09BA0-12F5-4CCE-BE8A-2923E76605DA}"
 Write-Host "Internet Explorer - Add-On: 'Lync Click to Call' [REMOVED]" -ForegroundColor Green
 <# 2026-02-10 - NO LONGER NEEDED | Internet Explorer was retired on June 15 2022.
-# If you're using a computer that needs IE, this script isn't for you.
-#-> Scheduled Tasks
 # IE to Edge Browser Helper Object
 Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects\{1FD49718-1D00-4B19-AF5F-070AF6D5D54C}"
 $existingTask = Get-ScheduledTask | Where-Object { $_.TaskName -like "Internet Explorer - IEtoEDGE Addon Removal" }
@@ -477,7 +483,6 @@ if ($null -eq $existingTask) {
     $STPrin = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount
     Register-ScheduledTask -Action $action -Trigger $trigger -TaskName "Internet Explorer - IEtoEDGE Addon Removal" -Description "Removes the Internet Explorer Addon IEtoEDGE.  This will permit the use of Internet Explorer." -Principal $STPrin | Out-Null
 }
-#>
 Unregister-ScheduledTask -TaskName "Internet Explorer - IEtoEDGE Addon Removal" -Confirm:$false | Out-Null
 Write-Host "Internet Explorer - Add-On: 'IE to Edge' [REMOVED]" -ForegroundColor Green
 #>
@@ -1620,7 +1625,8 @@ Write-Host "`n`n9.0 Status: W1X Debloat completed succesfully at $(Get-Date)" -F
     # Script
     Write-Host " - Script" -ForegroundColor Yellow
     Write-Host "   - W1X Debloat Script  | Version $sv"
-    Write-Host "   - GitHub: https://github.com/AdminVin/W1X-Debloat "
+    Write-Host "   - PCs Optimized: $ComputersHelped"
+    Write-Host "   - GitHub: https://github.com/AdminVin/W1X-Debloat"
 
 Write-Host "`n> > > PLEASE REBOOT YOUR COMPUTER!< < <`n`n" -ForegroundColor Red
 
@@ -1641,6 +1647,7 @@ W1X Debloat completed successfully at $(Get-Date)
 
  - Script
    - W1X Debloat Script | Version $sv
+   - PCs Optimized: $ComputersHelped
    - GitHub: https://github.com/AdminVin/W1X-Debloat
 
 >>> PLEASE REBOOT YOUR COMPUTER! <<<
