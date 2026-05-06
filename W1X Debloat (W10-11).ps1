@@ -1,10 +1,9 @@
-$SV = "3.19"
+$SV = "3.18"
 <#############################################################################################################################>
 <# 
 [>] Change Log
-2026-05-06 - v3.19
-    - Added script counter for tracking total PC's optimized (https://counterapi.dev/).
 2026-05-05 - v3.18
+    - Added script counter for tracking total PC's optimized (https://counterapi.dev/).
     - Updated Edge service removal.
     - Updated OneDrive removal process.
     - Updated Windows Suggestions/Tips/Welcome Experience removal with descriptions.
@@ -83,7 +82,6 @@ $SV = "3.19"
 Start-Job { Invoke-RestMethod -Uri "https://api.counterapi.dev/v2/vincent-s-team-4021/w1x-debloat/up" -Headers @{ Authorization = "Bearer ut_rGGnbETldmrgxugUWf4E4UxxPoMDqan51QMNBcVa" } -ErrorAction SilentlyContinue } | Out-Null
 #> Pull Total
 $ComputersHelped = (Invoke-RestMethod -Uri "https://api.counterapi.dev/v2/vincent-s-team-4021/w1x-debloat" -Headers @{ Authorization = "Bearer ut_rGGnbETldmrgxugUWf4E4UxxPoMDqan51QMNBcVa" } -ErrorAction SilentlyContinue).count
-if (-not [int]::TryParse([string]$ComputersHelped, [ref]$null)) { $ComputersHelped = "N/A" }
 ## Variables
 $ErrorActionPreference = "SilentlyContinue"
 $ProgressPreference = "SilentlyContinue"            # Disable Progress Bars
