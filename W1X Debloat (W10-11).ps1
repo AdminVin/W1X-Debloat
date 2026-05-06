@@ -194,6 +194,7 @@ $Apps = @(
     "Microsoft.ECApp",                                          # Ease of Access (OOBE)    
     "Microsoft.Edge.GameAssist",                                # Edge Gaming Overlay
     "Microsoft.WindowsFeedbackHub*",                            # Send Feedback to Microsoft
+    "MicrosoftCorporationII.MicrosoftFamily",                   # Family Controls
     "Microsoft.GetHelp*",                                       # Microsoft Support App
     "Microsoft.Getstarted*",                                    # Introductory Guide
     "*maps*",                                                   # Mapping App
