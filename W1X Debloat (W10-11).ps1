@@ -81,7 +81,7 @@ $SV = "3.18"
 #> Add
 Start-Job { Invoke-RestMethod -Uri "https://api.counterapi.dev/v2/vincent-s-team-4021/w1x-debloat/up" -Headers @{ Authorization = "Bearer ut_rGGnbETldmrgxugUWf4E4UxxPoMDqan51QMNBcVa" } -ErrorAction SilentlyContinue } | Out-Null
 #> Pull Total
-$ComputersHelped = (Invoke-RestMethod -Uri "https://api.counterapi.dev/v2/vincent-s-team-4021/w1x-debloat" -Headers @{ Authorization = "Bearer ut_rGGnbETldmrgxugUWf4E4UxxPoMDqan51QMNBcVa" } -ErrorAction SilentlyContinue).count
+$ComputersHelped = (Invoke-RestMethod -Uri "https://api.counterapi.dev/v2/vincent-s-team-4021/w1x-debloat" -Headers @{ Authorization = "Bearer ut_rGGnbETldmrgxugUWf4E4UxxPoMDqan51QMNBcVa" } -ErrorAction SilentlyContinue).data.up_count
 ## Variables
 $ErrorActionPreference = "SilentlyContinue"
 $ProgressPreference = "SilentlyContinue"            # Disable Progress Bars
