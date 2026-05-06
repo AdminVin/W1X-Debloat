@@ -222,6 +222,7 @@ $Apps = @(
     "Microsoft.WindowsPhone*",                                  # Phone Companion
     "Microsoft.WindowsReadingList*",                            # Reading List App
     "Microsoft.YourPhone*",                                     # Phone Link App
+    "MicrosoftWindows.CrossDevice*",                            # Phone Link - Cross Device Backend
     "Microsoft.ZuneMusic",                                      # Groove Music
     # Microsoft - Random Bloatware
     "*ACGMediaPlayer*",                                         # Media Player
