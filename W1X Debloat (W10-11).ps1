@@ -224,6 +224,10 @@ $Apps = @(
     "Microsoft.YourPhone*",                                     # Phone Link App
     "MicrosoftWindows.CrossDevice*",                            # Phone Link - Cross Device Backend
     "Microsoft.ZuneMusic",                                      # Groove Music
+    "Microsoft.Copilot*",                                       # Microsoft Copilot AI
+    "MicrosoftWindows.Client.CoreAI*",                          # Windows AI Backbone
+    "Microsoft.AIFabric*",                                      # Windows AI Framework
+    "MicrosoftWindows.Client.Photon*"                           # Widgets Engine
     # Microsoft - Random Bloatware
     "*ACGMediaPlayer*",                                         # Media Player
     "*ActiproSoftwareLLC*",                                     # Syntax Editor Component
@@ -1028,7 +1032,7 @@ Write-Host "Explorer: Transparency [DISABLED]" -ForegroundColor Green
 
 # Co-Pilot
 Set-Registry -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Name "TurnOffWindowsCopilot" -Value 0 -Type DWord
-Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\Microsoft.Copilot_8wekyb3d8bbwe" -Name "Disabled" -Value 1 -Type DWord
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\Microsoft.Copilot_8wekyb3d8bbwe" -Name "Disabled" -Value 0 -Type DWord
 Write-Host "Explorer: Co-Pilot Shortcut [REMOVED]" -ForegroundColor Green
 
 # Task Bar Removal
