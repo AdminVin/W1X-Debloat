@@ -1444,7 +1444,7 @@ Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\lfsvc\Service\Config
 Write-Host "Applications - Location Permissions [DISABLED]" -ForegroundColor Green
 
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsAI' -Name 'DisableAIDataAnalysis' -Value 1 -Type DWord
-Write-Host "Applications - CoPilot Recall Screenshots [DISABLED]"
+Write-Host "Applications - CoPilot Recall Screenshots [DISABLED]" -ForegroundColor Green
 
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appDiagnostics' -Name 'Value' -Value 'Deny' -Type String
 Write-Host "Applications - Diagnostics [DISABLED]" -ForegroundColor Green
