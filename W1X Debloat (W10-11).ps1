@@ -682,41 +682,16 @@ foreach ($service in $services) {
 
 ## Scheduled Tasks
 Write-Host "4.2 Scheduled Tasks" -ForegroundColor Green
-# Tasks - Intune Related
 $removedCount = 0
-if (!($intuneInstalled)) {
-    $Tasks = @(
-        "\Microsoft\Windows\Application Experience\ProgramDataUpdater",
-        "\Microsoft\Windows\Application Experience\StartupAppTask",
-        "\Microsoft\Windows\Autochk\Proxy",
-        "\Microsoft\Windows\Customer Experience Improvement Program\BthSQM",
-        "\Microsoft\Windows\Customer Experience Improvement Program\Consolidator",
-        "\Microsoft\Windows\Customer Experience Improvement Program\KernelCeipTask",
-        "\Microsoft\Windows\Customer Experience Improvement Program\UsbCeip",
-        "\Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticDataCollector",
-        "\Microsoft\Windows\DiskDiagnostic\Microsoft-Windows-DiskDiagnosticResolver"
-    )
-
-    foreach ($task in $Tasks) {
-        try {
-            $taskName = ($task.Split('\')[-1])
-            $taskPath = ($task -replace "\\$taskName$", "")
-            Disable-ScheduledTask -TaskName $taskName -TaskPath $taskPath -ErrorAction SilentlyContinue | Out-Null
-            $removedCount++
-            Write-Host " - Task: $task [DISABLED]" -ForegroundColor Green
-        } catch {
-            Write-Host " - Task: $task [NOT FOUND]" -ForegroundColor Yellow
-        }
-    }
-}
-# Tasks - General/All Systems
 $taskData = @(
     @{ TaskName = "Proxy"; TaskPath = "\Microsoft\Windows\Autochk\"; DisplayName = "Proxy Task" },
     @{ TaskName = "SmartScreenSpecific"; TaskPath = "\Microsoft\Windows\AppID\"; DisplayName = "SmartScreen Specific Task" },
     @{ TaskName = "Microsoft Compatibility Appraiser"; TaskPath = "\Microsoft\Windows\Application Experience\"; DisplayName = "Microsoft Compatibility Appraiser Task" },
     @{ TaskName = "ProgramDataUpdater"; TaskPath = "\Microsoft\Windows\Application Experience\"; DisplayName = "Program Data Updater Task" },
     @{ TaskName = "AitAgent"; TaskPath = "\Microsoft\Windows\Application Experience\"; DisplayName = "Application Experience AIT Agent" },
-    @{ TaskName = "Microsoft Compatibility Appraiser Exp"; TaskPath = "\Microsoft\Windows\Application Experience\"; DisplayName = "Microsoft Compatibility Appraiser Exp Task" },
+    @{ TaskName = "StartupAppTask"; TaskPath = "\Microsoft\Windows\Application Experience\"; DisplayName = "Startup App Task (InTune)"; InTuneOnly = $true },
+    @{ TaskName = "Microsoft Compatibility Appraiser Exp"; TaskPath = "\Microsoft\Windows\Application Experience\"; DisplayName = "Microsoft Compatibility Appraiser Exp (InTune)"; InTuneOnly = $true },
+    @{ TaskName = "BthSQM"; TaskPath = "\Microsoft\Windows\Customer Experience Improvement Program\"; DisplayName = "Bluetooth SQM Task (InTune)"; InTuneOnly = $true },
     @{ TaskName = "Consolidator"; TaskPath = "\Microsoft\Windows\Customer Experience Improvement Program\"; DisplayName = "Consolidator Task" },
     @{ TaskName = "KernelCeipTask"; TaskPath = "\Microsoft\Windows\Customer Experience Improvement Program\"; DisplayName = "Kernel CEIP Task" },
     @{ TaskName = "UsbCeip"; TaskPath = "\Microsoft\Windows\Customer Experience Improvement Program\"; DisplayName = "USB CEIP Task" },
@@ -731,6 +706,7 @@ $taskData = @(
     @{ TaskName = "AnalyzeSystem"; TaskPath = "\Microsoft\Windows\Power Efficiency Diagnostics\"; DisplayName = "Power Efficiency Diagnostics" }
 )
 foreach ($taskInfo in $taskData) {
+    if ($taskInfo.InTuneOnly -and $intuneInstalled) { continue }
     $taskName = $taskInfo.TaskName
     $taskPath = $taskInfo.TaskPath
     $displayName = $taskInfo.DisplayName
