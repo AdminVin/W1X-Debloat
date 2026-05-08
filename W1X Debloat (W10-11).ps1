@@ -612,6 +612,7 @@ $services = @(
     "RetailDemo",						# Retail Demo
     "TapiSrv",                          # Telephony
     "Themes",							# Themes
+    "wuqisvc",                          # Usage and Quality Insights
     "wisvc",							# Windows Insider Service
     "icssvc",							# Windows Mobile Hotspot Service
     "DiagTrack",						# Windows Connected User Experiences and Telemetry (InTune related / Does not break sync)
