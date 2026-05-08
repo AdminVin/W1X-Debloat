@@ -6,6 +6,8 @@ $SV = "3.19"
     - Updated Start Menu to the modern wider design recently released by Microsoft.
         - Unable to maintain the original start menu, as the registry keys are no longer functional.
     - Enabled Num Lock on startup for current user and login screen.
+    - Updated the cleanup of scheduled tasks to DISABLE instead of REMOVE.
+        - Windows was recreating the tasks, defeating the purpose of the cleanup.
 2026-05-05 - v3.18
     - Added script counter for tracking total PC's optimized (https://counterapi.dev/).
     - Updated Edge service removal.
@@ -714,6 +716,7 @@ $taskData = @(
     @{ TaskName = "Microsoft Compatibility Appraiser"; TaskPath = "\Microsoft\Windows\Application Experience\"; DisplayName = "Microsoft Compatibility Appraiser Task" },
     @{ TaskName = "ProgramDataUpdater"; TaskPath = "\Microsoft\Windows\Application Experience\"; DisplayName = "Program Data Updater Task" },
     @{ TaskName = "AitAgent"; TaskPath = "\Microsoft\Windows\Application Experience\"; DisplayName = "Application Experience AIT Agent" },
+    @{ TaskName = "Microsoft Compatibility Appraiser Exp"; TaskPath = "\Microsoft\Windows\Application Experience\"; DisplayName = "Microsoft Compatibility Appraiser Exp Task" },
     @{ TaskName = "Consolidator"; TaskPath = "\Microsoft\Windows\Customer Experience Improvement Program\"; DisplayName = "Consolidator Task" },
     @{ TaskName = "KernelCeipTask"; TaskPath = "\Microsoft\Windows\Customer Experience Improvement Program\"; DisplayName = "Kernel CEIP Task" },
     @{ TaskName = "UsbCeip"; TaskPath = "\Microsoft\Windows\Customer Experience Improvement Program\"; DisplayName = "USB CEIP Task" },
@@ -733,8 +736,8 @@ foreach ($taskInfo in $taskData) {
     $displayName = $taskInfo.DisplayName
     try {
         if (Get-ScheduledTask -TaskName $taskName -TaskPath $taskPath -ErrorAction SilentlyContinue) {
-            Unregister-ScheduledTask -TaskName $taskName -TaskPath $taskPath -Confirm:$false -ErrorAction Stop | Out-Null
-            Write-Host " - Task: '$displayName' [REMOVED]" -ForegroundColor Green
+            Disable-ScheduledTask -TaskName $taskName -TaskPath $taskPath -ErrorAction Stop | Out-Null
+            Write-Host " - Task: '$displayName' [DISABLED]" -ForegroundColor Green
             $removedCount++
         }
     } catch {
