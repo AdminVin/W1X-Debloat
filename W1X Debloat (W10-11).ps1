@@ -1,7 +1,10 @@
-$SV = "3.18"
+$SV = "3.19"
 <#############################################################################################################################>
 <# 
 [>] Change Log
+2026-05-07 - v3.19
+    - Updated Start Menu to display all pinned apps, and app list below.
+    - Enabled Num Lock on startup for current user and login screen.
 2026-05-05 - v3.18
     - Added script counter for tracking total PC's optimized (https://counterapi.dev/).
     - Updated Edge service removal.
@@ -9,7 +12,7 @@ $SV = "3.18"
     - Updated Windows Suggestions/Tips/Welcome Experience removal with descriptions.
     - Updated Windows 'Getting to Know You' disabling process.
     - Updated Windows Cleanup to disable Windows space reservation.
-    - Added performance optimizations: MMCSS SystemResponsiveness, Win32PrioritySeparation, HAGS, DisablePagingExecutive, Game Mode.
+    - Added performance optimizations: MMCSS SystemResponsiveness, HAGS, DisablePagingExecutive, Game Mode.
     - Disabled CoPilot Recall automatic screenshots.
 2026-04-10 - v3.17
     - Updated 'Cleanup' section, added additional temp/cache directories.
@@ -958,7 +961,7 @@ Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -N
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowCloudFilesInQuickAccess" -Value 0 -Type DWord
 Write-Host "Explorer: Windows Explorer Recommendations [DISABLED]" -ForegroundColor Green
 
-<# [>] 2025/11/3 - Note: Windows 25H2 still tracks recent files with this off; no performance gain.
+<# [>] 2025/11/03 - Note: Windows 25H2 still tracks recent files with this off; no performance gain.
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Value 1 -Type DWord
 Write-Host "Explorer: 'Recent Files' in Quick Access [DISABLED]" -ForegroundColor Yellow
 
@@ -1048,22 +1051,9 @@ Write-Host "Explorer: Folder Content Detection [DISABLED]" -ForegroundColor Gree
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarEndTaskEnabled" -Value 1 -Type DWord
 Write-Host "Explorer: Taskbar - Right Click 'End Task' [ENABLED]" -ForegroundColor Green
 
-# Source: https://www.elevenforum.com/t/new-start-menu-rollout-timeline.42558/
-Set-Registry -Path "HKLM:\SYSTEM\ControlSet001\Control\FeatureManagement\Overrides\14" -Remove Path
-
-# Scheduled Task to Set on Boot
-# Cleanup Old Task
-Unregister-ScheduledTask -TaskName FixStartMenuFeatureOverride -Confirm:$false
-# Set Task
-$action = New-ScheduledTaskAction -Execute powershell.exe -Argument "-NoProfile -WindowStyle Hidden -Command `"Remove-Item 'HKLM:\SYSTEM\ControlSet001\Control\FeatureManagement\Overrides\14' -Recurse -Force -ErrorAction SilentlyContinue`""
-$trigger = New-ScheduledTaskTrigger -AtStartup
-$principal = New-ScheduledTaskPrincipal -UserId SYSTEM -RunLevel Highest
-Register-ScheduledTask -TaskName "W1XDebloat_FixStartMenuOverride" -Action $action -Trigger $trigger -Principal $principal -Force | Out-Null
-Write-Host "Explorer: Reverting to Classic Windows 11 Start Menu [UPDATED]" -ForegroundColor Green
-
 Set-Registry -Path 'HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell' -Name 'LogicalViewMode' -Value 1 -Type DWord
 Set-Registry -Path 'HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell' -Name 'Mode' -Value 4 -Type DWord
-Write-Host "Explorer: Default Folder View - Details [UPDATED]" -ForegroundColor Green
+Write-Host "Explorer: Folder View Default (Details) [UPDATED]" -ForegroundColor Green
 <###################################### EXPLORER TWEAKS (End) ######################################>
 
 
@@ -1127,9 +1117,17 @@ $Shortcut.Save()
 [System.Runtime.Interopservices.Marshal]::ReleaseComObject($WshShell) | Out-Null
 Write-Host "Start Menu: 'Devices & Printers (Add Network)' [ADDED]" -ForegroundColor Green
 
-# Source: https://www.reddit.com/r/Windows11/comments/1qbnfwj/seriously_how_do_i_hide_this_thing_from_my_start/
-Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoStartMenuMorePrograms" -Value 1 -Type DWord
-Write-Host "Start Menu: App Categories [REMOVED]" -ForegroundColor Green
+Unregister-ScheduledTask -TaskName "W1XDebloat_FixStartMenuOverride" -Confirm:$false -ErrorAction SilentlyContinue
+$featureIds = @(156965516, 3036241548, 1853569164, 2792562829, 762256525, 734731404)
+foreach ($id in $featureIds) {
+    Set-Registry -Path "HKLM:\SYSTEM\ControlSet001\Control\FeatureManagement\Overrides\14\$id" -Name "EnabledState" -Value 2 -Type DWord
+    Set-Registry -Path "HKLM:\SYSTEM\ControlSet001\Control\FeatureManagement\Overrides\14\$id" -Name "EnabledStateOptions" -Value 0 -Type DWord
+}
+Write-Host "Start Menu: Feature Overrides [UPDATED]" -ForegroundColor Green
+
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoStartMenuMorePrograms" -Remove Value
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Start" -Name "AllAppsViewMode" -Value 2 -Type DWord
+Write-Host "Start Menu: Apps View (List) [UPDATED]" -ForegroundColor Green
 <###################################### START MENU TWEAKS (End) ######################################>
 
 
@@ -1383,6 +1381,10 @@ Write-Host "Windows: 'Startup' option restored in Settings > Apps  [RESTORED]" -
 
 Set-Registry -Path "HKCU:\Control Panel\International" -Name "sShortDate" -Value "M/d/yy" -Type String
 Write-Host "Windows: System Tray time set to MM/DD/YY [UPDATED]" -ForegroundColor Green
+
+Set-Registry -Path 'HKCU:\Control Panel\Keyboard' -Name 'InitialKeyboardIndicators' -Value '2' -Type String
+Set-Registry -Path 'HKU:\.DEFAULT\Control Panel\Keyboard' -Name 'InitialKeyboardIndicators' -Value '2' -Type String
+Write-Host "Windows: NumLock on Startup [ENABLED]" -ForegroundColor Green
 <###################################### WINDOWS TWEAKS (End) ######################################>
 
 
