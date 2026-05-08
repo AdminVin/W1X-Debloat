@@ -3,7 +3,8 @@ $SV = "3.19"
 <# 
 [>] Change Log
 2026-05-07 - v3.19
-    - Updated Start Menu to display all pinned apps, and app list below.
+    - Updated Start Menu to the modern wider design recently released by Microsoft.
+        - Unable to maintain the original start menu, as the registry keys are no longer functional.
     - Enabled Num Lock on startup for current user and login screen.
 2026-05-05 - v3.18
     - Added script counter for tracking total PC's optimized (https://counterapi.dev/).
@@ -21,7 +22,7 @@ $SV = "3.19"
 2026-03-04 - v3.15
     - Adjusted TCP Tuning for better throughput.
 2026-02-20 - v3.14
-    - Removed PowerShell 7 installer, not needed.
+    - Removed PowerShell 7 from installing if not detected (no longer needed).
 2026-02-11 - v3.13
     - Added blocking of telementry for OneDrive and Windows Feedback.
     - Disabled adding IEtoEdge Addon for Internet Explorer.
@@ -58,7 +59,7 @@ $SV = "3.19"
     - Updated Hyper-V tweak, skipping if Docker is installed.
     - Updated OneDrive detection and cleaned up output.
 2025-07-07 - v3.02
-    - Added PowerShell 7 Updater
+    - Added PowerShell 7 Updater.
     - Removed 'Ask Co-Pilot' from Right Click Context Menu.
 2025-06-20 - v3.01
     - Fixed progress bar bug (being stuck on screen, post operation).
@@ -73,7 +74,9 @@ $SV = "3.19"
     - Updated Scheduled Tasks & Services method.
        - Removed Windows Media Player Sharing service.
     - Updated network tweaks: NetDMA; enabled RSS/DCA; set CTCP for optimized throughput and reduced latency.
-2022-07-01 - v1.00
+2023-06-01 - v2.0
+    - PowerShell Studio compiled versions.
+2022-07-01 - v1.0
     - Initial creation of script.
 #>
 
