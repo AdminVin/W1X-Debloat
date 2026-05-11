@@ -1,7 +1,9 @@
-$SV = "3.19"
+$SV = "3.20"
 <#############################################################################################################################>
 <# 
 [>] Change Log
+2026-05-10 - v3.20
+    - Updated Hyper-V/Docker tweaks to re-enable if any componet is either installed.
 2026-05-07 - v3.19
     - Updated Start Menu to the modern wider design recently released by Microsoft.
         - Unable to maintain the original start menu, as the registry keys are no longer functional.
@@ -1343,16 +1345,46 @@ Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersio
 Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run" -Name "SecurityHealth"
 Write-Host "Windows: Security System Tray Icon [HIDDEN]" -ForegroundColor Green
 
-$VMsRunning = Get-VM | Where-Object { $_.State -eq 'Running' }
+$VMsRunning = $null
+try { $VMsRunning = Get-VM -ErrorAction SilentlyContinue | Where-Object { $_.State -eq 'Running' } } catch {}
 if ($VMsRunning -or (Test-Path "C:\Program Files\Docker\")) {
-    Write-Host "Windows: Hyper-V [Skipped]" -ForegroundColor Yellow
+    $hvAll     = (Get-WindowsOptionalFeature -Online -FeatureName "Microsoft-Hyper-V-All"  -ErrorAction SilentlyContinue).State
+    $hvPlat    = (Get-WindowsOptionalFeature -Online -FeatureName "HypervisorPlatform"      -ErrorAction SilentlyContinue).State
+    $vmPlat    = (Get-WindowsOptionalFeature -Online -FeatureName "VirtualMachinePlatform"  -ErrorAction SilentlyContinue).State
+    $bcdLine   = (bcdedit /enum '{current}' 2>$null) | Where-Object { $_ -match 'hypervisorlaunchtype' }
+    $bcdIsOff  = $bcdLine -match 'off'
+    $toEnable = @()
+    if ($hvAll  -ne "Enabled") { $toEnable += "Microsoft-Hyper-V-All" }
+    if ($hvPlat -ne "Enabled") { $toEnable += "HypervisorPlatform" }
+    if ($vmPlat -ne "Enabled") { $toEnable += "VirtualMachinePlatform" }
+
+    if ($toEnable.Count -eq 0 -and -not $bcdIsOff) {
+        Write-Host "Windows: Hyper-V [ENABLED/SKIPPED]" -ForegroundColor Yellow
+    } else {
+        foreach ($feature in $toEnable) {
+            Enable-WindowsOptionalFeature -Online -FeatureName $feature -NoRestart | Out-Null
+        }
+        if ($bcdIsOff) { bcdedit /set hypervisorlaunchtype auto }
+        Write-Host "Windows: Hyper-V/Docker [ENABLED]" -ForegroundColor Green
+    }
 } else {
-    Set-Registry -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" -Name "Enabled" -Value 0 -Type DWord
-    Disable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All -NoRestart | Out-Null
-    Disable-WindowsOptionalFeature -Online -FeatureName "HypervisorPlatform" -NoRestart | Out-Null
-    Disable-WindowsOptionalFeature -Online -FeatureName "VirtualMachinePlatform" -NoRestart | Out-Null
-    bcdedit /set hypervisorlaunchtype off
-    Write-Host "Windows: Hyper-V [DISABLED]" -ForegroundColor Green
+    $hvAll    = (Get-WindowsOptionalFeature -Online -FeatureName "Microsoft-Hyper-V-All"  -ErrorAction SilentlyContinue).State
+    $hvPlat   = (Get-WindowsOptionalFeature -Online -FeatureName "HypervisorPlatform"      -ErrorAction SilentlyContinue).State
+    $vmPlat   = (Get-WindowsOptionalFeature -Online -FeatureName "VirtualMachinePlatform"  -ErrorAction SilentlyContinue).State
+    $bcdLine  = (bcdedit /enum '{current}' 2>$null) | Where-Object { $_ -match 'hypervisorlaunchtype' }
+    $bcdIsOff = $bcdLine -match 'off'
+
+    $allDisabled = ($hvAll -eq "Disabled") -and ($hvPlat -eq "Disabled") -and ($vmPlat -eq "Disabled") -and $bcdIsOff
+    if ($allDisabled) {
+        Write-Host "Windows: Hyper-V/Docker [DISABLED/SKIPPED]" -ForegroundColor Yellow
+    } else {
+        Set-Registry -Path "HKLM:\SYSTEM\CurrentControlSet\Control\DeviceGuard\Scenarios\HypervisorEnforcedCodeIntegrity" -Name "Enabled" -Value 0 -Type DWord
+        if ($hvAll  -ne "Disabled") { Disable-WindowsOptionalFeature -Online -FeatureName "Microsoft-Hyper-V-All"  -NoRestart | Out-Null }
+        if ($hvPlat -ne "Disabled") { Disable-WindowsOptionalFeature -Online -FeatureName "HypervisorPlatform"      -NoRestart | Out-Null }
+        if ($vmPlat -ne "Disabled") { Disable-WindowsOptionalFeature -Online -FeatureName "VirtualMachinePlatform"  -NoRestart | Out-Null }
+        if (-not $bcdIsOff)         { bcdedit /set hypervisorlaunchtype off }
+        Write-Host "Windows: Hyper-V/Docker [DISABLED]" -ForegroundColor Green
+    }
 }
 
 # Source: https://www.elevenforum.com/t/restore-missing-startup-apps-page-in-settings-in-windows-11.30997/
