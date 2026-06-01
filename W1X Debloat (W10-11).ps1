@@ -1,7 +1,11 @@
-$SV = "3.20"
+$SV = "3.21"
 <#############################################################################################################################>
-<# 
+<#
 [>] Change Log
+2026-06-01 - v3.21
+    - Fixed script abort risk: moved $ErrorActionPreference before counter API call.
+    - Fixed SSD detection null-deref when PhysicalDisk lookup returns no match on NVMe/OEM hardware.
+    - Added Set-CopilotToContextMenu: remaps Copilot key (F23) to Context Menu key via Scancode Map.
 2026-05-10 - v3.20
     - Updated Hyper-V/Docker tweaks to re-enable if any componet is either installed.
 2026-05-07 - v3.19
@@ -87,14 +91,14 @@ $SV = "3.20"
 
 <#############################################################################################################################>
 #region 0.0 - Script Settings
+## Variables
+$ErrorActionPreference = "SilentlyContinue"
+$ProgressPreference = "SilentlyContinue"            # Disable Progress Bars
 ## Counter
 #> Add
 Start-Job { Invoke-RestMethod -Uri "https://api.counterapi.dev/v2/vincent-s-team-4021/w1x-debloat/up" -Headers @{ Authorization = "Bearer ut_rGGnbETldmrgxugUWf4E4UxxPoMDqan51QMNBcVa" } -ErrorAction SilentlyContinue } | Out-Null
 #> Pull Total
 $ComputersHelped = (Invoke-RestMethod -Uri "https://api.counterapi.dev/v2/vincent-s-team-4021/w1x-debloat" -Headers @{ Authorization = "Bearer ut_rGGnbETldmrgxugUWf4E4UxxPoMDqan51QMNBcVa" } -ErrorAction SilentlyContinue).data.up_count
-## Variables
-$ErrorActionPreference = "SilentlyContinue"
-$ProgressPreference = "SilentlyContinue"            # Disable Progress Bars
 ## Functions
 function Set-Registry {
     param (
@@ -157,6 +161,56 @@ function Test-OneDriveSyncing {
     catch {
         return $false
     }
+}
+
+function Set-CopilotToContextMenu {
+    $manufacturer = (Get-CimInstance -ClassName Win32_ComputerSystem -ErrorAction SilentlyContinue).Manufacturer
+
+    if    ($manufacturer -like "*HP*")     { $scancode = [byte[]](0x5D, 0xE0, 0x6E, 0x00) }  # F23 -> Context Menu
+    elseif($manufacturer -like "*Dell*")   { $scancode = [byte[]](0x5D, 0xE0, 0x6E, 0x00) }  # F23 -> Context Menu
+    elseif($manufacturer -like "*Lenovo*") { $scancode = [byte[]](0x5D, 0xE0, 0x6E, 0x00) }  # F23 -> Context Menu
+    else {
+        #Write-Host "Copilot key remap [SKIPPED] — unsupported manufacturer: $manufacturer" -ForegroundColor Yellow
+        return
+    }
+
+    $path = "HKLM:\SYSTEM\CurrentControlSet\Control\Keyboard Layout"
+
+    # Check if F23 (0x6E) is already mapped — skip to avoid overwriting an existing remap
+    $existingMap = (Get-ItemProperty -Path $path -ErrorAction SilentlyContinue).'Scancode Map'
+    if ($existingMap -and $existingMap.Count -ge 12) {
+        $realEntryCount = [BitConverter]::ToInt32($existingMap, 8) - 1
+        for ($i = 0; $i -lt $realEntryCount; $i++) {
+            $offset = 12 + ($i * 4)
+            if ($existingMap[$offset + 2] -eq 0x6E -and $existingMap[$offset + 3] -eq 0x00) {
+                #Write-Host "Copilot key remap [SKIPPED] — F23 already mapped." -ForegroundColor Yellow
+                return
+            }
+        }
+
+        $totalCount = $realEntryCount + 1 + 1
+        $blob       = [System.Collections.Generic.List[byte]]::new()
+        $blob.AddRange([byte[]](0x00,0x00,0x00,0x00, 0x00,0x00,0x00,0x00))
+        $blob.AddRange([BitConverter]::GetBytes([int32]$totalCount))
+        for ($i = 0; $i -lt $realEntryCount; $i++) {
+            $offset = 12 + ($i * 4)
+            $blob.AddRange($existingMap[$offset..($offset + 3)])
+        }
+        $blob.AddRange($scancode)
+        $blob.AddRange([byte[]](0x00,0x00,0x00,0x00))
+        $bytes = $blob.ToArray()
+    } else {
+        $bytes = [byte[]](
+            0x00,0x00,0x00,0x00,
+            0x00,0x00,0x00,0x00,
+            0x02,0x00,0x00,0x00
+        ) + $scancode + [byte[]](0x00,0x00,0x00,0x00)
+    }
+
+    if (-not (Test-Path $path)) { New-Item -Path $path -Force | Out-Null }
+
+    New-ItemProperty -Path $path -Name "Scancode Map" -PropertyType Binary -Value $bytes -Force | Out-Null
+    #Write-Host "Copilot key -> Context Menu remap [APPLIED] — reboot required." -ForegroundColor Green
 }
 
 
@@ -643,7 +697,7 @@ foreach ($service in $services) {
 }
 #> Disable - Superfetch/Prefetch Disable (if running SSD)
 $disk = Get-PhysicalDisk | Where-Object { $_.DeviceID -eq (Get-Disk -Number (Get-Partition -DriveLetter C).DiskNumber).Number }
-if ($disk.MediaType -eq 'SSD') {
+if ($disk -and $disk.MediaType -eq 'SSD') {
     Stop-Service -Name SysMain -Force
     Set-Service -Name SysMain -StartupType Disabled
     Write-Host " - Service: Superfetch/Prefetch [DISABLED]" -ForegroundColor Green
@@ -1401,6 +1455,9 @@ Write-Host "Windows: System Tray time set to MM/DD/YY [UPDATED]" -ForegroundColo
 Set-Registry -Path 'HKCU:\Control Panel\Keyboard' -Name 'InitialKeyboardIndicators' -Value '2' -Type String
 Set-Registry -Path 'HKU:\.DEFAULT\Control Panel\Keyboard' -Name 'InitialKeyboardIndicators' -Value '2' -Type String
 Write-Host "Windows: NumLock on Startup [ENABLED]" -ForegroundColor Green
+
+Set-CopilotToContextMenu
+Write-Host "Windows: Co-Pilot [F23] remapped to Context Menu [UPDATED]"
 <###################################### WINDOWS TWEAKS (End) ######################################>
 
 
@@ -1591,7 +1648,9 @@ Write-Host "8.2 System Files" -ForegroundColor Green
                 cmd.exe /c rd /s /q "C:\Windows\SoftwareDistribution.old"
             }   
             Rename-Item -Path "C:\Windows\SoftwareDistribution" -NewName "SoftwareDistribution.old"
-            cmd.exe /c rd /s /q "C:\Windows\SoftwareDistribution.old"
+            if (Test-Path "C:\Windows\SoftwareDistribution.old") {
+                cmd.exe /c rd /s /q "C:\Windows\SoftwareDistribution.old"
+            }
 
             # CBS (logs from Windows Update and DISM)
             Remove-ItemRecursively -Path "C:\Windows\Logs\CBS\*"
