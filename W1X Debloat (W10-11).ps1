@@ -6,6 +6,7 @@ $SV = "3.21"
     - Fixed script abort risk: moved $ErrorActionPreference before counter API call.
     - Fixed SSD detection null-deref when PhysicalDisk lookup returns no match on NVMe/OEM hardware.
     - Added Set-CopilotToContextMenu: remaps Copilot key (F23) to Context Menu key via Scancode Map.
+    - Disabled NTFS Last Access Timestamp updates to reduce unnecessary disk writes.
 2026-05-10 - v3.20
     - Updated Hyper-V/Docker tweaks to re-enable if any componet is either installed.
 2026-05-07 - v3.19
@@ -1094,6 +1095,15 @@ Write-Host "Explorer: Taskbar - Right Click 'End Task' [ENABLED]" -ForegroundCol
 Set-Registry -Path 'HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell' -Name 'LogicalViewMode' -Value 1 -Type DWord
 Set-Registry -Path 'HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell' -Name 'Mode' -Value 4 -Type DWord
 Write-Host "Explorer: Folder View Default (Details) [UPDATED]" -ForegroundColor Green
+
+<# In Windows 10/11, the value uses bit flags where bit 0 controls disable/enable and bit 1 determines if it's system or user managed. To disable last access updates, I need to set NtfsDisableLastAccessUpdate to 1 as a REG_DWORD in that FileSystem registry path, which is the registry equivalent of the fsutil command.
+0 = Last access updates enabled (default on some systems)
+1 = Last access updates disabled (user-managed)
+2 = Last access updates enabled (system-managed)
+3 = Last access updates disabled (system-managed)
+#>
+Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name 'NtfsDisableLastAccessUpdate' -Value 1 -Type DWord
+Write-Host "Explorer: NTFS Last Access Timestamp [DISABLED]" -ForegroundColor Green
 <###################################### EXPLORER TWEAKS (End) ######################################>
 
 
