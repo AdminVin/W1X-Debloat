@@ -1,7 +1,10 @@
-$SV = "3.21"
+$SV = "3.22"
 <#############################################################################################################################>
 <#
 [>] Change Log
+2026-06-08 - v3.22
+    - Disabled OneDrive removal &disable if not in use.
+        - Current detection method is out of date, and no longer viable.
 2026-06-01 - v3.21
     - Fixed script abort risk: moved $ErrorActionPreference before counter API call.
     - Fixed SSD detection null-deref when PhysicalDisk lookup returns no match on NVMe/OEM hardware.
@@ -456,6 +459,7 @@ Write-Host "Microsoft Edge - Tracking [DISABLED]" -ForegroundColor Green
 Get-CimInstance -Query "SELECT * FROM Win32_Product WHERE Name LIKE '%Microsoft Search in Bing%'" | ForEach-Object { Invoke-CimMethod -InputObject $_ -MethodName "Uninstall" | Out-Null }
 Write-Host "Microsoft Edge - Bloat Search Addon [REMOVED]" -ForegroundColor Green
 # 3.2.2 OneDrive
+<# 2026-06-08 - Disabling Removal/Disable, current detection is not reliable.
 Write-Host "3.2.2 One Drive" -ForegroundColor Green
 if (Test-OneDriveSyncing) {
     # DisableFileSync (Enable)
@@ -526,6 +530,7 @@ if (Test-OneDriveSyncing) {
         Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Type DWord -Value 1  
 		Write-Host "3.2.2 Microsoft One Drive [Removed]" -ForegroundColor Yellow
 }
+#>
 ## 3.2.3 Internet Explorer
 Write-Host "3.2.3 Internet Explorer" -ForegroundColor Green
 #-> Add-Ons
