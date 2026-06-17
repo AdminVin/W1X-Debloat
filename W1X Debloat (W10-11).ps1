@@ -1101,6 +1101,18 @@ Set-Registry -Path 'HKCU:\Software\Classes\Local Settings\Software\Microsoft\Win
 Set-Registry -Path 'HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell' -Name 'Mode' -Value 4 -Type DWord
 Write-Host "Explorer: Folder View Default (Details) [UPDATED]" -ForegroundColor Green
 
+Set-Registry -Path 'HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags\AllFolders\Shell' -Name 'GroupView' -Value 0 -Type DWord
+# Also stamp existing per-folder bags (e.g. Downloads) which override the AllFolders default
+Get-ChildItem 'HKCU:\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\Bags' -ErrorAction SilentlyContinue |
+    Where-Object { $_.PSChildName -match '^\d+$' } |
+    ForEach-Object {
+        $shellPath = "$($_.PSPath)\Shell"
+        if (Test-Path $shellPath) {
+            Set-ItemProperty -Path $shellPath -Name 'GroupView' -Value 0 -Type DWord -Force -ErrorAction SilentlyContinue
+        }
+    }
+Write-Host "Explorer: Folder Grouping [DISABLED]" -ForegroundColor Green
+
 <# In Windows 10/11, the value uses bit flags where bit 0 controls disable/enable and bit 1 determines if it's system or user managed. To disable last access updates, I need to set NtfsDisableLastAccessUpdate to 1 as a REG_DWORD in that FileSystem registry path, which is the registry equivalent of the fsutil command.
 0 = Last access updates enabled (default on some systems)
 1 = Last access updates disabled (user-managed)
