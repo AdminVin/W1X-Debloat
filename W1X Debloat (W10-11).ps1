@@ -1,7 +1,11 @@
-$SV = "3.22"
+$SV = "3.23"
 <#############################################################################################################################>
 <#
 [>] Change Log
+2026-06-20 - v3.23
+    - Disabled mandatory SMB client signing requirement (LanmanWorkstation\RequireSecuritySignature).
+        - Windows 11 24H2+ made SMB signing mandatory for ALL outbound connections by default (previously only required for domain controllers).
+        - Breaks anonymous/guest SMB shares (e.g. Samba "guest ok" shares) since guest sessions can't satisfy mandatory signing.
 2026-06-08 - v3.22
     - Disabled OneDrive removal &disable if not in use.
         - Current detection method is out of date, and no longer viable.
@@ -1230,6 +1234,11 @@ Write-Host "Network: NetDMA [DISABLED]" -ForegroundColor Green
 
 netsh int tcp set supplemental template=internet congestionprovider=ctcp
 Write-Host "Network: TCP Congestion Provider set to Compound TCP (CTCP)" -ForegroundColor Green
+
+# Windows 11 24H2+ made SMB signing mandatory for all outbound connections by default (previously only required for domain controllers).
+# This breaks anonymous/guest SMB shares (e.g. Samba "guest ok" shares), since guest sessions can't satisfy mandatory signing.
+Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters' -Name 'RequireSecuritySignature' -Value 0 -Type DWord
+Write-Host "Network: SMB Client - Mandatory Signing Requirement [DISABLED]" -ForegroundColor Green
 <###################################### NETWORK TWEAKS (End) ######################################>
 
 
