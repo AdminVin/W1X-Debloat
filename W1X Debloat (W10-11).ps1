@@ -1,7 +1,9 @@
-$SV = "3.23"
+$SV = "3.24"
 <#############################################################################################################################>
 <#
 [>] Change Log
+2026-06-30 - v3.24
+    - Re-enabled OneDrive removal/disable, now detected by checking if %USERPROFILE%\OneDrive has any content (empty/missing = not in use).
 2026-06-20 - v3.23
     - Disabled mandatory SMB client signing requirement (LanmanWorkstation\RequireSecuritySignature).
         - Windows 11 24H2+ made SMB signing mandatory for ALL outbound connections by default (previously only required for domain controllers).
@@ -159,16 +161,17 @@ function Remove-ItemRecursively {
 }
  
 function Test-OneDriveSyncing {
-    try {
-        Get-ItemPropertyValue `
-            -Path "HKCU:\Software\Microsoft\OneDrive" `
-            -Name "ClientEverSignedIn" `
-            -ErrorAction Stop | Out-Null
-        return $true
-    }
-    catch {
+    $oneDrivePath = Join-Path $env:USERPROFILE "OneDrive"
+
+    if (-not (Test-Path -Path $oneDrivePath)) {
         return $false
     }
+
+    # No -Force here on purpose: an unused OneDrive folder can still contain
+    # a hidden/system desktop.ini (folder icon metadata), which shouldn't
+    # count as "in use". Only visible synced content counts.
+    $hasContent = Get-ChildItem -Path $oneDrivePath -ErrorAction SilentlyContinue | Select-Object -First 1
+    return [bool]$hasContent
 }
 
 function Set-CopilotToContextMenu {
@@ -463,7 +466,6 @@ Write-Host "Microsoft Edge - Tracking [DISABLED]" -ForegroundColor Green
 Get-CimInstance -Query "SELECT * FROM Win32_Product WHERE Name LIKE '%Microsoft Search in Bing%'" | ForEach-Object { Invoke-CimMethod -InputObject $_ -MethodName "Uninstall" | Out-Null }
 Write-Host "Microsoft Edge - Bloat Search Addon [REMOVED]" -ForegroundColor Green
 # 3.2.2 OneDrive
-<# 2026-06-08 - Disabling Removal/Disable, current detection is not reliable.
 Write-Host "3.2.2 One Drive" -ForegroundColor Green
 if (Test-OneDriveSyncing) {
     # DisableFileSync (Enable)
@@ -534,7 +536,6 @@ if (Test-OneDriveSyncing) {
         Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Type DWord -Value 1  
 		Write-Host "3.2.2 Microsoft One Drive [Removed]" -ForegroundColor Yellow
 }
-#>
 ## 3.2.3 Internet Explorer
 Write-Host "3.2.3 Internet Explorer" -ForegroundColor Green
 #-> Add-Ons
