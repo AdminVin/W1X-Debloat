@@ -1503,7 +1503,7 @@ Set-Registry -Path 'HKU:\.DEFAULT\Control Panel\Keyboard' -Name 'InitialKeyboard
 Write-Host "Windows: NumLock on Startup [ENABLED]" -ForegroundColor Green
 
 Set-CopilotToContextMenu
-Write-Host "Windows: Co-Pilot [F23] remapped to Context Menu [UPDATED]"
+Write-Host "Windows: Co-Pilot [F23] remapped to Context Menu [UPDATED]" -ForegroundColor Green
 <###################################### WINDOWS TWEAKS (End) ######################################>
 
 
