@@ -161,17 +161,26 @@ function Remove-ItemRecursively {
 }
  
 function Test-OneDriveSyncing {
-    $oneDrivePath = Join-Path $env:USERPROFILE "OneDrive"
+    $userProfile = $env:USERPROFILE
 
-    if (-not (Test-Path -Path $oneDrivePath)) {
+    # OneDrive can create multiple folders: "OneDrive", "OneDrive - Contoso", etc.
+    $oneDriveFolders = Get-ChildItem -Path $userProfile -Directory -Filter "OneDrive*" -ErrorAction SilentlyContinue
+
+    if (-not $oneDriveFolders) {
         return $false
     }
 
-    # No -Force here on purpose: an unused OneDrive folder can still contain
-    # a hidden/system desktop.ini (folder icon metadata), which shouldn't
-    # count as "in use". Only visible synced content counts.
-    $hasContent = Get-ChildItem -Path $oneDrivePath -ErrorAction SilentlyContinue | Select-Object -First 1
-    return [bool]$hasContent
+    foreach ($folder in $oneDriveFolders) {
+        # No -Force here on purpose: an unused OneDrive folder can still contain
+        # a hidden/system desktop.ini (folder icon metadata), which shouldn't
+        # count as "in use". Only visible synced content counts.
+        $hasContent = Get-ChildItem -Path $folder.FullName -ErrorAction SilentlyContinue | Select-Object -First 1
+        if ($hasContent) {
+            return $true
+        }
+    }
+
+    return $false
 }
 
 function Set-CopilotToContextMenu {
