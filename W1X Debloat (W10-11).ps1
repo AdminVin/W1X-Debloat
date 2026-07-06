@@ -481,6 +481,9 @@ if (Test-OneDriveSyncing) {
     Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Type DWord -Value 0
     # DisableFileSyncNGSC (Enable)
     Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Type DWord -Value 0  
+    # File Explorer - Navigation Bar
+    Set-Registry -Path 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name 'System.IsPinnedToNameSpaceTree' -Type DWord -Value 1
+    Set-Registry -Path 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name '(default)' -Type String -Value 'OneDrive'
     # Remove Telementry
     Get-ScheduledTask -TaskPath "\" | Where-Object {$_.TaskName -like "OneDrive Reporting Task*"} | Unregister-ScheduledTask -Confirm:$false
 	Write-Host "3.2.2 Microsoft One Drive Removal [Skipped]" -ForegroundColor Yellow
@@ -498,8 +501,8 @@ if (Test-OneDriveSyncing) {
         if (Test-Path $OneDriveSetup64) { Start-Process -FilePath $OneDriveSetup64 -WorkingDirectory "$Env:WinDir\SysWOW64" -ArgumentList "/uninstall" -Wait }
 		## Files Cleanup
 		# File Explorer - Navigation Bar
-        Set-Registry -Path 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name '(default)' -Type String -Value 'OneDrive'
         Set-Registry -Path 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name 'System.IsPinnedToNameSpaceTree' -Type DWord -Value 0
+        Set-Registry -Path 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name '(default)' -Type String -Value 'OneDrive'
 		# AppData / Local
         $LocalOneDrive = "$env:LOCALAPPDATA\OneDrive"
         if (Test-Path $LocalOneDrive) { Remove-Item -Path $LocalOneDrive -Recurse -Confirm:$false -Force }
