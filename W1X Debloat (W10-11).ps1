@@ -1,7 +1,9 @@
-$SV = "3.24"
+$SV = "3.25"
 <#############################################################################################################################>
 <#
 [>] Change Log
+2026-07-17 - v3.25
+    - Cleaned up output for script re-runs.
 2026-06-30 - v3.24
     - Re-enabled OneDrive removal/disable, now detected by checking if %USERPROFILE%\OneDrive has any content (empty/missing = not in use).
 2026-06-20 - v3.23
@@ -669,8 +671,8 @@ Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAc
 Write-Host "3.4.12 Microsoft Terminal - Autostart [DISABLED]" -ForegroundColor Green
 
 ## 3.4.13 Windows Feedback
-Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\Feedback\Siuf\" -TaskName "DmClient" -Confirm:$false
-Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\Feedback\Siuf\" -TaskName "DmClientOnScenarioDownload" -Confirm:$false
+Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\Feedback\Siuf\" -TaskName "DmClient" -Confirm:$false | Out-Null
+Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\Feedback\Siuf\" -TaskName "DmClientOnScenarioDownload" -Confirm:$false | Out-Null
 Write-Host "3.4.13 Microsoft Feedback - Telementry Tasks [DISABLED]" -ForegroundColor Green
 
 #endregion
@@ -1403,7 +1405,7 @@ if ($RamInKB -ge 16000000) {
     Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' -Name 'DisablePagingExecutive' -Value 1 -Type DWord
     Write-Host "Windows: Kernel Paging to Disk [DISABLED]" -ForegroundColor Green
 
-    Disable-MMAgent -MemoryCompression
+    Disable-MMAgent -MemoryCompression | Out-Null
     Write-Host "Windows: Memory Compression (RAM >= 16GB) [DISABLED]" -ForegroundColor Green
 } elseif ($RamInKB -ge 8000000) {
     Write-Host "Windows: Reduced Service Host Threshold (RAM < 16GB) [SKIPPED]" -ForegroundColor Yellow
@@ -1595,7 +1597,7 @@ Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Dat
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'MaxTelemetryAllowed' -Value 0 -Type DWord
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection' -Name 'AllowTelemetry' -Value 0 -Type DWord
 # Usage / Quality Insights
-Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\UsageAndQualityInsights\" -TaskName "UsageAndQualityInsights-MaintenanceTask" -Confirm:$false
+Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\UsageAndQualityInsights\" -TaskName "UsageAndQualityInsights-MaintenanceTask" -Confirm:$false | Out-Null
 Write-Host "Windows: Telementry [DISABLED]" -ForegroundColor Green
 
 # Firewall Block
