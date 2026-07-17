@@ -671,8 +671,8 @@ Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAc
 Write-Host "3.4.12 Microsoft Terminal - Autostart [DISABLED]" -ForegroundColor Green
 
 ## 3.4.13 Windows Feedback
-Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\Feedback\Siuf\" -TaskName "DmClient" -Confirm:$false | Out-Null
-Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\Feedback\Siuf\" -TaskName "DmClientOnScenarioDownload" -Confirm:$false | Out-Null
+Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\Feedback\Siuf\" -TaskName "DmClient" -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
+Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\Feedback\Siuf\" -TaskName "DmClientOnScenarioDownload" -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
 Write-Host "3.4.13 Microsoft Feedback - Telementry Tasks [DISABLED]" -ForegroundColor Green
 
 #endregion
@@ -1405,7 +1405,9 @@ if ($RamInKB -ge 16000000) {
     Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\Memory Management' -Name 'DisablePagingExecutive' -Value 1 -Type DWord
     Write-Host "Windows: Kernel Paging to Disk [DISABLED]" -ForegroundColor Green
 
-    Disable-MMAgent -MemoryCompression | Out-Null
+    if ((Get-MMAgent).MemoryCompression) {
+        Disable-MMAgent -MemoryCompression
+    }
     Write-Host "Windows: Memory Compression (RAM >= 16GB) [DISABLED]" -ForegroundColor Green
 } elseif ($RamInKB -ge 8000000) {
     Write-Host "Windows: Reduced Service Host Threshold (RAM < 16GB) [SKIPPED]" -ForegroundColor Yellow
@@ -1597,7 +1599,7 @@ Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\Dat
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\DataCollection' -Name 'MaxTelemetryAllowed' -Value 0 -Type DWord
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection' -Name 'AllowTelemetry' -Value 0 -Type DWord
 # Usage / Quality Insights
-Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\UsageAndQualityInsights\" -TaskName "UsageAndQualityInsights-MaintenanceTask" -Confirm:$false | Out-Null
+Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\UsageAndQualityInsights\" -TaskName "UsageAndQualityInsights-MaintenanceTask" -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
 Write-Host "Windows: Telementry [DISABLED]" -ForegroundColor Green
 
 # Firewall Block
