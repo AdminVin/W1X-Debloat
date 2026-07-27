@@ -2,6 +2,8 @@ $SV = "3.25"
 <#############################################################################################################################>
 <#
 [>] Change Log
+2026-07-27 - v3.26
+    - Added Google Chrome telementary disabling.
 2026-07-17 - v3.25
     - Cleaned up output for script re-runs.
 2026-06-30 - v3.24
@@ -674,6 +676,12 @@ Write-Host "3.4.12 Microsoft Terminal - Autostart [DISABLED]" -ForegroundColor G
 Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\Feedback\Siuf\" -TaskName "DmClient" -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
 Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\Feedback\Siuf\" -TaskName "DmClientOnScenarioDownload" -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
 Write-Host "3.4.13 Microsoft Feedback - Telementry Tasks [DISABLED]" -ForegroundColor Green
+
+## 3.4.14 Google Chrome
+# User Metrics and telementary
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Google\Chrome' -Name 'MetricsReportingEnabled' -Value 0 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Google\Chrome' -Name 'UrlKeyedAnonymizedDataCollectionEnabled' -Value 0 -Type DWord
+Write-Host "3.4.14 Google Chrome - Telementry [DISABLED]" -ForegroundColor Green
 
 #endregion
 
