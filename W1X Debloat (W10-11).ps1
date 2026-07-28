@@ -689,6 +689,7 @@ foreach ($firefoxRunPath in $firefoxRunPaths) {
             Remove-ItemProperty -Path $firefoxRunPath -Name $_.Name -Force -ErrorAction SilentlyContinue
         }
 }
+#> Tracking
 # Prevent the Firefox default-browser agent from collecting and submitting default-browser data.
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox' -Name 'DisableDefaultBrowserAgent' -Value 1 -Type DWord
 # Stop Firefox from checking whether it is the default browser.
@@ -715,7 +716,23 @@ Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox\EnableTrackingProtec
 # Partition third-party cookies and reject cookies from known trackers.
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox\Cookies' -Name 'Behavior' -Value 'reject-tracker-and-partition-foreign' -Type String
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox\Cookies' -Name 'Locked' -Value 0 -Type DWord
-Write-Host "Mozilla Firefox - Privacy [HARDENED]" -ForegroundColor Green
+# Disable in-content extension and feature recommendations.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox\UserMessaging' -Name 'ExtensionRecommendations' -Value 0 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox\UserMessaging' -Name 'FeatureRecommendations' -Value 0 -Type DWord
+# Disable Firefox-specific suggestions injected into the address bar.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox\UserMessaging' -Name 'UrlbarInterventions' -Value 0 -Type DWord
+# Skip first-run onboarding messages on the New Tab page.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox\UserMessaging' -Name 'SkipOnboarding' -Value 1 -Type DWord
+# Hide the "More from Mozilla" promotional section in Settings.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox\UserMessaging' -Name 'MoreFromMozilla' -Value 0 -Type DWord
+# Remove sponsored tiles and sponsored Pocket stories from the New Tab page.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox\FirefoxHome' -Name 'SponsoredTopSites' -Value 0 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox\FirefoxHome' -Name 'SponsoredPocket' -Value 0 -Type DWord
+# Disable Firefox Suggest web/sponsored suggestions and their usage telemetry in the address bar.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox\FirefoxSuggest' -Name 'WebSuggestions' -Value 0 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox\FirefoxSuggest' -Name 'SponsoredSuggestions' -Value 0 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox\FirefoxSuggest' -Name 'ImproveSuggest' -Value 0 -Type DWord
+Write-Host "Mozilla Firefox - Privacy [UPDATED]" -ForegroundColor Green
 
 ## 3.2 [11/11] Google Chrome
 Write-Host "3.2 [11/11] Google Chrome" -ForegroundColor Green
@@ -737,7 +754,13 @@ Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Google\Chrome' -Name 'NetworkPredict
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Google\Chrome' -Name 'AlternateErrorPagesEnabled' -Value 0 -Type DWord
 # Block third-party cookies by default while allowing the user to override the setting.
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Google\Chrome\Recommended' -Name 'BlockThirdPartyCookies' -Value 1 -Type DWord
-Write-Host "Google Chrome - Privacy [HARDENED]" -ForegroundColor Green
+# Use local spell checking instead of Google's online spell-check service.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Google\Chrome' -Name 'SpellcheckServiceEnabled' -Value 0 -Type DWord
+# Disable in-product promotional messages, tips, and notifications.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Google\Chrome' -Name 'PromotionsEnabled' -Value 0 -Type DWord
+# Disable site-suggested ads (Topics API-based ad targeting).
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Google\Chrome' -Name 'PrivacySandboxSiteEnabledAdsEnabled' -Value 0 -Type DWord
+Write-Host "Google Chrome - Privacy [UPDATED]" -ForegroundColor Green
 #endregion
 #endregion
 <#############################################################################################################################>
