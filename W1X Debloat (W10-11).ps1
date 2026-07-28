@@ -669,6 +669,23 @@ if (-not (Test-Path "C:\Windows\System32\Autoruns.exe")) {
 
 ## 3.2 [10/11] Mozilla Firefox
 Write-Host "3.2 [10/11] Mozilla Firefox" -ForegroundColor Green
+# Disable Autostart
+$firefoxRunPaths = @(
+    'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'
+    'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'
+    'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run'
+)
+foreach ($firefoxRunPath in $firefoxRunPaths) {
+    $firefoxRunProperties = Get-ItemProperty -Path $firefoxRunPath -ErrorAction SilentlyContinue
+    $firefoxRunProperties.PSObject.Properties |
+        Where-Object {
+            $_.Name -notlike 'PS*' -and
+            ($_.Name -match 'firefox' -or [string]$_.Value -match 'firefox')
+        } |
+        ForEach-Object {
+            Remove-ItemProperty -Path $firefoxRunPath -Name $_.Name -Force -ErrorAction SilentlyContinue
+        }
+}
 # Prevent the Firefox default-browser agent from collecting and submitting default-browser data.
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox' -Name 'DisableDefaultBrowserAgent' -Value 1 -Type DWord
 # Stop Firefox from checking whether it is the default browser.
