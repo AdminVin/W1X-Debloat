@@ -1,9 +1,13 @@
-$SV = "3.25"
+$SV = "3.26"
 <#############################################################################################################################>
 <#
 [>] Change Log
-2026-07-27 - v3.26
-    - Added Google Chrome telementary disabling.
+2026-07-28 - v3.26
+    - Stopped Outlook (New) from being removed.
+    - Added Google Chrome: Disabled telemetry.
+    - Updated Mozilla: Disabled telemetry.
+    - Updated Microsoft Edge: Disabled auto start & updated disabling telemetry.
+    - Added Microsoft Office: Disabled telemetry.
 2026-07-17 - v3.25
     - Cleaned up output for script re-runs.
 2026-06-30 - v3.24
@@ -246,6 +250,7 @@ $Timer = [System.Diagnostics.Stopwatch]::StartNew()
 $FreeSpaceBefore = (Get-PSDrive -Name C).Free / 1GB
 Write-Host " - Disk Space Free (before): $("{0:N2} GB" -f $FreeSpaceBefore)" -ForegroundColor Yellow
 #endregion
+<#############################################################################################################################>
 
 
 <#############################################################################################################################>
@@ -255,6 +260,7 @@ Write-Host "`n`n2.0 Diagnostics" -ForegroundColor Green
 Set-Registry -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Policies\System" -Name "VerboseStatus" -Type Dword -Value "1"
 Write-Host "2.1 Verbose Status Messaging [Enabled]" -ForegroundColor Green
 #endregion
+<#############################################################################################################################>
 
 
 <#############################################################################################################################>
@@ -412,13 +418,6 @@ foreach ($App in $Apps) {
     }
 }
 
-# Outlook (only if Desktop version installed)
-if (Test-Path "C:\Program Files\Microsoft Office\root\Office16\OUTLOOK.EXE") {
-    Remove-AppxProvisionedPackage -Online -PackageName (Get-AppxPackage -AllUsers -Name "Microsoft.OutlookForWindows").PackageName -ErrorAction SilentlyContinue
-    Get-AppxPackage -AllUsers -Name "Microsoft.OutlookForWindows" | Remove-AppxPackage -ErrorAction SilentlyContinue
-    Write-Host " - Removed: Outlook (Metro)" -ForegroundColor Green
-}
-
 # REMOVAL - Microsoft Desktop App Installer
 #> Silently manages installation and updating of Windows apps, especially those distributed as MSIX or APPX packages.
 Add-AppxPackage -RegisterByFamilyName -MainPackage Microsoft.DesktopAppInstaller_8wekyb3d8bbwe | Out-Null
@@ -436,50 +435,93 @@ Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliv
 Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "OEMPreInstalledAppsEnabled" -Type DWord -Value "0"
 # Turn off Start menu suggestions (e.g. WhatsApp recommendations under "Recommended")
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_IrisRecommendations" -Type DWord -Value "0"
+# Disable Microsoft consumer experiences, including suggested apps and post-setup promotions.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent' -Name 'DisableWindowsConsumerFeatures' -Value 1 -Type DWord
+# Disable cloud-optimized content throughout supported Windows experiences.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent' -Name 'DisableCloudOptimizedContent' -Value 1 -Type DWord
+# Disable cloud content based on the user's Microsoft account state.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent' -Name 'DisableConsumerAccountStateContent' -Value 1 -Type DWord
+# Disable all Windows Spotlight content, suggestions, tips, and related network traffic.
+Set-Registry -Path 'HKCU:\SOFTWARE\Policies\Microsoft\Windows\CloudContent' -Name 'DisableWindowsSpotlightFeatures' -Value 1 -Type DWord
+
+# Diagnostics [DISABLED]
+Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appDiagnostics' -Name 'Value' -Value 'Deny' -Type String
+# Prevent Windows apps from reading diagnostic information about other apps.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppPrivacy' -Name 'LetAppsGetDiagnosticInfo' -Value 2 -Type DWord
+
+# Location Access [DISABLED]
+Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location' -Name 'Value' -Value 'Deny' -Type String
+Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}' -Name 'SensorPermissionState' -Value 1 -Type DWord
+Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\lfsvc\Service\Configuration' -Name 'EnableStatus' -Value 1 -Type DWord
 
 # Restore Progress Bars
-$ProgressPreference = "Continue"                    # Restore Progress Bars
+$ProgressPreference = "Continue"
 #endregion
 
 
 #region Windows 10/11 - Applications - Desktop
 Write-Host "3.2 Applications - Desktop" -ForegroundColor Green
-# 3.2.1 Edge
-Write-Host "3.2.1 Microsoft Edge" -ForegroundColor Green
-#> Services
-Get-Service "edgeupdate" | Stop-Service -ErrorAction SilentlyContinue
-Get-Service "edgeupdatem" | Stop-Service -ErrorAction SilentlyContinue
-Get-Service "edgeupdate" | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
-Get-Service "edgeupdatem" | Set-Service -StartupType Disabled -ErrorAction SilentlyContinue
-Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdate' -Remove Path
-Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\edgeupdatem' -Remove Path
-Write-Host "Microsoft Edge - Auto Update Services [DISABLED]" -ForegroundColor Green
-#> Scheduled Tasks
-Get-Scheduledtask "*edge*" | Disable-ScheduledTask | Out-Null
-Write-Host "Microsoft Edge - Auto Start - Scheduled Task [DISABLED]" -ForegroundColor Green
+
+# 3.2 [1/11] Microsoft Edge
+Write-Host "3.2 [1/11] Microsoft Edge" -ForegroundColor Green
 #> Auto Start
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'StartupBoostEnabled' -Value 0 -Type DWord
-$paths = @(
-  "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run",
-  "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
-)
-foreach ($path in $paths) {
-    Get-ItemProperty -Path $path |
-        Get-Member -MemberType NoteProperty |
-        Where-Object { $_.Name -like '*MicrosoftEdge*' } |
-        ForEach-Object {
-            Remove-ItemProperty -Path $path -Name $_.Name -Force
-        }
-}
-Write-Host "Microsoft Edge - Auto Start - Startup Entries [DISABLED]" -ForegroundColor Green
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'BackgroundModeEnabled' -Value 0 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'LaunchEdgeOnWindowsStartupEnabled' -Value 0 -Type DWord
+Write-Host "Microsoft Edge - Auto Start [DISABLED]" -ForegroundColor Green
 #> Tracking
+# Disable all required and optional Edge diagnostic data.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'DiagnosticData' -Value 0 -Type DWord
+# Prevent visited URLs and per-page usage from being included in optional diagnostic data.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'UrlDiagnosticDataEnabled' -Value 0 -Type DWord
+# Prevent browsing history, favorites, collections, and usage data from being sent for personalization.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'PersonalizationReportingEnabled' -Value 0 -Type DWord
+# Disable address bar web suggestions to avoid sending typed characters and visited URLs for suggestions.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'SearchSuggestEnabled' -Value 0 -Type DWord
+# Disable Edge feedback, surveys, and browser issue reports.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'UserFeedbackAllowed' -Value 0 -Type DWord
+# Enable Do Not Track requests to websites.
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'ConfigureDoNotTrack' -Value 1 -Type DWord
-Write-Host "Microsoft Edge - Tracking [DISABLED]" -ForegroundColor Green
+# Disable shopping/coupon price lookup features that fetch data from Microsoft services.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'EdgeShoppingAssistantEnabled' -Value 0 -Type DWord
+# Enforce strict tracking prevention while retaining per-site exceptions.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'TrackingPrevention' -Value 3 -Type DWord
+# Block third-party cookies by default while allowing the user to override the setting.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge\Recommended' -Name 'BlockThirdPartyCookies' -Value 1 -Type DWord
+# Disable DNS prefetching, preconnections, and page prerendering.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'NetworkPredictionOptions' -Value 2 -Type DWord
+# Prevent failed URLs from being sent to Microsoft for alternate page suggestions.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'AlternateErrorPagesEnabled' -Value 0 -Type DWord
+# Disable Microsoft cloud-based text prediction.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'TextPredictionEnabled' -Value 0 -Type DWord
+# Use local spell checking instead of the Microsoft Editor online service.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'MicrosoftEditorProofingEnabled' -Value 0 -Type DWord
+# Disable Microsoft visual image search.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'VisualSearchEnabled' -Value 0 -Type DWord
+# Disable Microsoft Bing trending suggestions in the address bar.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'AddressBarTrendingSuggestEnabled' -Value 0 -Type DWord
+# Disable customized backgrounds, suggestions, notifications, and Microsoft service tips.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'SpotlightExperiencesAndRecommendationsEnabled' -Value 0 -Type DWord
+# Disable Edge feature recommendations and browser assistance notifications.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'ShowRecommendationsEnabled' -Value 0 -Type DWord
+# Disable Copilot chat suggestions in the Edge address bar.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'CopilotAddressBarSuggestionsEnabled' -Value 0 -Type DWord
+Write-Host "Microsoft Edge - Privacy [HARDENED]" -ForegroundColor Green
 #> Addons
-Get-CimInstance -Query "SELECT * FROM Win32_Product WHERE Name LIKE '%Microsoft Search in Bing%'" | ForEach-Object { Invoke-CimMethod -InputObject $_ -MethodName "Uninstall" | Out-Null }
+$SearchInBingProducts = Get-ItemProperty -Path @(
+    'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\*'
+    'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*'
+) -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -like '*Microsoft Search in Bing*' }
+
+foreach ($SearchInBingProduct in $SearchInBingProducts) {
+    if ($SearchInBingProduct.PSChildName -match '^\{[0-9A-Fa-f-]{36}\}$') {
+        Start-Process -FilePath 'msiexec.exe' -ArgumentList '/x', $SearchInBingProduct.PSChildName, '/qn', '/norestart' -Wait
+    }
+}
 Write-Host "Microsoft Edge - Bloat Search Addon [REMOVED]" -ForegroundColor Green
-# 3.2.2 OneDrive
-Write-Host "3.2.2 One Drive" -ForegroundColor Green
+
+# 3.2 [2/11] OneDrive
+Write-Host "3.2 [2/11] Microsoft OneDrive" -ForegroundColor Green
 if (Test-OneDriveSyncing) {
     # DisableFileSync (Enable)
     Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Type DWord -Value 0
@@ -487,10 +529,9 @@ if (Test-OneDriveSyncing) {
     Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Type DWord -Value 0  
     # File Explorer - Navigation Bar
     Set-Registry -Path 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name 'System.IsPinnedToNameSpaceTree' -Type DWord -Value 1
-    Set-Registry -Path 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name '(default)' -Type String -Value 'OneDrive'
-    # Remove Telementry
+    # Remove Telemetry
     Get-ScheduledTask -TaskPath "\" | Where-Object {$_.TaskName -like "OneDrive Reporting Task*"} | Unregister-ScheduledTask -Confirm:$false
-	Write-Host "3.2.2 Microsoft One Drive Removal [Skipped]" -ForegroundColor Yellow
+	Write-Host "Microsoft OneDrive Removal [SKIPPED]" -ForegroundColor Yellow
 } else {
     	## Close OneDrive (if running in background)
 		Stop-Process -Name "OneDrive" -Force
@@ -506,8 +547,7 @@ if (Test-OneDriveSyncing) {
 		## Files Cleanup
 		# File Explorer - Navigation Bar
         Set-Registry -Path 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name 'System.IsPinnedToNameSpaceTree' -Type DWord -Value 0
-        Set-Registry -Path 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name '(default)' -Type String -Value 'OneDrive'
-		# AppData / Local
+    		# AppData / Local
         $LocalOneDrive = "$env:LOCALAPPDATA\OneDrive"
         if (Test-Path $LocalOneDrive) { Remove-Item -Path $LocalOneDrive -Recurse -Confirm:$false -Force }
         # ProgramData
@@ -531,7 +571,7 @@ if (Test-OneDriveSyncing) {
 		## Registry
         # Remove Previous Accounts/Sync Options
         Set-Registry -Remove Path -Path "HKCU:\Software\Microsoft\OneDrive"
-        # Remove previously set One Drive settings
+        # Remove previously set OneDrive settings
         Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive"
         # Remove Right Click Menu Context Options
         Set-Registry -Remove Path -Path "HKLM:\SYSTEM\CurrentControlSet\Services\FileSyncHelper"
@@ -544,74 +584,45 @@ if (Test-OneDriveSyncing) {
 		reg delete "HKEY_USERS\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v "OneDriveSetup" /f
 		reg unload "hku\Default"
 		#########################################
-        ### DISABLE ONE DRIVE FROM BEING USED ###
+        ### DISABLE OneDrive FROM BEING USED ###
         #########################################
         # DisableFileSync
         Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Type DWord -Value 1
         # DisableFileSyncNGSC
         Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSyncNGSC' -Type DWord -Value 1  
-		Write-Host "3.2.2 Microsoft One Drive [Removed]" -ForegroundColor Yellow
+		Write-Host "Microsoft OneDrive [REMOVED]" -ForegroundColor Yellow
 }
-## 3.2.3 Internet Explorer
-Write-Host "3.2.3 Internet Explorer" -ForegroundColor Green
-#-> Add-Ons
-# Send to One Note
-Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{2670000A-7350-4f3c-8081-5663EE0C6C49}"
-Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer\Extensions\{2670000A-7350-4f3c-8081-5663EE0C6C49}"
-Write-Host "Internet Explorer - Add-On: 'Send to One Note' [REMOVED]" -ForegroundColor Green
-# OneNote Linked Notes
-Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions\{789FE86F-6FC4-46A1-9849-EDE0DB0C95CA}"
-Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\Microsoft\Internet Explorer\Extensions\{789FE86F-6FC4-46A1-9849-EDE0DB0C95CA}"
-Write-Host "Internet Explorer - Add-On: 'OneNote Linked Notes' [REMOVED]" -ForegroundColor Green
-# Lync Click to Call
-Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Internet Explorer\Extensions" -Name "{31D09BA0-12F5-4CCE-BE8A-2923E76605DA}"
-Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects" -Name "{31D09BA0-12F5-4CCE-BE8A-2923E76605DA}"
-Write-Host "Internet Explorer - Add-On: 'Lync Click to Call' [REMOVED]" -ForegroundColor Green
-<# 2026-02-10 - NO LONGER NEEDED | Internet Explorer was retired on June 15 2022.
-# IE to Edge Browser Helper Object
-Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects\{1FD49718-1D00-4B19-AF5F-070AF6D5D54C}"
-$existingTask = Get-ScheduledTask | Where-Object { $_.TaskName -like "Internet Explorer - IEtoEDGE Addon Removal" }
-if ($null -eq $existingTask) {
-    Get-ChildItem -Path "C:\Program Files (x86)\Microsoft\Edge\Application" -Recurse -Filter "BHO" | Remove-Item -Force -Recurse
-    $action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "Get-ChildItem -Path 'C:\Program Files (x86)\Microsoft\Edge\Application' -Recurse -Filter 'BHO' | Remove-Item -Force -Recurse"
-    $trigger = New-ScheduledTaskTrigger -AtLogOn
-    $STPrin = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount
-    Register-ScheduledTask -Action $action -Trigger $trigger -TaskName "Internet Explorer - IEtoEDGE Addon Removal" -Description "Removes the Internet Explorer Addon IEtoEDGE.  This will permit the use of Internet Explorer." -Principal $STPrin | Out-Null
-}
-Unregister-ScheduledTask -TaskName "Internet Explorer - IEtoEDGE Addon Removal" -Confirm:$false | Out-Null
-Write-Host "Internet Explorer - Add-On: 'IE to Edge' [REMOVED]" -ForegroundColor Green
-#>
 
-## 3.2.4 One Note
-Write-Host "3.2.4 One Note" -ForegroundColor Green
+## 3.2 [3/11] Microsoft OneNote
+Write-Host "3.2 [3/11] Microsoft One Note" -ForegroundColor Green
 Remove-Item -LiteralPath "C:\Users\$env:username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Send to OneNote.lnk" -ErrorAction "SilentlyContinue" -Force | Out-Null
 Set-Registry -Remove Value -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\StartupFolder" -Name "Send to OneNote.lnk"
-Write-Host "OneNote - Startup: 'Send to OneNote' [REMOVED]" -ForegroundColor Green
+Write-Host "Microsoft OneNote - Startup: 'Send to OneNote' [REMOVED]" -ForegroundColor Green
 
-## 3.2.5 Mozilla Firefox
-Write-Host "3.2.5 Mozilla Firefox" -ForegroundColor Green
-# Scheduled Tasks
-Get-ScheduledTask "*Firefox Default*" | Unregister-ScheduledTask -Confirm:$false
-Write-Host "Firefox - 'Periodic requests to set as default browser' [DISABLED]" -ForegroundColor Green
-
-## 3.2.6 Teams (Home / Small Business)
-Write-Host "3.2.6 Teams (Home / Small Business)" -ForegroundColor Green
-Set-Registry -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'TaskbarMn' -Value 0 -Type DWord
-Write-Host "Teams (Home / Small Business) - Taskbar Shortcut [REMOVED]" -ForegroundColor Green
-
-## 3.2.7 Teams (Work or School)
-Write-Host "3.2.7 Teams (Work or School) - Disabled Auto Start" -ForegroundColor Green
+## 3.2 [4/11] Microsoft Teams
+Write-Host "3.2 [4/11] Microsoft Teams" -ForegroundColor Green
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\MSTeams_8wekyb3d8bbwe" -Name "Disabled" -Value 1 -Type DWord
 Set-Registry -Remove Value -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "Teams"
 Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run" -Name "TeamsMachineInstaller"
 Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run32" -Name "TeamsMachineUninstallerLocalAppData"
 Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run32" -Name "TeamsMachineUninstallerProgramData"
-Write-Host "Teams (Work or School) - Auto Start [DISABLED]" -ForegroundColor Green
+Write-Host "Microsoft Teams - Auto Start [DISABLED]" -ForegroundColor Green
 
-## 3.2.8 Windows Suggestions/Tips/Welcome Experience
-Write-Host "3.2.8 Windows Suggestions/Tips/Welcome Experience" -ForegroundColor Green
+## 3.2 [5/11] Cortana
+Write-Host "3.2 [4/11] Microsoft Cortana" -ForegroundColor Green
+# Disable Cloud Search
+Set-Registry -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCloudSearch" -Value 0 -Type DWord
+# Disable Bing Search Integration
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -Value 0 -Type DWord
+# Disable Web Search Suggestions (taskbar)
+Set-Registry -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "DisableSearchBoxSuggestions" -Value 1 -Type DWord
+# Disable dynamic online content and Search Highlights in the Windows search box.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search' -Name 'EnableDynamicContentInWSB' -Value 0 -Type DWord
+Write-Host "Microsoft Cortana [DISABLED]" -ForegroundColor Green
+
+## 3.2 [6/11] Microsoft Suggestions/Feedback
+Write-Host "3.2 [6/11] Microsoft Suggestions/Tips/Welcome Experience" -ForegroundColor Green
 $cdmPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
-
 # Static/Known Keys
 # Windows Welcome Experience — the full-screen "Here's what's new" page that appears after major updates
 Set-Registry -Path $cdmPath -Name "SubscribedContent-310093Enabled" -Type DWord -Value 0
@@ -627,18 +638,26 @@ Set-Registry -Path $cdmPath -Name "SubscribedContent-338393Enabled" -Type DWord 
 Set-Registry -Path $cdmPath -Name "SubscribedContent-353694Enabled" -Type DWord -Value 0
 # Timeline suggestions — recommended content in the Task View / Timeline feature
 Set-Registry -Path $cdmPath -Name "SubscribedContent-353698Enabled" -Type DWord -Value 0
-
 # Dynamic Keys
-Get-ItemProperty -Path $cdmPath |
-    Get-Member -MemberType NoteProperty |
-    Where-Object { $_.Name -like "SubscribedContent*" } |
-    ForEach-Object {
-        Set-Registry -Path $cdmPath -Name $_.Name -Type DWord -Value 0
+Get-ItemProperty -Path $cdmPath | Get-Member -MemberType NoteProperty | Where-Object { $_.Name -like "SubscribedContent*" } | ForEach-Object { 
+          Set-Registry -Path $cdmPath -Name $_.Name -Type DWord -Value 0
     }
-Write-Host "Windows Suggestions/Tips/Welcome Experience [DISABLED]" -ForegroundColor Green
+#> Feedback
+Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\Feedback\Siuf\" -TaskName "DmClient" -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
+Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\Feedback\Siuf\" -TaskName "DmClientOnScenarioDownload" -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
+Write-Host "Microsoft Suggestions/Feedback/Tips [DISABLED]" -ForegroundColor Green
 
-## 3.2.9 Sysinternals Installation
-Write-Host "3.2.9 Sysinternals" -ForegroundColor Green
+## 3.2 [7/11] Microsoft Dynamic Lighting
+Write-Host "3.2 [7/11] Microsoft Dynamic Lighting" -ForegroundColor Green
+Set-Registry -Path "HKCU:\Software\Microsoft\Lighting" -Name "AmbientLightingEnabled" -Value 0 -Type DWord
+Write-Host "Microsoft Dynamic Lighting (RGB Fix) [DISABLED]" -ForegroundColor Green
+
+## 3.2 [8/11] Microsoft Terminal
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\Microsoft.WindowsTerminal_8wekyb3d8bbwe" -Name "Disabled" -Value 1 -Type DWord
+Write-Host "Microsoft Terminal - Autostart [DISABLED]" -ForegroundColor Green
+
+## 3.2 [9/11] Sysinternals Installation
+Write-Host "3.2 [9/11] Sysinternals" -ForegroundColor Green
 if (-not (Test-Path "C:\Windows\System32\Autoruns.exe")) {
     Invoke-WebRequest -Uri "https://live.sysinternals.com/Autoruns.exe" -OutFile "C:\Windows\System32\Autoruns.exe"
     Invoke-WebRequest -Uri "https://live.sysinternals.com/Autoruns64.exe" -OutFile "C:\Windows\System32\Autoruns64.exe"
@@ -648,44 +667,62 @@ if (-not (Test-Path "C:\Windows\System32\Autoruns.exe")) {
     Write-Host "Sysinternals - Autoruns/64 [SKIPPED / ALREADY INSTALLED]" -ForegroundColor Green
 }
 
-## 3.3.10 Cortana
-# Disable
-Set-Registry -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortana" -Value 0 -Type DWord
-# Disable Lock Screen
-Set-Registry -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCortanaAboveLock" -Value 0 -Type DWord
-# Disable Cloud Search
-Set-Registry -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCloudSearch" -Value 0 -Type DWord
-# Disable Bing Search Integration
-Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "BingSearchEnabled" -Value 0 -Type DWord
-# Disable Cortana Consent UI
-Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" -Name "CortanaConsent" -Value 0 -Type DWord
-# Disable Web Search Suggestions (taskbar)
-Set-Registry -Path "HKCU:\Software\Policies\Microsoft\Windows\Explorer" -Name "DisableSearchBoxSuggestions" -Value 1 -Type DWord
-Get-AppxPackage -AllUsers Microsoft.549981C3F5F10 | Remove-AppxPackage | Out-Null
-Write-Host "3.3.10 Explorer: Cortana [DISABLED]" -ForegroundColor Green
+## 3.2 [10/11] Mozilla Firefox
+Write-Host "3.2 [10/11] Mozilla Firefox" -ForegroundColor Green
+# Prevent the Firefox default-browser agent from collecting and submitting default-browser data.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox' -Name 'DisableDefaultBrowserAgent' -Value 1 -Type DWord
+# Stop Firefox from checking whether it is the default browser.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox' -Name 'DontCheckDefaultBrowser' -Value 1 -Type DWord
+# Disable Mozilla telemetry uploads and local telemetry storage.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox' -Name 'DisableTelemetry' -Value 1 -Type DWord
+# Disable Firefox studies and remote experiments.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox' -Name 'DisableFirefoxStudies' -Value 1 -Type DWord
+# Disable the Pocket content service and its browser integration.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox' -Name 'DisablePocket' -Value 1 -Type DWord
+# Prevent Firefox from downloading remote feature and performance changes between updates.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox' -Name 'DisableRemoteImprovements' -Value 1 -Type DWord
+# Disable remote search suggestions from address-bar input.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox' -Name 'SearchSuggestEnabled' -Value 0 -Type DWord
+# Disable DNS prefetching.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox' -Name 'NetworkPrediction' -Value 0 -Type DWord
+# Use strict tracking protection while retaining user-controlled per-site exceptions.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox\EnableTrackingProtection' -Name 'Value' -Value 1 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox\EnableTrackingProtection' -Name 'Category' -Value 'strict' -Type String
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox\EnableTrackingProtection' -Name 'Locked' -Value 0 -Type DWord
+# Apply automatic compatibility exceptions for websites affected by strict protection.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox\EnableTrackingProtection' -Name 'BaselineExceptions' -Value 1 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox\EnableTrackingProtection' -Name 'ConvenienceExceptions' -Value 1 -Type DWord
+# Partition third-party cookies and reject cookies from known trackers.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox\Cookies' -Name 'Behavior' -Value 'reject-tracker-and-partition-foreign' -Type String
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox\Cookies' -Name 'Locked' -Value 0 -Type DWord
+Write-Host "Mozilla Firefox - Privacy [HARDENED]" -ForegroundColor Green
 
-## 3.4.11 Dynamic Lighting
-Set-Registry -Path "HKCU:\Software\Microsoft\Lighting" -Name "AmbientLightingEnabled" -Value 0 -Type DWord
-Write-Host "3.4.11 Microsoft Dynamic Lighting (RGB Fix) [DISABLED]" -ForegroundColor Green
-
-## 3.4.12 Terminal
-Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\Microsoft.WindowsTerminal_8wekyb3d8bbwe" -Name "Disabled" -Value 1 -Type DWord
-Write-Host "3.4.12 Microsoft Terminal - Autostart [DISABLED]" -ForegroundColor Green
-
-## 3.4.13 Windows Feedback
-Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\Feedback\Siuf\" -TaskName "DmClient" -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
-Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\Feedback\Siuf\" -TaskName "DmClientOnScenarioDownload" -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
-Write-Host "3.4.13 Microsoft Feedback - Telementry Tasks [DISABLED]" -ForegroundColor Green
-
-## 3.4.14 Google Chrome
-# User Metrics and telementary
+## 3.2 [11/11] Google Chrome
+Write-Host "3.2 [11/11] Google Chrome" -ForegroundColor Green
+# Disable usage and crash metrics reporting.
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Google\Chrome' -Name 'MetricsReportingEnabled' -Value 0 -Type DWord
+# Disable collection of URL-keyed anonymized browsing data.
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Google\Chrome' -Name 'UrlKeyedAnonymizedDataCollectionEnabled' -Value 0 -Type DWord
-Write-Host "3.4.14 Google Chrome - Telementry [DISABLED]" -ForegroundColor Green
-
+# Disable extended Safe Browsing reporting while retaining standard protection.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Google\Chrome' -Name 'SafeBrowsingExtendedReportingEnabled' -Value 0 -Type DWord
+# Disable Safe Browsing surveys.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Google\Chrome' -Name 'SafeBrowsingSurveysEnabled' -Value 0 -Type DWord
+# Disable Chrome enterprise cloud reporting.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Google\Chrome' -Name 'CloudReportingEnabled' -Value 0 -Type DWord
+# Disable remote search suggestions from address-bar input.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Google\Chrome' -Name 'SearchSuggestEnabled' -Value 0 -Type DWord
+# Disable DNS prefetching, preconnections, and page prerendering.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Google\Chrome' -Name 'NetworkPredictionOptions' -Value 2 -Type DWord
+# Prevent failed URLs from being sent to Google for alternate page suggestions.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Google\Chrome' -Name 'AlternateErrorPagesEnabled' -Value 0 -Type DWord
+# Block third-party cookies by default while allowing the user to override the setting.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Google\Chrome\Recommended' -Name 'BlockThirdPartyCookies' -Value 1 -Type DWord
+Write-Host "Google Chrome - Privacy [HARDENED]" -ForegroundColor Green
+# Disable required and optional Microsoft Office diagnostic data without disabling connected experiences.
+Set-Registry -Path 'HKCU:\Software\Policies\Microsoft\Office\Common\ClientTelemetry' -Name 'SendTelemetry' -Value 3 -Type DWord
 #endregion
-
 #endregion
+<#############################################################################################################################>
 
 
 <#############################################################################################################################>
@@ -814,12 +851,15 @@ if ($removedCount -eq 0) {
     Write-Host " - Task: All removed previously!" -ForegroundColor Yellow
 }
 #endregion
+<#############################################################################################################################>
+
 
 <#############################################################################################################################>
 #region 5.0 - Quality of Life
 Write-Host "`n`n5.0 Quality of Life" -ForegroundColor Green
 
-<###################################### EXPLORER TWEAKS (Start) ######################################>
+
+<###################################### EXPLORER TWEAKS [START] ######################################>
 # Restore 'Windows 10' Right Click Context Menu
 if((Test-Path -LiteralPath "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32") -ne $true) {New-Item "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" -Force | Out-Null}
 Set-Registry -Path "HKCU:\Software\Classes\CLSID\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\InprocServer32" -Name "(default)" -Type String -Value ""
@@ -1107,6 +1147,8 @@ Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Themes\Perso
 Write-Host "Explorer: Transparency [DISABLED]" -ForegroundColor Green
 
 # Co-Pilot
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsAI' -Name 'DisableAIDataAnalysis' -Value 1 -Type DWord
+Write-Host "Explorer: Co-Pilot Recall Screenshots [DISABLED]" -ForegroundColor Green
 Set-Registry -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Name "TurnOffWindowsCopilot" -Value 0 -Type DWord
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\Microsoft.Copilot_8wekyb3d8bbwe" -Name "Disabled" -Value 0 -Type DWord
 Write-Host "Explorer: Co-Pilot Shortcut [REMOVED]" -ForegroundColor Green
@@ -1148,11 +1190,10 @@ Write-Host "Explorer: Folder Grouping [DISABLED]" -ForegroundColor Green
 #>
 Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name 'NtfsDisableLastAccessUpdate' -Value 1 -Type DWord
 Write-Host "Explorer: NTFS Last Access Timestamp [DISABLED]" -ForegroundColor Green
-<###################################### EXPLORER TWEAKS (End) ######################################>
+<###################################### EXPLORER TWEAKS [END] ######################################>
 
 
-
-<###################################### START MENU TWEAKS (Start) ######################################>
+<###################################### START MENU TWEAKS [START] ######################################>
 if ((Get-CimInstance -ClassName Win32_OperatingSystem).Caption -like "Microsoft Windows 11*") {
     #Source: https://vhorizon.co.uk/windows-11-start-menu-layout-group-policy/
     Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Value 0 -Type DWord
@@ -1222,11 +1263,10 @@ Write-Host "Start Menu: Feature Overrides [UPDATED]" -ForegroundColor Green
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer" -Name "NoStartMenuMorePrograms" -Remove Value
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Start" -Name "AllAppsViewMode" -Value 2 -Type DWord
 Write-Host "Start Menu: Apps View (List) [UPDATED]" -ForegroundColor Green
-<###################################### START MENU TWEAKS (End) ######################################>
+<###################################### START MENU TWEAKS [END] ######################################>
 
 
-
-<###################################### NETWORK TWEAKS (Start) ######################################>
+<###################################### NETWORK TWEAKS [START] ######################################>
 Get-NetAdapter -Physical | Where-Object Status -eq 'Up' | ForEach-Object {
     Disable-NetAdapterPowerManagement -Name $_.Name -DeviceSleepOnDisconnect -NoRestart | Out-Null
 }
@@ -1262,11 +1302,11 @@ Write-Host "Network: TCP Congestion Provider set to Compound TCP (CTCP)" -Foregr
 # This breaks anonymous/guest SMB shares (e.g. Samba "guest ok" shares), since guest sessions can't satisfy mandatory signing.
 Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters' -Name 'RequireSecuritySignature' -Value 0 -Type DWord
 Write-Host "Network: SMB Client - Mandatory Signing Requirement [DISABLED]" -ForegroundColor Green
-<###################################### NETWORK TWEAKS (End) ######################################>
+<###################################### NETWORK TWEAKS [END] ######################################>
 
 
 
-<###################################### WINDOWS TWEAKS (Start) ######################################>
+<###################################### WINDOWS TWEAKS [START] ######################################>
 # Disable 'High Precision Event Timer' to prevent input lag/delays
 bcdedit /deletevalue useplatformclock
 bcdedit /deletevalue useplatformtick
@@ -1519,19 +1559,7 @@ Write-Host "Windows: NumLock on Startup [ENABLED]" -ForegroundColor Green
 
 Set-CopilotToContextMenu
 Write-Host "Windows: Co-Pilot [F23] remapped to Context Menu [UPDATED]" -ForegroundColor Green
-<###################################### WINDOWS TWEAKS (End) ######################################>
-
-
-
-<###################################### TEST TWEAKS (Start) ######################################>
-<# Visual Settings
-Set-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects' -Name 'VisualFXSetting' -Value "0"
-Set-ItemProperty -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VisualEffects' -Name 'VisualFXSetting' -Value 393241
-New-ItemProperty -LiteralPath 'HKCU:\Control Panel\Desktop' -Name 'UserPreferencesMask' -Value ([byte[]](0x10,0x32,0x07,0x80,0x10,0x00,0x00,0x00)) -PropertyType Binary -Force
-Write-Host "Explorer: Set Optimal Visual Settings" -ForegroundColor Green
-#>
-<###################################### TEST TWEAKS (Ened) ######################################>
-#endregion
+<###################################### WINDOWS TWEAKS [END] ######################################>
 
 
 <#############################################################################################################################>
@@ -1572,29 +1600,21 @@ Write-Host "Battery: Percentage [ENABLED]" -ForegroundColor Green
 <#############################################################################################################################>
 #region 7.0 - Privacy
 Write-Host "`n`n7.0 Privacy" -ForegroundColor Green
-## Applications
-Write-Host "7.1 Applications" -ForegroundColor Green
-Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location' -Name 'Value' -Value 'Deny' -Type String
-Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}' -Name 'SensorPermissionState' -Value 1 -Type DWord
-Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\lfsvc\Service\Configuration' -Name 'EnableStatus' -Value 1 -Type DWord
-Write-Host "Applications - Location Permissions [DISABLED]" -ForegroundColor Green
 
-Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsAI' -Name 'DisableAIDataAnalysis' -Value 1 -Type DWord
-Write-Host "Applications - CoPilot Recall Screenshots [DISABLED]" -ForegroundColor Green
-
-Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appDiagnostics' -Name 'Value' -Value 'Deny' -Type String
-Write-Host "Applications - Diagnostics [DISABLED]" -ForegroundColor Green
-
-Write-Host "7.2 Keyboard" -ForegroundColor Green
+Write-Host "7.0 [1/3] Keyboard" -ForegroundColor Green
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\PolicyManager\default\TextInput\AllowLinguisticDataCollection' -Name 'value' -Value 0 -Type DWord
 Set-Registry -Path 'HKCU:\Software\Microsoft\Input\TIPC' -Name 'Enabled' -Value 0 -Type DWord
 Write-Host "Keyboard - Improved Inking and Typing Reconition [DISABLED]" -ForegroundColor Green
 
-Write-Host "7.3 Clipboard" -ForegroundColor Green
+Write-Host "7.0 [2/3] Clipboard" -ForegroundColor Green
 Set-Registry -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\SmartActionPlatform\SmartClipboard' -Name 'Disabled' -Value 1 -Type DWord
+# Prevent Windows from storing a history of copied clipboard content.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'AllowClipboardHistory' -Value 0 -Type DWord
+# Prevent clipboard content from synchronizing between the user's devices.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'AllowCrossDeviceClipboard' -Value 0 -Type DWord
 Write-Host "Clipboard - 'Smart Clipboard' [DISABLED]" -ForegroundColor Green
 
-Write-Host "7.4 Telemetry" -ForegroundColor Green #InTune Required
+Write-Host "7.0 [3/3] Telemetry" -ForegroundColor Green #InTune Required
 # Disable Tailored Experiences With Diagnostic Data
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Privacy' -Name 'TailoredExperiencesWithDiagnosticDataEnabled' -Value 0 -Type DWord
 # Disable Activites
@@ -1609,22 +1629,9 @@ Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection' -N
 # Usage / Quality Insights
 Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\UsageAndQualityInsights\" -TaskName "UsageAndQualityInsights-MaintenanceTask" -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
 Write-Host "Windows: Telementry [DISABLED]" -ForegroundColor Green
-
-# Firewall Block
-# Inbound - Check
-$inboundRuleExists = Get-NetFirewallRule -DisplayName "Telementry Block - Inbound" -ErrorAction SilentlyContinue
-# Inbound - Add
-if (-not $inboundRuleExists) {
-    netsh advfirewall firewall add rule name="Telementry Block - Inbound" dir=in action=block remoteip=134.170.30.202,137.116.81.24,157.56.106.189,184.86.53.99,2.22.61.43,2.22.61.66,204.79.197.200,23.218.212.69,65.39.117.23,65.55.108.23,64.4.54.254 enable=yes
-}
-# Outbound - Check
-$outboundRuleExists = Get-NetFirewallRule -DisplayName "Telementry Block - Outbound" -ErrorAction SilentlyContinue
-# Outbound - Add
-if (-not $outboundRuleExists) {
-    netsh advfirewall firewall add rule name="Telementry Block - Outbound" dir=out action=block remoteip=65.55.252.43,65.52.108.29,191.232.139.254,65.55.252.92,65.55.252.63,65.55.252.93,65.55.252.43,65.52.108.29,194.44.4.200,194.44.4.208,157.56.91.77,65.52.100.7,65.52.100.91,65.52.100.93,65.52.100.92,65.52.100.94,65.52.100.9,65.52.100.11,168.63.108.233,157.56.74.250,111.221.29.177,64.4.54.32,207.68.166.254,207.46.223.94,65.55.252.71,64.4.54.22,131.107.113.238,23.99.10.11,68.232.34.200,204.79.197.200,157.56.77.139,134.170.58.121,134.170.58.123,134.170.53.29,66.119.144.190,134.170.58.189,134.170.58.118,134.170.53.30,134.170.51.190,157.56.121.89,134.170.115.60,204.79.197.200,104.82.22.249,134.170.185.70,64.4.6.100,65.55.39.10,157.55.129.21,207.46.194.25,23.102.21.4,173.194.113.220,173.194.113.219,216.58.209.166,157.56.91.82,157.56.23.91,104.82.14.146,207.123.56.252,185.13.160.61,8.254.209.254,198.78.208.254,185.13.160.61,185.13.160.61,8.254.209.254,207.123.56.252,68.232.34.200,65.52.100.91,65.52.100.7,207.46.101.29,65.55.108.23,23.218.212.69 enable=yes
-}
-Write-Host "Windows: Telementry Internet Connection [DISABLED]" -ForegroundColor Green
 #endregion
+<#############################################################################################################################>
+
 
 
 <#############################################################################################################################>
@@ -1807,3 +1814,5 @@ $form.WindowState = 'Minimized'
     [System.Windows.Forms.MessageBoxButtons]::OK,
     [System.Windows.Forms.MessageBoxIcon]::Information
 )
+#endregion
+<#############################################################################################################################>
