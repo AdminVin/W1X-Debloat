@@ -5,7 +5,7 @@ $SV = "3.26"
 2026-07-28 - v3.26
     - Stopped Outlook (New) from being removed.
     - Added Google Chrome: Disabled telemetry.
-    - Updated Mozilla: Disabled telemetry.
+    - Updated Mozilla Firefox: Disabled telemetry.
     - Updated Microsoft Edge: Disabled auto start & updated disabling telemetry.
     - Added Microsoft Office: Disabled telemetry.
 2026-07-17 - v3.25
