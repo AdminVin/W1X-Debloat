@@ -444,6 +444,9 @@ Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent' -Nam
 # Disable all Windows Spotlight content, suggestions, tips, and related network traffic.
 Set-Registry -Path 'HKCU:\SOFTWARE\Policies\Microsoft\Windows\CloudContent' -Name 'DisableWindowsSpotlightFeatures' -Value 1 -Type DWord
 
+# Microsoft Office - Disable required and optional diagnostic data without disabling connected experiences.
+Set-Registry -Path 'HKCU:\Software\Policies\Microsoft\Office\Common\ClientTelemetry' -Name 'SendTelemetry' -Value 3 -Type DWord
+
 # Diagnostics [DISABLED]
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\appDiagnostics' -Name 'Value' -Value 'Deny' -Type String
 # Prevent Windows apps from reading diagnostic information about other apps.
@@ -735,8 +738,6 @@ Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Google\Chrome' -Name 'AlternateError
 # Block third-party cookies by default while allowing the user to override the setting.
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Google\Chrome\Recommended' -Name 'BlockThirdPartyCookies' -Value 1 -Type DWord
 Write-Host "Google Chrome - Privacy [HARDENED]" -ForegroundColor Green
-# Disable required and optional Microsoft Office diagnostic data without disabling connected experiences.
-Set-Registry -Path 'HKCU:\Software\Policies\Microsoft\Office\Common\ClientTelemetry' -Name 'SendTelemetry' -Value 3 -Type DWord
 #endregion
 #endregion
 <#############################################################################################################################>
