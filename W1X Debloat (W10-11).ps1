@@ -612,7 +612,7 @@ Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersio
 Write-Host "Microsoft Teams - Auto Start [DISABLED]" -ForegroundColor Green
 
 ## 3.2 [5/11] Cortana
-Write-Host " - [4/11] Microsoft Cortana" -ForegroundColor Green
+Write-Host " - [5/11] Microsoft Cortana" -ForegroundColor Green
 # Disable Cloud Search
 Set-Registry -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCloudSearch" -Value 0 -Type DWord
 # Disable Bing Search Integration
@@ -656,6 +656,7 @@ Set-Registry -Path "HKCU:\Software\Microsoft\Lighting" -Name "AmbientLightingEna
 Write-Host "Microsoft Dynamic Lighting (RGB Fix) [DISABLED]" -ForegroundColor Green
 
 ## 3.2 [8/11] Microsoft Terminal
+Write-Host " - [8/11] Microsoft Terminal" -ForegroundColor Green
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\Microsoft.WindowsTerminal_8wekyb3d8bbwe" -Name "Disabled" -Value 1 -Type DWord
 Write-Host "Microsoft Terminal - Autostart [DISABLED]" -ForegroundColor Green
 
