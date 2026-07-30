@@ -454,8 +454,8 @@ Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppPrivacy' -Name 
 
 # Location Access [DISABLED]
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\location' -Name 'Value' -Value 'Deny' -Type String
-Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}' -Name 'SensorPermissionState' -Value 1 -Type DWord
-Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\lfsvc\Service\Configuration' -Name 'EnableStatus' -Value 1 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Sensor\Overrides\{BFA794E4-F964-4FDB-90F6-51056BFE4B44}' -Name 'SensorPermissionState' -Value 0 -Type DWord
+Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\lfsvc\Service\Configuration' -Name 'Status' -Value 0 -Type DWord
 
 # Restore Progress Bars
 $ProgressPreference = "Continue"
@@ -466,7 +466,7 @@ $ProgressPreference = "Continue"
 Write-Host "3.2 Applications - Desktop" -ForegroundColor Green
 
 # 3.2 [1/11] Microsoft Edge
-Write-Host "3.2 [1/11] Microsoft Edge" -ForegroundColor Green
+Write-Host " - [1/11] Microsoft Edge" -ForegroundColor Green
 #> Auto Start
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'StartupBoostEnabled' -Value 0 -Type DWord
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'BackgroundModeEnabled' -Value 0 -Type DWord
@@ -524,7 +524,7 @@ foreach ($SearchInBingProduct in $SearchInBingProducts) {
 Write-Host "Microsoft Edge - Bloat Search Addon [REMOVED]" -ForegroundColor Green
 
 # 3.2 [2/11] OneDrive
-Write-Host "3.2 [2/11] Microsoft OneDrive" -ForegroundColor Green
+Write-Host " - [2/11] Microsoft OneDrive" -ForegroundColor Green
 if (Test-OneDriveSyncing) {
     # DisableFileSync (Enable)
     Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\OneDrive' -Name 'DisableFileSync' -Type DWord -Value 0
@@ -597,13 +597,13 @@ if (Test-OneDriveSyncing) {
 }
 
 ## 3.2 [3/11] Microsoft OneNote
-Write-Host "3.2 [3/11] Microsoft One Note" -ForegroundColor Green
+Write-Host " - [3/11] Microsoft One Note" -ForegroundColor Green
 Remove-Item -LiteralPath "C:\Users\$env:username\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\Send to OneNote.lnk" -ErrorAction "SilentlyContinue" -Force | Out-Null
 Set-Registry -Remove Value -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\StartupFolder" -Name "Send to OneNote.lnk"
 Write-Host "Microsoft OneNote - Startup: 'Send to OneNote' [REMOVED]" -ForegroundColor Green
 
 ## 3.2 [4/11] Microsoft Teams
-Write-Host "3.2 [4/11] Microsoft Teams" -ForegroundColor Green
+Write-Host " - [4/11] Microsoft Teams" -ForegroundColor Green
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\MSTeams_8wekyb3d8bbwe" -Name "Disabled" -Value 1 -Type DWord
 Set-Registry -Remove Value -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name "Teams"
 Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run" -Name "TeamsMachineInstaller"
@@ -612,7 +612,7 @@ Set-Registry -Remove Value -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersio
 Write-Host "Microsoft Teams - Auto Start [DISABLED]" -ForegroundColor Green
 
 ## 3.2 [5/11] Cortana
-Write-Host "3.2 [4/11] Microsoft Cortana" -ForegroundColor Green
+Write-Host " - [4/11] Microsoft Cortana" -ForegroundColor Green
 # Disable Cloud Search
 Set-Registry -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "AllowCloudSearch" -Value 0 -Type DWord
 # Disable Bing Search Integration
@@ -624,7 +624,7 @@ Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search' -N
 Write-Host "Microsoft Cortana [DISABLED]" -ForegroundColor Green
 
 ## 3.2 [6/11] Microsoft Suggestions/Feedback
-Write-Host "3.2 [6/11] Microsoft Suggestions/Tips/Welcome Experience" -ForegroundColor Green
+Write-Host " - [6/11] Microsoft Suggestions/Tips/Welcome Experience" -ForegroundColor Green
 $cdmPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\ContentDeliveryManager"
 # Static/Known Keys
 # Windows Welcome Experience — the full-screen "Here's what's new" page that appears after major updates
@@ -651,7 +651,7 @@ Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\Feedback\Siuf\" -TaskName
 Write-Host "Microsoft Suggestions/Feedback/Tips [DISABLED]" -ForegroundColor Green
 
 ## 3.2 [7/11] Microsoft Dynamic Lighting
-Write-Host "3.2 [7/11] Microsoft Dynamic Lighting" -ForegroundColor Green
+Write-Host " - [7/11] Microsoft Dynamic Lighting" -ForegroundColor Green
 Set-Registry -Path "HKCU:\Software\Microsoft\Lighting" -Name "AmbientLightingEnabled" -Value 0 -Type DWord
 Write-Host "Microsoft Dynamic Lighting (RGB Fix) [DISABLED]" -ForegroundColor Green
 
@@ -660,7 +660,7 @@ Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAc
 Write-Host "Microsoft Terminal - Autostart [DISABLED]" -ForegroundColor Green
 
 ## 3.2 [9/11] Sysinternals Installation
-Write-Host "3.2 [9/11] Sysinternals" -ForegroundColor Green
+Write-Host " - [9/11] Sysinternals" -ForegroundColor Green
 if (-not (Test-Path "C:\Windows\System32\Autoruns.exe")) {
     Invoke-WebRequest -Uri "https://live.sysinternals.com/Autoruns.exe" -OutFile "C:\Windows\System32\Autoruns.exe"
     Invoke-WebRequest -Uri "https://live.sysinternals.com/Autoruns64.exe" -OutFile "C:\Windows\System32\Autoruns64.exe"
@@ -671,7 +671,7 @@ if (-not (Test-Path "C:\Windows\System32\Autoruns.exe")) {
 }
 
 ## 3.2 [10/11] Mozilla Firefox
-Write-Host "3.2 [10/11] Mozilla Firefox" -ForegroundColor Green
+Write-Host " - [10/11] Mozilla Firefox" -ForegroundColor Green
 # Disable Autostart
 $firefoxRunPaths = @(
     'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'
@@ -735,7 +735,7 @@ Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Mozilla\Firefox\FirefoxSuggest' -Nam
 Write-Host "Mozilla Firefox - Privacy [UPDATED]" -ForegroundColor Green
 
 ## 3.2 [11/11] Google Chrome
-Write-Host "3.2 [11/11] Google Chrome" -ForegroundColor Green
+Write-Host " - [11/11] Google Chrome" -ForegroundColor Green
 # Disable usage and crash metrics reporting.
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Google\Chrome' -Name 'MetricsReportingEnabled' -Value 0 -Type DWord
 # Disable collection of URL-keyed anonymized browsing data.
@@ -1642,12 +1642,12 @@ Write-Host "Battery: Percentage [ENABLED]" -ForegroundColor Green
 #region 7.0 - Privacy
 Write-Host "`n`n7.0 Privacy" -ForegroundColor Green
 
-Write-Host "7.0 [1/3] Keyboard" -ForegroundColor Green
+Write-Host " - [1/4] Keyboard" -ForegroundColor Green
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\PolicyManager\default\TextInput\AllowLinguisticDataCollection' -Name 'value' -Value 0 -Type DWord
 Set-Registry -Path 'HKCU:\Software\Microsoft\Input\TIPC' -Name 'Enabled' -Value 0 -Type DWord
 Write-Host "Keyboard - Improved Inking and Typing Reconition [DISABLED]" -ForegroundColor Green
 
-Write-Host "7.0 [2/3] Clipboard" -ForegroundColor Green
+Write-Host " - [2/4] Clipboard" -ForegroundColor Green
 Set-Registry -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\SmartActionPlatform\SmartClipboard' -Name 'Disabled' -Value 1 -Type DWord
 # Prevent Windows from storing a history of copied clipboard content.
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'AllowClipboardHistory' -Value 0 -Type DWord
@@ -1655,7 +1655,7 @@ Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'All
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\System' -Name 'AllowCrossDeviceClipboard' -Value 0 -Type DWord
 Write-Host "Clipboard - 'Smart Clipboard' [DISABLED]" -ForegroundColor Green
 
-Write-Host "7.0 [3/3] Telemetry" -ForegroundColor Green #InTune Required
+Write-Host " - [3/4] Telemetry" -ForegroundColor Green #InTune Required
 # Disable Tailored Experiences With Diagnostic Data
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Privacy' -Name 'TailoredExperiencesWithDiagnosticDataEnabled' -Value 0 -Type DWord
 # Disable Activites
@@ -1670,6 +1670,16 @@ Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection' -N
 # Usage / Quality Insights
 Unregister-ScheduledTask -TaskPath "\Microsoft\Windows\UsageAndQualityInsights\" -TaskName "UsageAndQualityInsights-MaintenanceTask" -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
 Write-Host "Windows: Telementry [DISABLED]" -ForegroundColor Green
+
+Write-Host " - [4/4] Misc" -ForegroundColor Green
+# Prevent Windows from sending the OS language list to websites for content personalization.
+Set-Registry -Path 'HKCU:\Control Panel\International\User Profile' -Name 'HttpAcceptLanguageOptOut' -Value 1 -Type DWord
+# Opt out of online speech recognition data collection (separate from the offline typing/inking personalization you already disable).
+Set-Registry -Path 'HKCU:\Software\Microsoft\Speech_OneCore\Settings\OnlineSpeechPrivacy' -Name 'HasAccepted' -Value 0 -Type DWord
+# Belt-and-suspenders WER policy, redundant with your WerSvc service disable but survives if the service gets re-enabled by an update/InTune.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting' -Name 'Disabled' -Value 1 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting' -Name 'DontSendAdditionalData' -Value 1 -Type DWord
+Write-Host "Windows: Language List, Online Speech Recognition, WER Policy [DISABLED]" -ForegroundColor Green
 #endregion
 <#############################################################################################################################>
 
