@@ -1,7 +1,9 @@
-$SV = "3.26"
+$SV = "3.27"
 <#############################################################################################################################>
 <#
 [>] Change Log
+2026-09-10 - v3.27
+    - Added Explorer: Alt+Tab - Windows Only (excludes Edge tabs via MultiTaskingAltTabFilter).
 2026-07-28 - v3.26
     - Stopped Outlook (New) from being removed.
     - Added Google Chrome: Disabled telemetry.
@@ -1232,6 +1234,10 @@ Write-Host "Explorer: Folder Grouping [DISABLED]" -ForegroundColor Green
 #>
 Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name 'NtfsDisableLastAccessUpdate' -Value 1 -Type DWord
 Write-Host "Explorer: NTFS Last Access Timestamp [DISABLED]" -ForegroundColor Green
+
+# Alt+Tab - Show open windows only (excludes Edge tabs)
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MultiTaskingAltTabFilter" -Value 3 -Type DWord
+Write-Host "Explorer: Alt+Tab - Windows Only [UPDATED]" -ForegroundColor Green
 <###################################### EXPLORER TWEAKS [END] ######################################>
 
 
