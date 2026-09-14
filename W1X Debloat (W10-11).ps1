@@ -2,8 +2,9 @@ $SV = "3.27"
 <#############################################################################################################################>
 <#
 [>] Change Log
-2026-09-10 - v3.27
-    - Added Explorer: Alt+Tab - Windows Only (excludes Edge tabs via MultiTaskingAltTabFilter).
+2026-09-14 - v3.27
+    - Fixed Set-Registry: Now corrects existing values with the wrong registry type.
+    - Updated Explorer: Disabled window grouping in Taskbar and Alt+Tab (EnableTaskGroups).
 2026-07-28 - v3.26
     - Stopped Outlook (New) from being removed.
     - Added Google Chrome: Disabled telemetry.
@@ -149,6 +150,11 @@ function Set-Registry {
     # Path Check
     if (-not (Test-Path $Path)) {
         $null = New-Item -Path $Path -Force
+    }
+    # Type Check
+    $key = Get-Item -LiteralPath $Path -ErrorAction SilentlyContinue
+    if ($key -and ($key.GetValueNames() -contains $Name) -and ($key.GetValueKind($Name).ToString() -ne $Type)) {
+        Remove-ItemProperty -Path $Path -Name $Name -Force -ErrorAction SilentlyContinue
     }
     # Item Check
     if (-not (Get-ItemProperty -Path $Path -Name $Name -ErrorAction SilentlyContinue)) {
@@ -1235,8 +1241,7 @@ Write-Host "Explorer: Folder Grouping [DISABLED]" -ForegroundColor Green
 Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name 'NtfsDisableLastAccessUpdate' -Value 1 -Type DWord
 Write-Host "Explorer: NTFS Last Access Timestamp [DISABLED]" -ForegroundColor Green
 
-# Alt+Tab - Show open windows only (excludes Edge tabs)
-Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "MultiTaskingAltTabFilter" -Value 3 -Type DWord
+Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "EnableTaskGroups" -Value 0 -Type DWord
 Write-Host "Explorer: Alt+Tab - Windows Only [UPDATED]" -ForegroundColor Green
 <###################################### EXPLORER TWEAKS [END] ######################################>
 
