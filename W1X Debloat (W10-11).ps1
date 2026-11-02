@@ -2,8 +2,9 @@ $SV = "3.29"
 <#############################################################################################################################>
 <#
 [>] Change Log
-2026-11-01 - v3.29
-    - Added Network: Packet Coalescing disabled on connected Ethernet/Wireless adapters.
+2026-11-02 - v3.29
+    - Added Network: MIMO power saving disabled (No SMPS) on supported Wi-Fi adapters, connected or disconnected.
+    - Added Network: Packet Coalescing disabled on Ethernet/Wireless adapters, including disconnected adapters.
         - Batching incoming packets delays small real-time game packets, causing rubber banding in online games.
 2026-09-16 - v3.28
     - Fixed Applications: Metro apps now remove for all users ('-AllUsers' was missing, removal only applied to the account running the script).
@@ -1370,11 +1371,25 @@ Set-Registry -Remove Value -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\Lanman
 Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters' -Name 'RequireSecuritySignature' -Value 0 -Type DWord
 Write-Host "Network: SMB Client - Mandatory Signing Requirement [DISABLED]" -ForegroundColor Green
 
-# Packet Coalescing batches incoming packets to save power, delaying delivery of small real-time game packets (causes rubber banding).
-Get-NetAdapter -Physical | Where-Object Status -eq 'Up' | ForEach-Object {
+# D0 Packet Coalescing batches broadcast/multicast packets to save power; support depends on the adapter/driver.
+# Include disconnected Wi-Fi and unplugged Ethernet adapters; an active connection is not required.
+Get-NetAdapter -Physical | ForEach-Object {
     Disable-NetAdapterPowerManagement -Name $_.Name -D0PacketCoalescing -NoRestart -ErrorAction SilentlyContinue | Out-Null
 }
 Write-Host "Network: Ethernet/Wireless Packet Coalescing [DISABLED]" -ForegroundColor Green
+
+# Disable MIMO power saving (No SMPS) to keep all Wi-Fi antennas active.
+Get-NetAdapter -Physical | ForEach-Object {
+    $mimo = Get-NetAdapterAdvancedProperty -Name $_.Name -DisplayName 'MIMO Power Save Mode' -ErrorAction SilentlyContinue
+    if ($mimo -and $mimo.ValidDisplayValues -contains 'No SMPS') {
+        try {
+            $mimo | Set-NetAdapterAdvancedProperty -DisplayValue 'No SMPS' -NoRestart -ErrorAction Stop
+            Write-Host "Network: Wireless MIMO Power Saving ($($_.Name)) [DISABLED]" -ForegroundColor Green
+        } catch {
+            Write-Host "Network: Wireless MIMO Power Saving ($($_.Name)) could not be disabled: $_" -ForegroundColor Yellow
+        }
+    }
+}
 <###################################### NETWORK TWEAKS [END] ######################################>
 
 
