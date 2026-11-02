@@ -1,7 +1,10 @@
-$SV = "3.28"
+$SV = "3.29"
 <#############################################################################################################################>
 <#
 [>] Change Log
+2026-11-01 - v3.29
+    - Added Network: Packet Coalescing disabled on connected Ethernet/Wireless adapters.
+        - Batching incoming packets delays small real-time game packets, causing rubber banding in online games.
 2026-09-16 - v3.28
     - Fixed Applications: Metro apps now remove for all users ('-AllUsers' was missing, removal only applied to the account running the script).
     - Fixed Applications: Package enumeration moved outside the removal loop (was re-running for every entry in the list).
@@ -1366,6 +1369,12 @@ Set-Registry -Remove Value -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\Lanman
 # This breaks anonymous/guest SMB shares (e.g. Samba "guest ok" shares), since guest sessions can't satisfy mandatory signing.
 Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Services\LanmanWorkstation\Parameters' -Name 'RequireSecuritySignature' -Value 0 -Type DWord
 Write-Host "Network: SMB Client - Mandatory Signing Requirement [DISABLED]" -ForegroundColor Green
+
+# Packet Coalescing batches incoming packets to save power, delaying delivery of small real-time game packets (causes rubber banding).
+Get-NetAdapter -Physical | Where-Object Status -eq 'Up' | ForEach-Object {
+    Disable-NetAdapterPowerManagement -Name $_.Name -D0PacketCoalescing -NoRestart -ErrorAction SilentlyContinue | Out-Null
+}
+Write-Host "Network: Ethernet/Wireless Packet Coalescing [DISABLED]" -ForegroundColor Green
 <###################################### NETWORK TWEAKS [END] ######################################>
 
 
