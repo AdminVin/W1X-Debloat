@@ -1,7 +1,10 @@
-$SV = "3.29"
+$SV = "3.30"
 <#############################################################################################################################>
 <#
 [>] Change Log
+2026-11-16 - v3.30
+    - Added Privacy: Microsoft Defender automatic sample submission disabled (SubmitSamplesConsent = Never send).
+        - Cloud-delivered protection remains enabled.
 2026-11-02 - v3.29
     - Added Network: MIMO power saving disabled (No SMPS) on supported Wi-Fi adapters, connected or disconnected.
     - Added Network: Packet Coalescing disabled on Ethernet/Wireless adapters, including disconnected adapters.
@@ -1759,6 +1762,9 @@ Set-Registry -Path 'HKCU:\Software\Microsoft\Speech_OneCore\Settings\OnlineSpeec
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting' -Name 'Disabled' -Value 1 -Type DWord
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting' -Name 'DontSendAdditionalData' -Value 1 -Type DWord
 Write-Host "Windows: Language List, Online Speech Recognition, WER Policy [DISABLED]" -ForegroundColor Green
+# Stop Microsoft Defender from automatically uploading sample files to Microsoft (2 = Never send). Cloud-delivered protection is unaffected.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet' -Name 'SubmitSamplesConsent' -Value 2 -Type DWord
+Write-Host "Microsoft Defender: Automatic Sample Submission [DISABLED]" -ForegroundColor Green
 #endregion
 <#############################################################################################################################>
 
