@@ -1,7 +1,15 @@
-$SV = "3.30"
+$SV = "3.31"
 <#############################################################################################################################>
 <#
 [>] Change Log
+2026-11-18 - v3.31
+    - Added Privacy: Click to Do disabled (DisableClickToDo policy).
+    - Added Privacy: Notepad AI features disabled (DisableAIFeatures policy).
+    - Added Explorer: 'AI Actions' right-click context menu hidden (HideAIActionsMenu policy).
+    - Added Explorer: Recall optional feature removed (AllowRecallEnablement = 0 + payload removal).
+        - Snapshot policy (DisableAIDataAnalysis) kept so Recall stays disabled if Windows reinstalls it.
+    - Added Edge: Copilot page context access blocked (CopilotPageContext, EdgeEntraCopilotPageContext). Entra ID profiles only.
+    - Added Privacy: PowerShell 7, .NET CLI, VS Code, and Visual Studio telemetry disabled.
 2026-11-16 - v3.30
     - Added Privacy: Microsoft Defender automatic sample submission disabled (SubmitSamplesConsent = Never send).
         - Cloud-delivered protection remains enabled.
@@ -551,6 +559,9 @@ Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'SpotlightExpe
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'ShowRecommendationsEnabled' -Value 0 -Type DWord
 # Disable Copilot chat suggestions in the Edge address bar.
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'CopilotAddressBarSuggestionsEnabled' -Value 0 -Type DWord
+# Block Copilot from reading page content, open tabs, and history (Copilot itself stays available). Applies to Entra ID (work/school) profiles only.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'CopilotPageContext' -Value 0 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Edge' -Name 'EdgeEntraCopilotPageContext' -Value 0 -Type DWord
 Write-Host "Microsoft Edge - Privacy [HARDENED]" -ForegroundColor Green
 #> Addons
 $SearchInBingProducts = Get-ItemProperty -Path @(
@@ -1153,6 +1164,10 @@ Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -N
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowCloudFilesInQuickAccess" -Value 0 -Type DWord
 Write-Host "Explorer: Windows Explorer Recommendations [DISABLED]" -ForegroundColor Green
 
+# Hide the 'AI Actions' right-click menu (sends files to Copilot/Photos/Paint AI). Community-documented policy, applies to all users.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer' -Name 'HideAIActionsMenu' -Value 1 -Type DWord
+Write-Host "Explorer: 'AI Actions' - Right Click Context Menu [REMOVED]" -ForegroundColor Green
+
 <# [>] 2025/11/03 - Note: Windows 25H2 still tracks recent files with this off; no performance gain.
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "ShowRecent" -Value 1 -Type DWord
 Write-Host "Explorer: 'Recent Files' in Quick Access [DISABLED]" -ForegroundColor Yellow
@@ -1228,6 +1243,13 @@ Write-Host "Explorer: Transparency [DISABLED]" -ForegroundColor Green
 # Co-Pilot
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsAI' -Name 'DisableAIDataAnalysis' -Value 1 -Type DWord
 Write-Host "Explorer: Co-Pilot Recall Screenshots [DISABLED]" -ForegroundColor Green
+# Remove the Recall optional feature. Policy (0 = Recall not available) removes the bits and blocks re-enablement; snapshot policy above stays as a fallback.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsAI' -Name 'AllowRecallEnablement' -Value 0 -Type DWord
+$recallFeature = Get-WindowsOptionalFeature -Online -FeatureName "Recall" -ErrorAction SilentlyContinue
+if ($recallFeature -and $recallFeature.State -ne "DisabledWithPayloadRemoved") {
+    Disable-WindowsOptionalFeature -Online -FeatureName "Recall" -Remove -NoRestart -ErrorAction SilentlyContinue | Out-Null
+}
+Write-Host "Explorer: Co-Pilot Recall Feature [REMOVED]" -ForegroundColor Green
 Set-Registry -Path "HKCU:\Software\Policies\Microsoft\Windows\WindowsCopilot" -Name "TurnOffWindowsCopilot" -Value 0 -Type DWord
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\BackgroundAccessApplications\Microsoft.Copilot_8wekyb3d8bbwe" -Name "Disabled" -Value 0 -Type DWord
 Write-Host "Explorer: Co-Pilot Shortcut [REMOVED]" -ForegroundColor Green
@@ -1765,6 +1787,21 @@ Write-Host "Windows: Language List, Online Speech Recognition, WER Policy [DISAB
 # Stop Microsoft Defender from automatically uploading sample files to Microsoft (2 = Never send). Cloud-delivered protection is unaffected.
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender\Spynet' -Name 'SubmitSamplesConsent' -Value 2 -Type DWord
 Write-Host "Microsoft Defender: Automatic Sample Submission [DISABLED]" -ForegroundColor Green
+# Disable Click to Do (screenshots and analyzes screen content on Win+click). Separate from the Recall policies.
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\WindowsAI' -Name 'DisableClickToDo' -Value 1 -Type DWord
+Write-Host "Windows: Click to Do [DISABLED]" -ForegroundColor Green
+# Disable Notepad AI features (Copilot rewrite/summarize sends text to the cloud).
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\WindowsNotepad' -Name 'DisableAIFeatures' -Value 1 -Type DWord
+Write-Host "Notepad: AI Features [DISABLED]" -ForegroundColor Green
+# Developer tool telemetry (usage data only, not code). Machine-wide environment variables apply to new processes.
+[Environment]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', '1', 'Machine')
+Write-Host "PowerShell 7: Telemetry [DISABLED]" -ForegroundColor Green
+[Environment]::SetEnvironmentVariable('DOTNET_CLI_TELEMETRY_OPTOUT', '1', 'Machine')
+Write-Host ".NET CLI: Telemetry [DISABLED]" -ForegroundColor Green
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\VSCode' -Name 'TelemetryLevel' -Value 'off' -Type String
+Write-Host "VS Code: Telemetry [DISABLED]" -ForegroundColor Green
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\VisualStudio\SQM' -Name 'OptIn' -Value 0 -Type DWord
+Write-Host "Visual Studio: Telemetry [DISABLED]" -ForegroundColor Green
 #endregion
 <#############################################################################################################################>
 
