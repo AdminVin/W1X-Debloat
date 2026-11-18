@@ -70,26 +70,6 @@ Full details for every version: **[Change Log](changelog.md)**
 
 <br>
 
-## What it does NOT do
-- **Does not** disable Microsoft Defender. Real-time and cloud protection stay on.
-- **Does not** disable Windows Update.
-- **Does not** block Copilot. It is hidden, but can still be opened if you choose to.
-- **Does not** remove Outlook (New), Microsoft Store, Calculator, Photos, or other core apps.
-- **Does not** remove OneDrive if it is in use (has files).
-
-<br>
-
-## Security trade-offs
-These are disabled for performance or convenience. Re-enable them if your environment needs them.
-- SmartScreen (app and download reputation checks)
-- Virtualization-Based Security / Memory Integrity
-- UAC prompt for administrators
-- Mandatory SMB client signing (breaks guest/anonymous shares on 24H2+)
-
-These are **enabled** to compensate: LSA Protection (credential dumping defense) and the Microsoft vulnerable driver blocklist.
-
-<br>
-
 ## FAQ
 **Is it safe to re-run?**
 Yes. The script checks existing settings and can be run again after Windows updates to re-apply changes.
