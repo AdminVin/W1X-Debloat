@@ -1,6 +1,6 @@
 # W1X Debloat - Change Log
 
-## 2026-11-18 - v1.32
+## 2026-11-20 - v1.32
 - Added Privacy: Microsoft Defender automatic sample submission disabled (SubmitSamplesConsent = Never send).
   - Cloud-delivered protection remains enabled.
 - Added Privacy: Click to Do disabled (DisableClickToDo policy).
@@ -10,6 +10,8 @@
   - Snapshot policy (DisableAIDataAnalysis) kept so Recall stays disabled if Windows reinstalls it.
 - Added Edge: Copilot page context access blocked (CopilotPageContext, EdgeEntraCopilotPageContext). Entra ID profiles only.
 - Added Privacy: PowerShell 7, .NET CLI, VS Code, and Visual Studio telemetry disabled.
+- Updated Privacy/Explorer: Converted per-user (HKCU) tweaks to machine-wide (HKLM) policies where supported, so they apply to all users.
+- Removed Explorer: 'Add Watermark' right click menu - is now cleaned up if previously added.
 - Renumbered all versions.
 
 ## 2026-11-02 - v1.31
