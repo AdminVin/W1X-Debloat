@@ -893,118 +893,10 @@ Write-Host "Explorer: 'Add to Favorites' - Right Click Context Menu [REMOVED]" -
 Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\Classes\SystemFileAssociations\.jfif\shell\ConvertToJPG"
 Write-Host "Explorer: File Convert .JFIF to .JPG - Right Click Context Menu [REMOVED]" -ForegroundColor Green
 
-# Right Click Context Menu "Add Watermark"
-$scriptDir = "C:\ProgramData\AV\Watermark"
-if (-not (Test-Path -Path $scriptDir)) {
-    New-Item -Path $scriptDir -ItemType Directory -Force
-}
-
-$scriptContent = @'
-Add-Type -AssemblyName System.Drawing
-
-function Resize-AndAddWatermark {
-    param (
-        [string]$imagePath
-    )
-
-    # Load image
-    $image = [System.Drawing.Image]::FromFile($imagePath)
-
-    # Resize image
-    $newWidth = 800
-    $newHeight = 600
-    $resizedImage = New-Object System.Drawing.Bitmap $image, $newWidth, $newHeight
-
-    # Create graphics object
-    $graphics = [System.Drawing.Graphics]::FromImage($resizedImage)
-    $graphics.SmoothingMode = [System.Drawing.Drawing2D.SmoothingMode]::AntiAlias
-    $graphics.Clear([System.Drawing.Color]::White)
-
-    # Draw the image onto the resized image
-    $graphics.DrawImage($image, 0, 0, $newWidth, $newHeight)
-
-    # Set watermark text properties
-    $font = New-Object System.Drawing.Font("Arial", 120, [System.Drawing.FontStyle]::Bold)
-    $brush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(50, 255, 255, 255)) # Semi-transparent white
-
-    # Draw main centered watermark text
-    $mainText = "PREVIEW"
-    $textWidth = $graphics.MeasureString($mainText, $font).Width
-    $textHeight = $graphics.MeasureString($mainText, $font).Height
-    $centerX = ($newWidth - $textWidth) / 2
-    $centerY = ($newHeight - $textHeight) / 2
-    $graphics.DrawString($mainText, $font, $brush, $centerX, $centerY)
-
-    # Tiled and distorted watermark text
-    $tileFont = New-Object System.Drawing.Font("Arial", 50, [System.Drawing.FontStyle]::Bold)
-    $tileBrush = New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(30, 255, 255, 255)) # Lighter transparency
-
-    $tileWidth = 200
-    $tileHeight = 100
-    for ($y = 0; $y -lt $newHeight; $y += $tileHeight) {
-        for ($x = 0; $x -lt $newWidth; $x += $tileWidth) {
-            # Apply random rotation and scaling
-            $angle = (Get-Random -Minimum -15 -Maximum 15)
-            $scale = (Get-Random -Minimum 0.8 -Maximum 1.2)
-
-            # Create a transformation matrix
-            $matrix = New-Object System.Drawing.Drawing2D.Matrix
-            $matrix.RotateAt($angle, [System.Drawing.PointF]::new($x + $tileWidth / 2, $y + $tileHeight / 2))
-            $matrix.Scale($scale, $scale)
-
-            # Apply the transformation
-            $graphics.Transform = $matrix
-            $graphics.DrawString($mainText, $tileFont, $tileBrush, $x, $y)
-            $graphics.ResetTransform()
-        }
-    }
-
-    # Save the output image
-    $directory = [System.IO.Path]::GetDirectoryName($imagePath)
-    $fileName = [System.IO.Path]::GetFileNameWithoutExtension($imagePath)
-    $outputPath = Join-Path -Path $directory -ChildPath ("$fileName`_resized.jpg")
-
-    $counter = 1
-    while (Test-Path $outputPath) {
-        $outputPath = Join-Path -Path $directory -ChildPath ("$fileName`_resized($counter).jpg")
-        $counter++
-    }
-
-    $resizedImage.Save($outputPath, [System.Drawing.Imaging.ImageFormat]::Jpeg)
-
-    # Clean up
-    $graphics.Dispose()
-    $resizedImage.Dispose()
-    $image.Dispose()
-}
-
-Resize-AndAddWatermark -imagePath $args[0]
-'@
-
-$scriptPath = Join-Path -Path $scriptDir -ChildPath "ResizeAndAddWatermark.ps1"
-$scriptContent | Out-File -FilePath $scriptPath -Force
-
-$regPathJPG = "HKCU:\Software\Classes\SystemFileAssociations\.jpg\shell\AddWatermark"
-$regPathPNG = "HKCU:\Software\Classes\SystemFileAssociations\.png\shell\AddWatermark"
-
-$regKeys = @($regPathJPG, $regPathPNG)
-
-foreach ($key in $regKeys) {
-    if (-not (Test-Path $key)) {
-        New-Item -Path $key -Force
-    }
-
-    Set-ItemProperty -Path $key -Name "(Default)" -Value "Add Watermark"
-
-    $commandKeyPath = "$key\command"
-    if (-not (Test-Path $commandKeyPath)) {
-        New-Item -Path $commandKeyPath -Force
-    }
-
-    Set-ItemProperty -Path $commandKeyPath -Name "(Default)" -Value "powershell.exe -ExecutionPolicy Bypass -File `"$scriptPath`" `"%1`""
-    Set-ItemProperty -Path $key -Name "Icon" -Value "shell32.dll,43"
-}
-Write-Host "Explorer: .JPG/.PNG 'Add Watermark' - Right Click Context Menu [ADDED]" -ForegroundColor Green
+# Right Click Context Menu - Remove "Add Watermark" (added by script versions <= v1.32)
+Set-Registry -Remove Path -Path "HKCU:\Software\Classes\SystemFileAssociations\.jpg\shell\AddWatermark"
+Set-Registry -Remove Path -Path "HKCU:\Software\Classes\SystemFileAssociations\.png\shell\AddWatermark"
+Remove-Item -Path "C:\ProgramData\AV\Watermark" -Recurse -Force -ErrorAction SilentlyContinue
 
 Set-Registry -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced' -Name 'LaunchTo' -Value 1 -Type DWord
 Write-Host "Explorer: Explorer defaults to 'This PC' instead of 'Home/Most Recent'" -ForegroundColor Green
@@ -1060,8 +952,6 @@ Write-Host "Explorer: Personalized Ads [DISABLED]" -ForegroundColor Green
 
 # Feedback - Source: https://www.makeuseof.com/windows-disable-feedback-notifications/
 Set-Registry -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\DataCollection" -Name "DoNotShowFeedbackNotifications" -Value 1 -Type DWord
-Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules" -Name "NumberOfSIUFInPeriod" -Value 0 -Type DWord
-Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Siuf\Rules" -Name "PeriodInNanoSeconds" -Value 0 -Type DWord
 Write-Host "Explorer: Feedback Notifications [DISABLED]" -ForegroundColor Green
 
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "EnableSnapBar" -Type DWord -Value 0
@@ -1171,11 +1061,8 @@ if ([int](Get-CimInstance -ClassName Win32_OperatingSystem).BuildNumber -ge 2200
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -Value 0 -Type DWord
 Write-host "Start Menu: 'Task View' Button [HIDDEN]" -ForegroundColor Green
 
-Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "SearchBoxTaskbarMode" -Value 0 -Type DWord
+Set-Registry -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Search" -Name "SearchOnTaskbarMode" -Value 0 -Type DWord
 Write-host "Start Menu: 'Search' Button [HIDDEN]" -ForegroundColor Green
-
-Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarDa" -Value 0 -Type DWord
-Write-Host "Start Menu: Weather Widget [HIDDEN]" -ForegroundColor Green
 
 # Start Menu - Disable Metro app suggestions.
 Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\ContentDeliveryManager" -Name "SystemPaneSuggestionsEnabled" -Type DWord -Value "0"
@@ -1381,8 +1268,7 @@ Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat' -Name '
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\AppCompat' -Name 'DisablePCA' -Value 1 -Type DWord
 Write-Host "Windows: Application Experience - Telemetry/Inventory Policies [DISABLED]" -ForegroundColor Green
 
-Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\GameDVR" -Name "AppCaptureEnabled" -Value 0 -Type DWord
-Set-Registry -Path "HKCU:\System\GameConfigStore" -Name "GameDVR_Enabled" -Value 0 -Type DWord
+Set-Registry -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\GameDVR" -Name "AllowGameDVR" -Value 0 -Type DWord
 Set-Registry -Path 'HKCU:\Software\Microsoft\GameBar' -Name 'AllowAutoGameMode' -Value 1 -Type DWord
 Set-Registry -Path 'HKCU:\Software\Microsoft\GameBar' -Name 'AutoGameModeEnabled' -Value 1 -Type DWord
 Write-Host "Windows: Game Bar [DISABLED]" -ForegroundColor Green
@@ -1390,7 +1276,6 @@ Write-Host "Windows: Game Bar [DISABLED]" -ForegroundColor Green
 # Smart Screening
 Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\AppHost" -Name "EnableWebContentEvaluation" -Value "0" -Type DWord
 Set-Registry -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\System" -Name "EnableSmartScreen" -Value "0" -Type DWord
-Set-Registry -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer" -Name "SmartScreenEnabled" -Value "Off" -Type String
 Write-Host "Windows: App Smart Screening [DISABLED]" -ForegroundColor Green
 
 # Remote Desktop
@@ -1412,11 +1297,8 @@ Set-Registry -Path 'HKLM:\SYSTEM\CurrentControlSet\Control' -Name 'WaitToKillSer
 Write-Host "Windows: Faster Shutdown [ENABLED]" -ForegroundColor Green
 
 # 'Microsoft from getting to know you'
-Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Personalization\Settings" -Name "AcceptedPrivacyPolicy" -Value 0 -Type DWord
-Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization" -Name "RestrictImplicitTextCollection" -Value 1 -Type DWord
-Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization" -Name "RestrictImplicitInkCollection" -Value 1 -Type DWord
-Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\InputPersonalization\TrainedDataStore" -Name "HarvestContacts" -Value 0 -Type DWord
-Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Input\TIPC" -Name "Enabled" -Value 0 -Type DWord
+Set-Registry -Path "HKLM:\SOFTWARE\Policies\Microsoft\InputPersonalization" -Name "RestrictImplicitTextCollection" -Value 1 -Type DWord
+Set-Registry -Path "HKLM:\SOFTWARE\Policies\Microsoft\InputPersonalization" -Name "RestrictImplicitInkCollection" -Value 1 -Type DWord
 Set-Registry -Path "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Search" -Name "HistoryViewEnabled" -Value 0 -Type DWord
 Write-Host "Windows: 'Microsoft from getting to know you' [DISABLED]" -ForegroundColor Green
 
@@ -1592,7 +1474,6 @@ Write-Host "`n`n7.0 Privacy" -ForegroundColor Green
 
 Write-Host " - [1/4] Keyboard" -ForegroundColor Green
 Set-Registry -Path 'HKLM:\SOFTWARE\Microsoft\PolicyManager\default\TextInput\AllowLinguisticDataCollection' -Name 'value' -Value 0 -Type DWord
-Set-Registry -Path 'HKCU:\Software\Microsoft\Input\TIPC' -Name 'Enabled' -Value 0 -Type DWord
 Write-Host "Keyboard - Improved Inking and Typing Reconition [DISABLED]" -ForegroundColor Green
 
 Write-Host " - [2/4] Clipboard" -ForegroundColor Green
@@ -1637,7 +1518,7 @@ Write-Host " - [4/4] Misc" -ForegroundColor Green
 # Prevent Windows from sending the OS language list to websites for content personalization.
 Set-Registry -Path 'HKCU:\Control Panel\International\User Profile' -Name 'HttpAcceptLanguageOptOut' -Value 1 -Type DWord
 # Opt out of online speech recognition data collection (separate from the offline typing/inking personalization you already disable).
-Set-Registry -Path 'HKCU:\Software\Microsoft\Speech_OneCore\Settings\OnlineSpeechPrivacy' -Name 'HasAccepted' -Value 0 -Type DWord
+Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\InputPersonalization' -Name 'AllowInputPersonalization' -Value 0 -Type DWord
 # Belt-and-suspenders WER policy, redundant with your WerSvc service disable but survives if the service gets re-enabled by an update/InTune.
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting' -Name 'Disabled' -Value 1 -Type DWord
 Set-Registry -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Windows Error Reporting' -Name 'DontSendAdditionalData' -Value 1 -Type DWord
