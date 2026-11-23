@@ -1,7 +1,7 @@
-$SV = "1.32"
+$SV = "1.33"
 <#
 [>] Version
-Updated: 2026-11-18 - v1.32
+Updated: 2026-11-23 - v1.33
 Created: 2022-07-01 - v1.0
 Full Change Log located https://github.com/AdminVin/W1X-Debloat/blob/main/changelog.md #>
 
@@ -451,6 +451,25 @@ if (Test-OneDriveSyncing) {
 		Stop-Process -Name "OneDrive" -Force
 		Stop-Process -Name "FileCoAuth" -Force
 		## Official Removal
+        # Installed OneDrive versions (machine-wide, including version-specific installers)
+        $OneDriveInstallers = @(
+            "$env:ProgramFiles\Microsoft OneDrive\OneDriveSetup.exe"
+            "${env:ProgramFiles(x86)}\Microsoft OneDrive\OneDriveSetup.exe"
+        )
+        $OneDriveInstallers += @(
+            Get-ChildItem -Path "$env:ProgramFiles\Microsoft OneDrive", "${env:ProgramFiles(x86)}\Microsoft OneDrive" -Filter "OneDriveSetup.exe" -Recurse -File -ErrorAction SilentlyContinue |
+                Select-Object -ExpandProperty FullName
+        )
+        $OneDriveInstallers = @($OneDriveInstallers | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique)
+        foreach ($Installer in $OneDriveInstallers) {
+            if (Test-Path -LiteralPath $Installer -PathType Leaf) {
+                if ((Get-AuthenticodeSignature -LiteralPath $Installer).Status -eq 'Valid') {
+                    Unblock-File -LiteralPath $Installer -ErrorAction SilentlyContinue
+                }
+                Start-Process -FilePath $Installer -ArgumentList "/uninstall /allusers" -Wait -ErrorAction SilentlyContinue
+            }
+        }
+
         # x86
         $OneDriveSetup32 = "$Env:WinDir\System32\OneDriveSetup.exe"
         if (Test-Path $OneDriveSetup32) { Start-Process -FilePath $OneDriveSetup32 -WorkingDirectory "$Env:WinDir\System32" -ArgumentList "/uninstall" -Wait }
@@ -460,10 +479,14 @@ if (Test-OneDriveSyncing) {
         if (Test-Path $OneDriveSetup64) { Start-Process -FilePath $OneDriveSetup64 -WorkingDirectory "$Env:WinDir\SysWOW64" -ArgumentList "/uninstall" -Wait }
 		## Files Cleanup
 		# File Explorer - Navigation Bar
+        Set-Registry -Path 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name '(default)' -Type String -Value 'OneDrive'
         Set-Registry -Path 'HKCU:\Software\Classes\CLSID\{018D5C66-4533-4307-9B53-224DE2ED1FE6}' -Name 'System.IsPinnedToNameSpaceTree' -Type DWord -Value 0
     		# AppData / Local
         $LocalOneDrive = "$env:LOCALAPPDATA\OneDrive"
         if (Test-Path $LocalOneDrive) { Remove-Item -Path $LocalOneDrive -Recurse -Confirm:$false -Force }
+        # AppData / Local / Microsoft (per-user install, account settings, and sync database)
+        $LocalMicrosoftOneDrive = "$env:LOCALAPPDATA\Microsoft\OneDrive"
+        if (Test-Path $LocalMicrosoftOneDrive) { Remove-Item -LiteralPath $LocalMicrosoftOneDrive -Recurse -Confirm:$false -Force -ErrorAction SilentlyContinue }
         # ProgramData
         $ProgramDataOneDrive = "$env:PROGRAMDATA\Microsoft OneDrive"
         if (Test-Path $ProgramDataOneDrive) { Remove-Item -Path $ProgramDataOneDrive -Recurse -Force | Out-Null }
@@ -490,13 +513,32 @@ if (Test-OneDriveSyncing) {
         # Remove Right Click Menu Context Options
         Set-Registry -Remove Path -Path "HKLM:\SYSTEM\CurrentControlSet\Services\FileSyncHelper"
         # Remove from launching on new user profiles
-        Set-Registry -Remove Value -Path 'HKU:\.DEFAULT\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' -Name 'OneDriveSetup'
-        Set-Registry -Remove Value -Path 'HKU:\.DEFAULT\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce' -Name 'OneDrive'
+        Set-Registry -Remove Value -Path 'Registry::HKEY_USERS\.DEFAULT\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' -Name 'OneDriveSetup'
+        Set-Registry -Remove Value -Path 'Registry::HKEY_USERS\.DEFAULT\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce' -Name 'OneDrive'
 
 		# Remove from 'Default' user account
 		reg load "hku\Default" "C:\Users\Default\NTUSER.DAT"
 		reg delete "HKEY_USERS\Default\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" /v "OneDriveSetup" /f
 		reg unload "hku\Default"
+
+        # Remove remaining OneDrive uninstall entries
+        @(
+            'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall'
+            'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall'
+            'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall'
+        ) | ForEach-Object {
+            Get-ChildItem -Path $_ -ErrorAction SilentlyContinue | ForEach-Object {
+                $Entry = Get-ItemProperty -Path $_.PSPath -ErrorAction SilentlyContinue
+                if ($Entry.DisplayName -like '*OneDrive*') {
+                    Remove-Item -LiteralPath $_.PSPath -Recurse -Force -ErrorAction SilentlyContinue
+                }
+            }
+        }
+
+        # Remove remaining OneDrive version registrations (machine-wide, 32-bit, Photos)
+        Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\Microsoft\OneDrive"
+        Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\OneDrive"
+        Set-Registry -Remove Path -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\ODPhotosOneDriveSetup.exe"
 		#########################################
         ### DISABLE OneDrive FROM BEING USED ###
         #########################################

@@ -1,5 +1,12 @@
 # W1X Debloat - Change Log
 
+## 2026-11-23 - v1.33
+- Updated Applications: OneDrive removal.
+  - Uninstalls machine-wide installs from Program Files (all users, including version-specific installers).
+  - Removes leftover uninstall entries and install registrations (machine-wide, 32-bit, Photos).
+  - Removes %LOCALAPPDATA%\Microsoft\OneDrive (per-user install, account settings, and sync database).
+- Fixed Applications: OneDrive removal from new user profiles (.DEFAULT Run/RunOnce paths were not applying).
+
 ## 2026-11-20 - v1.32
 - Added Privacy: Microsoft Defender automatic sample submission disabled (SubmitSamplesConsent = Never send).
   - Cloud-delivered protection remains enabled.
